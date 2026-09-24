@@ -128,16 +128,15 @@ export function TerminalSimulator() {
           </div>
 
           {/* Window Title */}
-          <div className="flex items-center gap-2 text-xs font-mono text-[#A1A1AA]">
-            <FolderGit2 className="w-3.5 h-3.5 text-white" />
-            <span className="text-white font-medium">cube — ~/workspace</span>
+          <div className="flex items-center gap-2 text-xs font-mono text-[#A1A1AA] truncate px-2">
+            <FolderGit2 className="w-3.5 h-3.5 text-white shrink-0" />
+            <span className="text-white font-medium truncate">
+              D:\your-project | openai/gpt-6-astra (high)
+            </span>
           </div>
 
-          {/* Model Status Pill */}
-          <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#050505] border border-[#27272A] text-[11px] font-mono text-white">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            <span>{scenario.model}</span>
-          </div>
+          {/* Right spacer to balance traffic light buttons */}
+          <div className="w-12 shrink-0 hidden sm:block" />
         </div>
 
         {/* Terminal Body Content */}
