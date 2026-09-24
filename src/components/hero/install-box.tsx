@@ -2,15 +2,59 @@
 
 import { useState } from "react";
 import { Check, Copy, ShieldCheck } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface InstallOption {
+  id: "powershell" | "wsl" | "macos" | "npm";
+  label: string;
+  prompt: string;
+  command: string;
+  platform: string;
+}
+
+const INSTALL_OPTIONS: InstallOption[] = [
+  {
+    id: "powershell",
+    label: "PowerShell",
+    prompt: "PS>",
+    command:
+      "irm https://pub-3313f2900e0948b5849dc47c989406ab.r2.dev/install.ps1 | iex",
+    platform: "Windows x64 Native",
+  },
+  {
+    id: "wsl",
+    label: "WSL / Linux",
+    prompt: "$",
+    command:
+      "curl -fsSL https://pub-3313f2900e0948b5849dc47c989406ab.r2.dev/install.sh | bash",
+    platform: "Linux / WSL2 (x86_64 / arm64)",
+  },
+  {
+    id: "macos",
+    label: "macOS",
+    prompt: "$",
+    command:
+      "curl -fsSL https://pub-3313f2900e0948b5849dc47c989406ab.r2.dev/install.sh | bash",
+    platform: "Apple Silicon & Intel",
+  },
+  {
+    id: "npm",
+    label: "npm",
+    prompt: "$",
+    command: "npm install -g @cube/cli",
+    platform: "Node.js >= 22.13.0",
+  },
+];
 
 export function InstallBox() {
+  const [activeTab, setActiveTab] = useState<InstallOption["id"]>("powershell");
   const [copied, setCopied] = useState(false);
-  const command =
-    "irm https://pub-3313f2900e0948b5849dc47c989406ab.r2.dev/install.ps1 | iex";
+
+  const activeOption = INSTALL_OPTIONS.find((opt) => opt.id === activeTab)!;
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(command);
+      await navigator.clipboard.writeText(activeOption.command);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -20,17 +64,41 @@ export function InstallBox() {
 
   return (
     <div id="install" className="w-full max-w-xl mx-auto">
+      {/* Platform Tabs (PowerShell, WSL/Linux, macOS, npm) */}
+      <div className="flex items-center justify-center gap-1.5 mb-2.5">
+        {INSTALL_OPTIONS.map((opt) => {
+          const isSelected = activeTab === opt.id;
+          return (
+            <button
+              key={opt.id}
+              onClick={() => {
+                setActiveTab(opt.id);
+                setCopied(false);
+              }}
+              className={cn(
+                "px-3 py-1 rounded-md text-xs font-mono transition-colors cursor-pointer",
+                isSelected
+                  ? "bg-[#18181B] text-white border border-[#27272A] shadow-sm font-semibold"
+                  : "text-[#A1A1AA] hover:text-white border border-transparent hover:bg-[#18181B]/40"
+              )}
+            >
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
+
       <div className="relative group">
-        {/* Outer terminal box */}
-        <div className="relative rounded-lg bg-[#18181B] border border-[#27272A] group-hover:border-white/20 p-2.5 sm:p-3 shadow-xl transition-colors">
+        {/* Outer terminal box (surface-2 #0D0D0F, border #27272A, terminal-mono) */}
+        <div className="relative rounded-lg bg-[#0D0D0F] border border-[#27272A] group-hover:border-white/30 p-2.5 sm:p-3 shadow-xl transition-colors">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             {/* Terminal prompt and command text */}
             <div className="flex items-center gap-2.5 overflow-x-auto px-2 py-1 scrollbar-none font-mono text-xs sm:text-[13px]">
-              <span className="text-white font-semibold select-none">
-                PS&gt;
+              <span className="text-[#A1A1AA] font-semibold select-none">
+                {activeOption.prompt}
               </span>
               <code className="text-[#FFFFFF] select-all whitespace-nowrap">
-                {command}
+                {activeOption.command}
               </code>
             </div>
 
@@ -67,7 +135,7 @@ export function InstallBox() {
           <span>SHA-256 Verified Release</span>
         </span>
         <span className="text-[#27272A]">•</span>
-        <span>Windows x64 Native</span>
+        <span>{activeOption.platform}</span>
         <span className="text-[#27272A]">•</span>
         <span>~2s Standalone Install</span>
       </div>
