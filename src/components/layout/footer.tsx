@@ -9,7 +9,7 @@ export function Footer() {
     <footer className="relative border-t border-[#27272A] bg-[#050505] overflow-hidden">
       {/* Final Pre-Footer Call to Action */}
       <div className="relative max-w-4xl mx-auto pt-20 pb-16 px-4 sm:px-6 lg:px-8 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#5EEAD4] mb-5">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-5">
           <span>ZERO PREREQUISITES REQUIRED</span>
         </div>
         <h2 className="text-3xl sm:text-4xl font-medium text-white tracking-tight mb-4">
@@ -31,7 +31,7 @@ export function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           {/* Brand */}
           <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 rounded-md bg-[#18181B] border border-[#27272A] flex items-center justify-center text-[#5EEAD4]">
+            <div className="w-6 h-6 rounded-md bg-[#18181B] border border-[#27272A] flex items-center justify-center text-white">
               <Terminal className="w-3.5 h-3.5" />
             </div>
             <span className="font-semibold text-sm text-white font-sans">

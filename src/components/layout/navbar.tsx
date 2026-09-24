@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Terminal, Menu, X, ArrowUpRight } from "lucide-react";
+import { Terminal, Menu, X } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
 
 export function Navbar() {
@@ -15,7 +15,7 @@ export function Navbar() {
         <div className="w-full sm:w-auto pointer-events-auto flex items-center justify-between sm:gap-6 px-4 py-2 rounded-full bg-[#18181B]/85 backdrop-blur-xl border border-[#27272A] shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-2 group pr-2 sm:pr-0">
-            <div className="w-6 h-6 rounded-md bg-[#27272A] border border-white/10 flex items-center justify-center text-[#5EEAD4] group-hover:border-[#5EEAD4]/50 transition-colors">
+            <div className="w-6 h-6 rounded-md bg-[#27272A] border border-white/10 flex items-center justify-center text-white transition-colors">
               <Terminal className="w-3.5 h-3.5" />
             </div>
             <span className="font-semibold text-sm tracking-tight text-white font-sans">
@@ -76,7 +76,7 @@ export function Navbar() {
 
             <a
               href="#install"
-              className="px-3.5 py-1.5 rounded-full bg-white text-black hover:bg-[#5EEAD4] text-xs font-medium transition-colors shadow-sm"
+              className="px-3.5 py-1.5 rounded-full bg-white text-black hover:bg-neutral-200 text-xs font-medium transition-colors shadow-sm"
             >
               Get Started
             </a>
@@ -86,7 +86,7 @@ export function Navbar() {
           <div className="flex items-center gap-2 sm:hidden">
             <a
               href="#install"
-              className="px-3 py-1 rounded-full bg-white text-black hover:bg-[#5EEAD4] text-xs font-medium"
+              className="px-3 py-1 rounded-full bg-white text-black hover:bg-neutral-200 text-xs font-medium"
             >
               Get Started
             </a>

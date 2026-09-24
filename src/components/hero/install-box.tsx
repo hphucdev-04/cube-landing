@@ -21,15 +21,12 @@ export function InstallBox() {
   return (
     <div id="install" className="w-full max-w-xl mx-auto">
       <div className="relative group">
-        {/* Subtle accent glow */}
-        <div className="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-[#5EEAD4]/20 via-white/5 to-[#5EEAD4]/20 blur-sm opacity-40 group-hover:opacity-80 transition-opacity duration-500" />
-
         {/* Outer terminal box */}
-        <div className="relative rounded-lg bg-[#18181B] border border-[#27272A] group-hover:border-[#5EEAD4]/40 p-2.5 sm:p-3 shadow-xl transition-colors">
+        <div className="relative rounded-lg bg-[#18181B] border border-[#27272A] group-hover:border-white/20 p-2.5 sm:p-3 shadow-xl transition-colors">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             {/* Terminal prompt and command text */}
             <div className="flex items-center gap-2.5 overflow-x-auto px-2 py-1 scrollbar-none font-mono text-xs sm:text-[13px]">
-              <span className="text-[#5EEAD4] font-semibold select-none">
+              <span className="text-white font-semibold select-none">
                 PS&gt;
               </span>
               <code className="text-[#FFFFFF] select-all whitespace-nowrap">
@@ -42,7 +39,7 @@ export function InstallBox() {
               onClick={handleCopy}
               className={`shrink-0 flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer ${
                 copied
-                  ? "bg-[#5EEAD4] text-black"
+                  ? "bg-white text-black"
                   : "bg-white/10 hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent"
               }`}
               title="Copy to clipboard"
@@ -65,8 +62,8 @@ export function InstallBox() {
 
       {/* Verification notes */}
       <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-[#A1A1AA] font-mono">
-        <span className="flex items-center gap-1.5 text-white/80">
-          <ShieldCheck className="w-3.5 h-3.5 text-[#5EEAD4]" />
+        <span className="flex items-center gap-1.5 text-white">
+          <ShieldCheck className="w-3.5 h-3.5 text-white" />
           <span>SHA-256 Verified Release</span>
         </span>
         <span className="text-[#27272A]">•</span>

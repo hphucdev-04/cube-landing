@@ -54,7 +54,7 @@ export function FaqAccordion() {
       <div className="relative max-w-3xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#5EEAD4] mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-4">
             <HelpCircle className="w-3.5 h-3.5" />
             <span>KNOWLEDGE BASE</span>
           </div>
@@ -76,7 +76,7 @@ export function FaqAccordion() {
                 className={cn(
                   "rounded-lg border transition-colors overflow-hidden",
                   isOpen
-                    ? "border-[#5EEAD4]/40 bg-[#18181B]"
+                    ? "border-white/20 bg-[#18181B]"
                     : "border-[#27272A] bg-[#18181B]/50 hover:border-[#27272A] hover:bg-[#18181B]"
                 )}
               >
@@ -91,7 +91,7 @@ export function FaqAccordion() {
                     className={cn(
                       "w-6 h-6 rounded-md flex items-center justify-center border transition-transform shrink-0",
                       isOpen
-                        ? "border-[#5EEAD4]/40 bg-[#050505] text-[#5EEAD4] rotate-180"
+                        ? "border-white/20 bg-[#050505] text-white rotate-180"
                         : "border-[#27272A] bg-[#050505] text-[#A1A1AA]"
                     )}
                   >

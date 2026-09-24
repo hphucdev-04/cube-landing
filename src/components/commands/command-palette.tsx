@@ -108,7 +108,7 @@ export function CommandPalette() {
       <div className="relative max-w-6xl mx-auto">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#5EEAD4] mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-4">
             <Hash className="w-3.5 h-3.5" />
             <span>COMMAND INTERFACE</span>
           </div>
@@ -133,7 +133,7 @@ export function CommandPalette() {
                 value={searchFilter}
                 onChange={(e) => setSearchFilter(e.target.value)}
                 placeholder="Filter commands (/model, /gateway...)"
-                className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#27272A] bg-[#18181B] text-xs text-white placeholder:text-[#A1A1AA]/60 focus:outline-none focus:border-[#5EEAD4]/60 transition-colors font-mono"
+                className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#27272A] bg-[#18181B] text-xs text-white placeholder:text-[#A1A1AA]/60 focus:outline-none focus:border-white/30 transition-colors font-mono"
               />
             </div>
 
@@ -148,8 +148,8 @@ export function CommandPalette() {
                     className={cn(
                       "w-full text-left p-3 rounded-lg border transition-colors flex items-center justify-between group cursor-pointer",
                       isSelected
-                        ? "border-[#5EEAD4]/50 bg-[#18181B]"
-                        : "border-[#27272A] bg-[#18181B]/50 hover:bg-[#18181B] hover:border-[#27272A]"
+                        ? "border-[#27272A] bg-[#18181B] text-white shadow-sm"
+                        : "border-[#27272A]/50 bg-[#18181B]/50 hover:bg-[#18181B] hover:border-[#27272A]"
                     )}
                   >
                     <div className="space-y-0.5 min-w-0 pr-3">
@@ -157,7 +157,7 @@ export function CommandPalette() {
                         <span
                           className={cn(
                             "font-mono text-xs font-semibold",
-                            isSelected ? "text-[#5EEAD4]" : "text-white group-hover:text-[#5EEAD4]"
+                            isSelected ? "text-white" : "text-white group-hover:text-white"
                           )}
                         >
                           {item.command}
@@ -180,7 +180,7 @@ export function CommandPalette() {
                       className={cn(
                         "w-4 h-4 shrink-0 transition-transform",
                         isSelected
-                          ? "text-[#5EEAD4] translate-x-0.5"
+                          ? "text-white translate-x-0.5"
                           : "text-[#A1A1AA]/40 group-hover:text-white"
                       )}
                     />
@@ -212,8 +212,8 @@ export function CommandPalette() {
                 >
                   {copied ? (
                     <>
-                      <Check className="w-3 h-3 text-[#5EEAD4]" />
-                      <span className="text-[#5EEAD4] text-[11px]">Copied</span>
+                      <Check className="w-3 h-3 text-white" />
+                      <span className="text-white text-[11px]">Copied</span>
                     </>
                   ) : (
                     <>
@@ -228,7 +228,7 @@ export function CommandPalette() {
               <div className="p-5 font-mono text-xs sm:text-[13px] space-y-3.5">
                 {/* Meta details */}
                 <div className="flex flex-wrap items-center gap-3 text-xs pb-3 border-b border-[#27272A]">
-                  <span className="px-2 py-0.5 rounded bg-[#18181B] text-[#5EEAD4] border border-[#27272A]">
+                  <span className="px-2 py-0.5 rounded bg-[#18181B] text-white border border-[#27272A]">
                     {selectedCommand.category}
                   </span>
                   <span className="text-[#A1A1AA]">
@@ -247,7 +247,7 @@ export function CommandPalette() {
                 {/* Command Input Simulated */}
                 <div className="p-2.5 rounded bg-[#18181B] border border-[#27272A]">
                   <div className="flex items-center gap-2 text-[#A1A1AA]">
-                    <span className="text-[#5EEAD4] font-bold">❯</span>
+                    <span className="text-white font-bold">❯</span>
                     <span className="text-white">{selectedCommand.example}</span>
                   </div>
                 </div>
@@ -257,7 +257,7 @@ export function CommandPalette() {
                   <div className="text-[10px] uppercase tracking-wider text-[#A1A1AA]/60 font-semibold mb-1">
                     Terminal Output:
                   </div>
-                  <pre className="text-neutral-300 whitespace-pre-wrap leading-relaxed text-xs pl-2 border-l-2 border-[#5EEAD4]/40">
+                  <pre className="text-neutral-300 whitespace-pre-wrap leading-relaxed text-xs pl-2 border-l-2 border-[#27272A]">
                     {selectedCommand.output}
                   </pre>
                 </div>

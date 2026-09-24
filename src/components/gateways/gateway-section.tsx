@@ -13,7 +13,6 @@ interface GatewayCategory {
   icon: typeof KeyRound;
   tagline: string;
   description: string;
-  accent: string;
   providers: {
     name: string;
     model: string;
@@ -33,7 +32,6 @@ const GATEWAY_CATEGORIES: GatewayCategory[] = [
     tagline: "Use your existing AI subscriptions. Zero extra token costs.",
     description:
       "Authenticate directly with your personal or team account via secure browser PKCE OAuth. Consume your monthly quota directly with zero middleman markup.",
-    accent: "text-[#5EEAD4]",
     codeSnippet: `/gateway oauth anthropic
 # Browser opens secure PKCE OAuth callback
 # Signed in as: user@company.com (Claude Pro/Team)
@@ -59,7 +57,6 @@ const GATEWAY_CATEGORIES: GatewayCategory[] = [
     tagline: "Pay-as-you-go keys from any major model foundry.",
     description:
       "Bring your developer API keys directly from Anthropic, OpenAI, OpenRouter, DeepSeek, Groq, Cerebras, and more. Keys are encrypted at rest on your machine.",
-    accent: "text-[#5EEAD4]",
     codeSnippet: `/gateway api openrouter
 # Stored encrypted key in ~/.cube/auth.json
 # Active Model: deepseek/deepseek-r1
@@ -85,7 +82,6 @@ const GATEWAY_CATEGORIES: GatewayCategory[] = [
     tagline: "Run entirely offline on your local GPU. Zero telemetry.",
     description:
       "Connect seamlessly to Ollama, LM Studio, or custom vLLM servers running on your workstation. No internet connection required. Absolute data sovereign privacy.",
-    accent: "text-[#5EEAD4]",
     codeSnippet: `/gateway local ollama
 # Detected local Ollama instance on http://localhost:11434
 # Active Model: qwen2.5-coder:32b-instruct-q8_0
@@ -114,7 +110,7 @@ export function GatewaySection() {
       <div className="relative max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#5EEAD4] mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-4">
             <span>MODEL ROUTING</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-white mb-4">
@@ -138,17 +134,17 @@ export function GatewaySection() {
                 className={cn(
                   "flex items-center gap-2.5 px-4 py-2 rounded-lg border text-sm font-medium transition-colors cursor-pointer",
                   isSelected
-                    ? "border-[#5EEAD4]/40 bg-[#18181B] text-white shadow-sm"
-                    : "border-[#27272A] bg-[#18181B]/50 text-[#A1A1AA] hover:text-white hover:bg-[#18181B]"
+                    ? "border-[#27272A] bg-[#18181B] text-white shadow-sm"
+                    : "border-[#27272A]/50 bg-[#18181B]/50 text-[#A1A1AA] hover:text-white hover:bg-[#18181B]"
                 )}
               >
-                <Icon className={cn("w-4 h-4", isSelected ? "text-[#5EEAD4]" : "text-neutral-500")} />
+                <Icon className={cn("w-4 h-4", isSelected ? "text-white" : "text-[#A1A1AA]")} />
                 <span>{cat.title}</span>
                 <span
                   className={cn(
                     "px-1.5 py-0.5 text-[11px] font-mono rounded border",
                     isSelected
-                      ? "border-[#5EEAD4]/30 bg-[#5EEAD4]/10 text-[#5EEAD4]"
+                      ? "border-[#27272A] bg-[#050505] text-white"
                       : "border-[#27272A] bg-[#050505] text-[#A1A1AA]"
                   )}
                 >
@@ -165,7 +161,7 @@ export function GatewaySection() {
             {/* Left Column: Details & Perks */}
             <div className="lg:col-span-7 space-y-6">
               <div className="space-y-2">
-                <div className="text-xs font-mono uppercase tracking-wider text-[#5EEAD4]">
+                <div className="text-xs font-mono uppercase tracking-wider text-[#A1A1AA]">
                   GATEWAY: {active.title}
                 </div>
                 <h3 className="text-xl sm:text-2xl font-medium text-white tracking-tight">
@@ -185,8 +181,8 @@ export function GatewaySection() {
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-semibold text-white">{provider.name}</span>
-                      <span className="inline-flex items-center gap-1 text-[10px] font-mono text-[#5EEAD4]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#5EEAD4]" />
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono text-[#A1A1AA]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-white" />
                         {provider.status}
                       </span>
                     </div>
@@ -200,7 +196,7 @@ export function GatewaySection() {
               <ul className="space-y-2 pt-1">
                 {active.perks.map((perk, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-neutral-300">
-                    <CheckCircle className="w-4 h-4 shrink-0 mt-0.5 text-[#5EEAD4]" />
+                    <CheckCircle className="w-4 h-4 shrink-0 mt-0.5 text-white" />
                     <span>{perk}</span>
                   </li>
                 ))}
@@ -231,8 +227,8 @@ export function GatewaySection() {
                     {active.codeSnippet}
                   </pre>
                   <div className="mt-3 pt-3 border-t border-[#27272A] flex items-center justify-between text-xs text-neutral-500">
-                    <span className="text-[#5EEAD4] flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#5EEAD4] animate-pulse" />
+                    <span className="text-white flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                       Session Ready
                     </span>
                     <span className="font-mono text-[11px]">latency: ~12ms</span>

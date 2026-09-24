@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles, ArrowRight, FileText } from "lucide-react";
+import { ArrowRight, FileText } from "lucide-react";
 import { InstallBox } from "./install-box";
 import { GithubIcon } from "@/components/ui/icons";
 
@@ -10,12 +10,12 @@ export function Hero() {
       <div className="relative max-w-4xl mx-auto text-center flex flex-col items-center">
         {/* Release / Status Pill Badge */}
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#18181B] border border-[#27272A] mb-8 shadow-sm">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#5EEAD4] animate-pulse" />
-          <span className="text-xs font-mono font-medium text-[#A1A1AA]">
+          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+          <span className="text-xs font-mono font-medium text-white">
             Cube v1.0.0
           </span>
           <span className="text-[#27272A]">•</span>
-          <span className="text-xs font-mono text-[#5EEAD4]">
+          <span className="text-xs font-mono text-[#A1A1AA]">
             Engineered in the Terminal
           </span>
         </div>
@@ -34,7 +34,7 @@ export function Hero() {
         <div className="flex flex-wrap items-center justify-center gap-3.5 mb-10">
           <a
             href="#install"
-            className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-white text-black hover:bg-[#5EEAD4] font-medium text-sm transition-colors shadow-lg cursor-pointer"
+            className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-white text-black hover:bg-neutral-200 font-medium text-sm transition-colors shadow-lg cursor-pointer"
           >
             <span>Get Started</span>
             <ArrowRight className="w-4 h-4" />
