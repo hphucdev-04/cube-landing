@@ -5,8 +5,6 @@ import { useEffect, useRef } from "react";
 interface CubeParticle {
   x: number;
   y: number;
-  targetX: number;
-  targetY: number;
   originX: number;
   originY: number;
   size: number;
@@ -91,11 +89,6 @@ export function CubeVoxelField() {
     window.addEventListener("mousemove", onMouseMove, { passive: true });
     document.addEventListener("mouseleave", onMouseLeave, { passive: true });
 
-    let isInitialized = false;
-    let isIntroActive = true;
-    let introProgress = 0;
-    let lastTime = 0;
-
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = window.innerWidth;
@@ -105,11 +98,10 @@ export function CubeVoxelField() {
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
       ctx.scale(dpr, dpr);
-      initParticles(!isInitialized);
-      isInitialized = true;
+      initParticles();
     };
 
-    const initParticles = (isIntro: boolean = true) => {
+    const initParticles = () => {
       particles = [];
       // High density: 2200 - 3200 tiny cubes across viewport
       const targetCount = Math.floor(Math.min(3000, (width * height) / 420));
@@ -120,16 +112,16 @@ export function CubeVoxelField() {
       let attempts = 0;
       while (particles.length < targetCount && attempts < targetCount * 5) {
         attempts++;
-        const targetX = Math.random() * width;
-        const targetY = Math.random() * height;
+        const x = Math.random() * width;
+        const y = Math.random() * height;
 
         // Radial distance from hero center
-        const dx = (targetX - cx) / (width * 0.48);
-        const dy = (targetY - cy) / (height * 0.42);
+        const dx = (x - cx) / (width * 0.48);
+        const dy = (y - cy) / (height * 0.42);
         const distFromCenter = Math.sqrt(dx * dx + dy * dy);
 
         // Noise clustering
-        const n = noise2D(targetX * 0.0022, targetY * 0.0022);
+        const n = noise2D(x * 0.0022, y * 0.0022);
         const centerSuppression = Math.min(1, Math.max(0, (distFromCenter - 0.28) * 1.8));
         const spawnProb = centerSuppression * (n > 0.4 ? 0.85 : 0.1);
 
@@ -138,33 +130,18 @@ export function CubeVoxelField() {
           const shade = 0.45 + Math.random() * 0.55; // [0.45, 1.0]
           const baseAlpha = 0.18 + Math.random() * 0.65;
 
-          // Vector from hero center to destination target
-          const angle = Math.atan2(targetY - cy, targetX - cx);
-          const dist = Math.hypot(targetX - cx, targetY - cy);
-
-          // Initial explosive burst velocity directed outward
-          const blastSpeed = isIntro
-            ? Math.min(30, (dist / (width * 0.45)) * 18 + 6 + Math.random() * 8)
-            : 0;
-
-          const startR = isIntro ? Math.random() * 12 : 0;
-          const posX = isIntro ? cx + Math.cos(angle) * startR : targetX;
-          const posY = isIntro ? cy + Math.sin(angle) * startR : targetY;
-
           particles.push({
-            x: posX,
-            y: posY,
-            targetX,
-            targetY,
-            originX: targetX,
-            originY: targetY,
+            x,
+            y,
+            originX: x,
+            originY: y,
             size,
             shade,
             baseAlpha,
             alpha: baseAlpha,
-            // Explosive vector outward during intro; standard drift otherwise
-            vx: isIntro ? Math.cos(angle) * blastSpeed : (Math.random() - 0.5) * 0.35,
-            vy: isIntro ? Math.sin(angle) * blastSpeed : -0.15 - Math.random() * 0.35,
+            // Visibly smooth upward & drifting velocity
+            vx: (Math.random() - 0.5) * 0.35,
+            vy: -0.15 - Math.random() * 0.35, // Slow rising voxel flow
             phase: Math.random() * Math.PI * 2,
             floatSpeed: 0.001 + Math.random() * 0.002,
             rotSpeed: 0.0015 + Math.random() * 0.003,
@@ -227,73 +204,38 @@ export function CubeVoxelField() {
     };
     document.addEventListener("visibilitychange", onVisibilityChange);
 
+    let lastTime = performance.now();
+
     const render = (now: number) => {
       if (isHidden) {
-        lastTime = now;
         animationFrameId = requestAnimationFrame(render);
         return;
       }
 
-      if (lastTime === 0) lastTime = now;
-      const rawDt = now - lastTime;
-      lastTime = now;
-      // Clamped delta-time prevents frame drops from causing large jumps
-      const dt = Math.max(8, Math.min(32, rawDt));
-      const timeFactor = dt / 16.67; // Normalized 60fps unit
-
       ctx.clearRect(0, 0, width, height);
+
+      // Smooth mouse interpolation
+      mouseX += (targetMouseX - mouseX) * 0.1;
+      mouseY += (targetMouseY - mouseY) * 0.1;
 
       const cx = width / 2;
       const cy = height * 0.38;
 
-      // Mouse smooth interpolation
-      mouseX += (targetMouseX - mouseX) * 0.1 * timeFactor;
-      mouseY += (targetMouseY - mouseY) * 0.1 * timeFactor;
-
-      if (isIntroActive) {
-        introProgress += 0.016 * timeFactor; // ~1.0s to complete
-        if (introProgress >= 1) {
-          isIntroActive = false;
-          // Smoothly hand off to standard gentle floating drift velocities
-          for (let j = 0; j < particles.length; j++) {
-            particles[j].vx = (Math.random() - 0.5) * 0.35;
-            particles[j].vy = -0.15 - Math.random() * 0.35;
-          }
-        }
-      }
-
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
-        if (isIntroActive) {
-          // Continuous physics integration: blast velocity + friction + spring attraction
-          p.x += p.vx * timeFactor;
-          p.y += p.vy * timeFactor;
+        // 1. Organic Sinusoidal Motion + Vertical Drift
+        p.phase += p.floatSpeed * 15;
+        p.x += p.vx + Math.sin(p.phase) * 0.35;
+        p.y += p.vy + Math.cos(p.phase * 0.8) * 0.2;
 
-          const friction = Math.pow(0.88, timeFactor);
-          p.vx *= friction;
-          p.vy *= friction;
-
-          // Spring towards target
-          const dx = p.targetX - p.x;
-          const dy = p.targetY - p.y;
-          const spring = 1 - Math.pow(1 - 0.09, timeFactor);
-          p.x += dx * spring;
-          p.y += dy * spring;
-        } else {
-          // 1. Organic Sinusoidal Motion + Vertical Drift (Standard loop)
-          p.phase += p.floatSpeed * 15 * timeFactor;
-          p.x += (p.vx + Math.sin(p.phase) * 0.35) * timeFactor;
-          p.y += (p.vy + Math.cos(p.phase * 0.8) * 0.2) * timeFactor;
-
-          // Wrap around viewport edges seamlessly
-          if (p.y < -20) {
-            p.y = height + 20;
-            p.x = Math.random() * width;
-          }
-          if (p.x < -20) p.x = width + 20;
-          if (p.x > width + 20) p.x = -20;
+        // Wrap around viewport edges seamlessly
+        if (p.y < -20) {
+          p.y = height + 20;
+          p.x = Math.random() * width;
         }
+        if (p.x < -20) p.x = width + 20;
+        if (p.x > width + 20) p.x = -20;
 
         // 2. Interactive mouse repulsion & lighting
         let mouseBoost = 0;
@@ -326,8 +268,7 @@ export function CubeVoxelField() {
         // 4. Subtle living shimmer/pulse
         const shimmer = 0.85 + 0.25 * Math.sin(now * 0.0018 + p.phase);
         const effectiveAlpha = Math.min(1, (p.baseAlpha * shimmer + mouseBoost) * centerMask);
-        const explosionLight = isIntroActive ? (1 - introProgress) * 0.8 : 0;
-        const lightMod = 1.0 + mouseBoost * 0.6 + explosionLight;
+        const lightMod = 1.0 + mouseBoost * 0.6;
 
         drawIsometricCube(
           p.x + repelX,
