@@ -246,15 +246,16 @@ export function CubeVoxelField() {
           const mdx = p.x - mouseX;
           const mdy = p.y - mouseY;
           const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
-          const maxDist = 160;
+          const maxDist = 240; // Bán kính hút mở rộng (240px)
 
           if (mDist < maxDist) {
             const factor = 1 - mDist / maxDist;
-            mouseBoost = factor * 0.45;
+            mouseBoost = factor * 0.65;
             const angle = Math.atan2(mdy, mdx);
-            // Lực hút chụm lại về phía chuột (Vector Attraction)
-            repelX = -Math.cos(angle) * factor * 18;
-            repelY = -Math.sin(angle) * factor * 18;
+            // Lực hút mạnh hơn, gom chụm rõ rệt về phía con trỏ chuột
+            const pullForce = Math.pow(factor, 0.75) * 55;
+            repelX = -Math.cos(angle) * pullForce;
+            repelY = -Math.sin(angle) * pullForce;
           }
         }
 
