@@ -151,7 +151,7 @@ export function ScrollShowcase() {
       },
       {
         root: null,
-        threshold: 0.25,
+        threshold: 0.5,
       }
     );
 
@@ -168,7 +168,7 @@ export function ScrollShowcase() {
     if (targetEl) {
       targetEl.scrollIntoView({
         behavior: "smooth",
-        block: index === FEATURES.length - 1 ? "start" : "center",
+        block: "center",
       });
     }
   };
@@ -191,66 +191,52 @@ export function ScrollShowcase() {
       {/* Two-Column Scroll-Synced Layout */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative">
-          {/* Left Column: Stacked feature sections */}
-          <div className="lg:col-span-5 space-y-12 lg:space-y-0">
-            {FEATURES.map((feature, idx) => {
-              const isLast = idx === FEATURES.length - 1;
-              return (
-                <div
-                  key={feature.id}
-                  ref={(el) => {
-                    sectionRefs.current[idx] = el;
-                  }}
-                  data-index={idx}
-                  className={cn(
-                    "transition-opacity duration-300 scroll-mt-28",
-                    isLast
-                      ? "min-h-[70vh] lg:min-h-[120vh] flex flex-col justify-start pt-12 lg:pt-24 pb-16 lg:pb-[60vh]"
-                      : "min-h-[50vh] lg:min-h-[75vh] flex flex-col justify-center py-12",
-                    activeIndex === idx ? "opacity-100" : "opacity-35 hover:opacity-60"
-                  )}
-                >
-                  <div className="space-y-4">
-                    <div className="text-xs font-mono text-white/70 tracking-wider">
-                      {feature.badge}
-                    </div>
-                    <h3 className="text-2xl sm:text-3xl font-medium text-white tracking-tight leading-snug">
-                      {feature.title}
-                    </h3>
-                    <div className="text-sm font-mono text-[#A1A1AA]">
-                      {feature.tagline}
-                    </div>
-                    <p className="text-sm sm:text-base text-[#A1A1AA] leading-relaxed">
-                      {feature.description}
-                    </p>
+          {/* Left Column: Stacked feature sections (min-h-[75vh] each) */}
+          <div className="lg:col-span-5 space-y-12 lg:space-y-0 pb-20 lg:pb-44">
+            {FEATURES.map((feature, idx) => (
+              <div
+                key={feature.id}
+                ref={(el) => {
+                  sectionRefs.current[idx] = el;
+                }}
+                data-index={idx}
+                className={cn(
+                  "min-h-[50vh] lg:min-h-[75vh] flex flex-col justify-center py-12 transition-opacity duration-300",
+                  activeIndex === idx ? "opacity-100" : "opacity-35 hover:opacity-60"
+                )}
+              >
+                <div className="space-y-4">
+                  <div className="text-xs font-mono text-white/70 tracking-wider">
+                    {feature.badge}
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-medium text-white tracking-tight leading-snug">
+                    {feature.title}
+                  </h3>
+                  <div className="text-sm font-mono text-[#A1A1AA]">
+                    {feature.tagline}
+                  </div>
+                  <p className="text-sm sm:text-base text-[#A1A1AA] leading-relaxed">
+                    {feature.description}
+                  </p>
 
-                    {/* Bullet points */}
-                    <ul className="space-y-2 pt-2">
-                      {feature.bullets.map((b, bIdx) => (
-                        <li key={bIdx} className="text-xs font-mono text-white/90 flex items-start gap-2">
-                          <span className="text-white select-none">›</span>
-                          <span>{b}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  {/* Bullet points */}
+                  <ul className="space-y-2 pt-2">
+                    {feature.bullets.map((b, bIdx) => (
+                      <li key={bIdx} className="text-xs font-mono text-white/90 flex items-start gap-2">
+                        <span className="text-white select-none">›</span>
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
 
-                    <div className="pt-2 flex items-center gap-2 text-xs font-mono text-[#A1A1AA]/60">
-                      <span>Facet {idx + 1} of 6</span>
-                      <span className="text-[#27272A]">•</span>
-                      <span>Cube Face: {feature.faceName}</span>
-                    </div>
-
-                    {isLast && (
-                      <div className="pt-4 border-t border-[#27272A]/50 flex items-center gap-2 text-xs font-mono text-[#A1A1AA]/50">
-                        <span>All 6 facets unlocked</span>
-                        <span className="text-[#27272A]">•</span>
-                        <span>Scroll down for Core Architecture ↓</span>
-                      </div>
-                    )}
+                  <div className="pt-2 flex items-center gap-2 text-xs font-mono text-[#A1A1AA]/60">
+                    <span>Facet {idx + 1} of 6</span>
+                    <span className="text-[#27272A]">•</span>
+                    <span>Cube Face: {feature.faceName}</span>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
 
           {/* Right Column: Sticky 3D Cube Navigator + macOS Terminal Panel */}
