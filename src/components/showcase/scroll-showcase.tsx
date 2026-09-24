@@ -205,7 +205,7 @@ export function ScrollShowcase() {
                   className={cn(
                     "transition-opacity duration-300 scroll-mt-28",
                     isLast
-                      ? "min-h-[70vh] lg:min-h-[140vh] flex flex-col justify-start pt-12 lg:pt-24 pb-16 lg:pb-[70vh]"
+                      ? "min-h-[70vh] lg:min-h-[120vh] flex flex-col justify-start pt-12 lg:pt-24 pb-16 lg:pb-[60vh]"
                       : "min-h-[50vh] lg:min-h-[75vh] flex flex-col justify-center py-12",
                     activeIndex === idx ? "opacity-100" : "opacity-35 hover:opacity-60"
                   )}
