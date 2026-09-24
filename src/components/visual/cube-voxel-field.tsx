@@ -7,6 +7,7 @@ interface CubeParticle {
   y: number;
   originX: number;
   originY: number;
+  distFactor: number;
   size: number;
   baseAlpha: number;
   alpha: number;
@@ -108,6 +109,7 @@ export function CubeVoxelField() {
 
       const cx = width / 2;
       const cy = height * 0.38;
+      const maxDist = Math.hypot(width * 0.5, height * 0.5) || 1;
 
       let attempts = 0;
       while (particles.length < targetCount && attempts < targetCount * 5) {
@@ -130,11 +132,15 @@ export function CubeVoxelField() {
           const shade = 0.45 + Math.random() * 0.55; // [0.45, 1.0]
           const baseAlpha = 0.18 + Math.random() * 0.65;
 
+          const dist = Math.hypot(x - cx, y - cy);
+          const distFactor = Math.min(1, dist / maxDist);
+
           particles.push({
             x,
             y,
             originX: x,
             originY: y,
+            distFactor,
             size,
             shade,
             baseAlpha,
@@ -204,30 +210,61 @@ export function CubeVoxelField() {
     };
     document.addEventListener("visibilitychange", onVisibilityChange);
 
-    let lastTime = performance.now();
+    let isIntroActive = true;
+    let introProgress = 0;
+    let animReady = false;
+    let lastTime = 0;
+
+    // Stagger start by 2 rAF frames so Next.js hydration completes first
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        animReady = true;
+      });
+    });
 
     const render = (now: number) => {
       if (isHidden) {
+        lastTime = now;
         animationFrameId = requestAnimationFrame(render);
         return;
       }
 
-      ctx.clearRect(0, 0, width, height);
+      if (lastTime === 0) lastTime = now;
+      const rawDt = now - lastTime;
+      lastTime = now;
+      const dt = Math.max(8, Math.min(32, rawDt));
+      const timeFactor = dt / 16.67;
 
-      // Smooth mouse interpolation
-      mouseX += (targetMouseX - mouseX) * 0.1;
-      mouseY += (targetMouseY - mouseY) * 0.1;
+      ctx.clearRect(0, 0, width, height);
 
       const cx = width / 2;
       const cy = height * 0.38;
+
+      // Smooth mouse interpolation
+      mouseX += (targetMouseX - mouseX) * 0.1 * timeFactor;
+      mouseY += (targetMouseY - mouseY) * 0.1 * timeFactor;
+
+      let ease = 1;
+      if (isIntroActive) {
+        if (animReady) {
+          introProgress += 0.009 * timeFactor; // ~1.8s smooth duration
+          if (introProgress >= 1) {
+            introProgress = 1;
+            isIntroActive = false;
+          }
+        }
+        // Smooth quartic deceleration curve computed ONCE outside particle loop
+        const inv = 1 - introProgress;
+        ease = 1 - inv * inv * inv * inv;
+      }
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
         // 1. Organic Sinusoidal Motion + Vertical Drift
-        p.phase += p.floatSpeed * 15;
-        p.x += p.vx + Math.sin(p.phase) * 0.35;
-        p.y += p.vy + Math.cos(p.phase * 0.8) * 0.2;
+        p.phase += p.floatSpeed * 15 * timeFactor;
+        p.x += (p.vx + Math.sin(p.phase) * 0.35) * timeFactor;
+        p.y += (p.vy + Math.cos(p.phase * 0.8) * 0.2) * timeFactor;
 
         // Wrap around viewport edges seamlessly
         if (p.y < -20) {
@@ -237,14 +274,34 @@ export function CubeVoxelField() {
         if (p.x < -20) p.x = width + 20;
         if (p.x > width + 20) p.x = -20;
 
+        let renderX = p.x;
+        let renderY = p.y;
+        let renderSize = p.size;
+        let explosionLight = 0;
+
+        if (isIntroActive) {
+          // Radial wave: center moves first, shockwave expands outward
+          const pProgress = Math.max(0, Math.min(1, (ease - p.distFactor * 0.28) / 0.72));
+
+          // Critical performance optimization: skip particles that haven't launched yet
+          // (prevents 3000 cubes stacking inside center causing overdraw thrash)
+          if (pProgress < 0.015) continue;
+
+          // Pure linear interpolation from center (cx, cy) to floating target
+          renderX = cx + (p.x - cx) * pProgress;
+          renderY = cy + (p.y - cy) * pProgress;
+          renderSize = p.size * (0.5 + 0.5 * pProgress);
+          explosionLight = (1 - pProgress) * 0.75;
+        }
+
         // 2. Interactive mouse repulsion & lighting
         let mouseBoost = 0;
         let repelX = 0;
         let repelY = 0;
 
         if (mouseX > 0 && mouseY > 0) {
-          const mdx = p.x - mouseX;
-          const mdy = p.y - mouseY;
+          const mdx = renderX - mouseX;
+          const mdy = renderY - mouseY;
           const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
           const maxDist = 240; // Bán kính hút mở rộng (240px)
 
@@ -260,20 +317,20 @@ export function CubeVoxelField() {
         }
 
         // 3. Fading around hero headline text
-        const dx = (p.x - cx) / (width * 0.45);
-        const dy = (p.y - cy) / (height * 0.4);
+        const dx = (renderX - cx) / (width * 0.45);
+        const dy = (renderY - cy) / (height * 0.4);
         const centerDist = Math.sqrt(dx * dx + dy * dy);
         const centerMask = Math.min(1, Math.max(0.06, centerDist - 0.22));
 
         // 4. Subtle living shimmer/pulse
         const shimmer = 0.85 + 0.25 * Math.sin(now * 0.0018 + p.phase);
         const effectiveAlpha = Math.min(1, (p.baseAlpha * shimmer + mouseBoost) * centerMask);
-        const lightMod = 1.0 + mouseBoost * 0.6;
+        const lightMod = 1.0 + mouseBoost * 0.6 + explosionLight;
 
         drawIsometricCube(
-          p.x + repelX,
-          p.y + repelY,
-          p.size,
+          renderX + repelX,
+          renderY + repelY,
+          renderSize,
           effectiveAlpha,
           p.shade,
           lightMod
