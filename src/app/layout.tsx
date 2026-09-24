@@ -55,7 +55,7 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased dark scroll-smooth`}
     >
-      <body className="min-h-full flex flex-col bg-[#050505] text-[#FFFFFF] font-sans selection:bg-[#5EEAD4]/20 selection:text-[#5EEAD4]">
+      <body className="min-h-full flex flex-col bg-[#050505] text-[#FFFFFF] font-sans selection:bg-white/20 selection:text-white">
         {children}
       </body>
     </html>

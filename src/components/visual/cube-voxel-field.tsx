@@ -5,18 +5,15 @@ import { useEffect, useRef } from "react";
 interface CubeParticle {
   x: number;
   y: number;
-  baseX: number;
-  baseY: number;
   size: number;
-  baseAlpha: number;
   alpha: number;
+  baseAlpha: number;
   vx: number;
   vy: number;
-  phase: number;
-  rotSpeed: number;
+  shade: number; // Grayscale lightness multiplier [0.4 .. 1.0]
 }
 
-// Lightweight 2D Perlin-like noise implementation for organic clustering
+// Lightweight 2D Perlin-like noise generator
 function createNoise2D() {
   const perm = new Uint8Array(512);
   for (let i = 0; i < 256; i++) perm[i] = i;
@@ -82,70 +79,67 @@ export function CubeVoxelField() {
 
     const initParticles = () => {
       particles = [];
-      // Target: 1200 - 1800 cubes for high performance
-      const particleCount = Math.floor(Math.min(1600, (width * height) / 800));
+      // High density: packed tight enough that clusters read as solid textured mass
+      // Target: 2400 - 3600 tiny cubes across viewport
+      const targetCount = Math.floor(Math.min(3200, (width * height) / 380));
 
       const cx = width / 2;
-      const cy = height * 0.38; // Center of hero text
+      const cy = height * 0.38; // Center of hero headline
 
       let attempts = 0;
-      while (particles.length < particleCount && attempts < particleCount * 4) {
+      while (particles.length < targetCount && attempts < targetCount * 5) {
         attempts++;
         const x = Math.random() * width;
         const y = Math.random() * height;
 
-        // Density field: denser at corners & edges, fading toward hero center
-        const dx = (x - cx) / (width * 0.5);
-        const dy = (y - cy) / (height * 0.5);
+        // Radial distance from hero headline center
+        const dx = (x - cx) / (width * 0.48);
+        const dy = (y - cy) / (height * 0.42);
         const distFromCenter = Math.sqrt(dx * dx + dy * dy);
 
-        // Noise value for organic cloud silhouettes
-        const n = noise2D(x * 0.0018, y * 0.0018);
+        // Noise field for organic cloud clusters with jagged edges
+        const n = noise2D(x * 0.0022, y * 0.0022);
 
-        // Combined probability: suppressed at center (< 0.4), boosted at edges & high noise
-        const centerSuppression = Math.min(1, Math.max(0, (distFromCenter - 0.25) * 1.6));
-        const spawnProb = centerSuppression * (0.3 + 0.7 * n);
+        // Clear a soft mask/fade zone behind headline & hero content
+        const centerSuppression = Math.min(1, Math.max(0, (distFromCenter - 0.28) * 1.8));
+
+        // Thresholding for tight, dense clusters
+        const spawnProb = centerSuppression * (n > 0.42 ? 0.85 : 0.08);
 
         if (Math.random() < spawnProb) {
-          const size = 3 + Math.random() * 4.5; // 3px - 7.5px isometric cube
-          const baseAlpha = 0.06 + Math.random() * 0.12; // 6% - 18% opacity
+          // Tiny isometric cubes (2.5px - 5.5px)
+          const size = 2.5 + Math.random() * 3.0;
+
+          // Strictly grayscale brightness: mix bright near-white with mid-tone grays
+          const shade = 0.5 + Math.random() * 0.5; // [0.5, 1.0]
+
+          // High contrast: opacity ranges up to 0.75 for crisp black-and-white static noise
+          const baseAlpha = 0.15 + Math.random() * 0.65;
 
           particles.push({
             x,
             y,
-            baseX: x,
-            baseY: y,
             size,
+            shade,
             baseAlpha,
             alpha: baseAlpha,
-            vx: (Math.random() - 0.5) * 0.15,
-            vy: (Math.random() - 0.5) * 0.12,
-            phase: Math.random() * Math.PI * 2,
-            rotSpeed: 0.0008 + Math.random() * 0.0015,
+            vx: (Math.random() - 0.5) * 0.08,
+            vy: (Math.random() - 0.5) * 0.06,
           });
         }
       }
     };
 
-    // Draw an isometric cube at (x, y) with size s and given opacity
-    const drawIsometricCube = (x: number, y: number, s: number, alpha: number) => {
-      // Isometric projection angles (30 degrees)
-      const cos30 = 0.8660254; // Math.cos(Math.PI / 6)
-      const sin30 = 0.5; // Math.sin(Math.PI / 6)
-
+    // Draw an isometric cube at (x, y) with strictly grayscale shading
+    const drawIsometricCube = (x: number, y: number, s: number, alpha: number, shade: number) => {
+      const cos30 = 0.8660254;
+      const sin30 = 0.5;
       const dx = s * cos30;
       const dy = s * sin30;
 
-      // Center point: (x, y)
-      // Top vertex: (x, y - s)
-      // Top-right: (x + dx, y - s + dy)
-      // Top-left: (x - dx, y - s + dy)
-      // Bottom: (x, y + s)
-      // Bottom-right: (x + dx, y + dy)
-      // Bottom-left: (x - dx, y + dy)
-
-      // 1. TOP FACE (Lightest face: accent #5EEAD4 with higher alpha)
-      ctx.fillStyle = `rgba(94, 234, 212, ${alpha * 1.35})`;
+      // 1. TOP FACE (Lightest: near-white / crisp grayscale)
+      const topVal = Math.min(255, Math.floor(255 * shade));
+      ctx.fillStyle = `rgba(${topVal}, ${topVal}, ${topVal}, ${alpha})`;
       ctx.beginPath();
       ctx.moveTo(x, y - s);
       ctx.lineTo(x + dx, y - s + dy);
@@ -154,8 +148,9 @@ export function CubeVoxelField() {
       ctx.closePath();
       ctx.fill();
 
-      // 2. LEFT SIDE FACE (Medium shade: accent #5EEAD4 standard alpha)
-      ctx.fillStyle = `rgba(94, 234, 212, ${alpha * 0.85})`;
+      // 2. LEFT SIDE FACE (Medium gray)
+      const leftVal = Math.floor(180 * shade);
+      ctx.fillStyle = `rgba(${leftVal}, ${leftVal}, ${leftVal}, ${alpha * 0.85})`;
       ctx.beginPath();
       ctx.moveTo(x - dx, y - s + dy);
       ctx.lineTo(x, y);
@@ -164,8 +159,9 @@ export function CubeVoxelField() {
       ctx.closePath();
       ctx.fill();
 
-      // 3. RIGHT SIDE FACE (Darker shade: accent #5EEAD4 lower alpha)
-      ctx.fillStyle = `rgba(45, 140, 126, ${alpha * 0.65})`;
+      // 3. RIGHT SIDE FACE (Darker gray)
+      const rightVal = Math.floor(110 * shade);
+      ctx.fillStyle = `rgba(${rightVal}, ${rightVal}, ${rightVal}, ${alpha * 0.65})`;
       ctx.beginPath();
       ctx.moveTo(x, y);
       ctx.lineTo(x + dx, y - s + dy);
@@ -175,18 +171,13 @@ export function CubeVoxelField() {
       ctx.fill();
     };
 
-    let lastTime = performance.now();
     let isHidden = false;
-
     const onVisibilityChange = () => {
       isHidden = document.hidden;
-      if (!isHidden) {
-        lastTime = performance.now();
-      }
     };
     document.addEventListener("visibilitychange", onVisibilityChange);
 
-    const render = (time: number) => {
+    const render = () => {
       if (isHidden) {
         animationFrameId = requestAnimationFrame(render);
         return;
@@ -200,26 +191,25 @@ export function CubeVoxelField() {
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
-        // Subtle floating drift
-        p.phase += p.rotSpeed * 12;
-        p.x += p.vx + Math.sin(p.phase) * 0.08;
-        p.y += p.vy + Math.cos(p.phase) * 0.06;
+        // Extremely slow drift
+        p.x += p.vx;
+        p.y += p.vy;
 
-        // Wrap edges smoothly
-        if (p.x < -20) p.x = width + 20;
-        if (p.x > width + 20) p.x = -20;
-        if (p.y < -20) p.y = height + 20;
-        if (p.y > height + 20) p.y = -20;
+        // Wrap around viewport edges
+        if (p.x < -10) p.x = width + 10;
+        if (p.x > width + 10) p.x = -10;
+        if (p.y < -10) p.y = height + 10;
+        if (p.y > height + 10) p.y = -10;
 
-        // Dynamic fading toward hero text
+        // Attenuate slightly if drifting into headline center
         const dx = (p.x - cx) / (width * 0.45);
-        const dy = (p.y - cy) / (height * 0.45);
+        const dy = (p.y - cy) / (height * 0.4);
         const centerDist = Math.sqrt(dx * dx + dy * dy);
-        const centerAtten = Math.min(1, Math.max(0.08, centerDist - 0.2));
+        const centerMask = Math.min(1, Math.max(0.05, centerDist - 0.22));
 
-        const currentAlpha = p.baseAlpha * centerAtten;
+        const effectiveAlpha = p.baseAlpha * centerMask;
 
-        drawIsometricCube(p.x, p.y, p.size, currentAlpha);
+        drawIsometricCube(p.x, p.y, p.size, effectiveAlpha, p.shade);
       }
 
       animationFrameId = requestAnimationFrame(render);
@@ -239,7 +229,7 @@ export function CubeVoxelField() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0 opacity-80 transition-opacity duration-1000"
+      className="fixed inset-0 pointer-events-none z-0"
       aria-hidden="true"
     />
   );
