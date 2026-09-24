@@ -250,10 +250,11 @@ export function CubeVoxelField() {
 
           if (mDist < maxDist) {
             const factor = 1 - mDist / maxDist;
-            mouseBoost = factor * 0.4;
+            mouseBoost = factor * 0.45;
             const angle = Math.atan2(mdy, mdx);
-            repelX = Math.cos(angle) * factor * 12;
-            repelY = Math.sin(angle) * factor * 12;
+            // Lực hút chụm lại về phía chuột (Vector Attraction)
+            repelX = -Math.cos(angle) * factor * 18;
+            repelY = -Math.sin(angle) * factor * 18;
           }
         }
 
