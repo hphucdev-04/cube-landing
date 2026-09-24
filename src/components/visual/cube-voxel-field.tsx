@@ -16,6 +16,11 @@ interface CubeParticle {
   phase: number;
   floatSpeed: number;
   rotSpeed: number;
+  // Big Bang intro explosion parameters
+  startX: number;
+  startY: number;
+  burstDelay: number;
+  burstDuration: number;
 }
 
 // Lightweight 2D Perlin-like noise generator
@@ -89,6 +94,9 @@ export function CubeVoxelField() {
     window.addEventListener("mousemove", onMouseMove, { passive: true });
     document.addEventListener("mouseleave", onMouseLeave, { passive: true });
 
+    let isInitialized = false;
+    let startTime = 0;
+
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = window.innerWidth;
@@ -98,10 +106,11 @@ export function CubeVoxelField() {
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
       ctx.scale(dpr, dpr);
-      initParticles();
+      initParticles(!isInitialized);
+      isInitialized = true;
     };
 
-    const initParticles = () => {
+    const initParticles = (isIntro: boolean = true) => {
       particles = [];
       // High density: 2200 - 3200 tiny cubes across viewport
       const targetCount = Math.floor(Math.min(3000, (width * height) / 420));
@@ -130,6 +139,19 @@ export function CubeVoxelField() {
           const shade = 0.45 + Math.random() * 0.55; // [0.45, 1.0]
           const baseAlpha = 0.18 + Math.random() * 0.65;
 
+          // Big Bang initial singularity: all particles originate from tight center core
+          const burstAngle = Math.random() * Math.PI * 2;
+          const burstRadius = Math.random() * 12; // tightly concentrated in 12px core
+          const startX = isIntro ? cx + Math.cos(burstAngle) * burstRadius : x;
+          const startY = isIntro ? cy + Math.sin(burstAngle) * burstRadius : y;
+
+          // Radial distance ratio for explosion wave stagger
+          const pDist = Math.hypot(x - cx, y - cy);
+          const maxD = Math.hypot(width * 0.5, height * 0.5);
+          const distRatio = Math.min(1, pDist / maxD);
+          const burstDelay = distRatio * 120 + Math.random() * 50; // 0..170ms wave
+          const burstDuration = 1100 + Math.random() * 300; // 1.1s - 1.4s
+
           particles.push({
             x,
             y,
@@ -145,6 +167,10 @@ export function CubeVoxelField() {
             phase: Math.random() * Math.PI * 2,
             floatSpeed: 0.001 + Math.random() * 0.002,
             rotSpeed: 0.0015 + Math.random() * 0.003,
+            startX,
+            startY,
+            burstDelay,
+            burstDuration,
           });
         }
       }
@@ -204,22 +230,37 @@ export function CubeVoxelField() {
     };
     document.addEventListener("visibilitychange", onVisibilityChange);
 
-    let lastTime = performance.now();
-
     const render = (now: number) => {
       if (isHidden) {
         animationFrameId = requestAnimationFrame(render);
         return;
       }
 
+      if (startTime === 0) startTime = now;
+      const elapsed = now - startTime;
+      const isIntroComplete = elapsed > 1650;
+
       ctx.clearRect(0, 0, width, height);
+
+      const cx = width / 2;
+      const cy = height * 0.38;
+
+      // Soft monochromatic Big Bang flash at center core in the first 500ms
+      if (elapsed < 500) {
+        const flashT = elapsed / 500;
+        const flashAlpha = (1 - flashT) * (1 - flashT) * 0.45;
+        const flashRadius = 30 + flashT * Math.min(width, height) * 0.4;
+        const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, flashRadius);
+        gradient.addColorStop(0, `rgba(255, 255, 255, ${flashAlpha * 0.7})`);
+        gradient.addColorStop(0.3, `rgba(255, 255, 255, ${flashAlpha * 0.25})`);
+        gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+      }
 
       // Smooth mouse interpolation
       mouseX += (targetMouseX - mouseX) * 0.1;
       mouseY += (targetMouseY - mouseY) * 0.1;
-
-      const cx = width / 2;
-      const cy = height * 0.38;
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
@@ -237,14 +278,39 @@ export function CubeVoxelField() {
         if (p.x < -20) p.x = width + 20;
         if (p.x > width + 20) p.x = -20;
 
+        // Big Bang intro explosion interpolation
+        let renderX = p.x;
+        let renderY = p.y;
+        let explosionLight = 0;
+        let explosionScale = 1;
+
+        if (!isIntroComplete) {
+          if (elapsed < p.burstDelay) {
+            renderX = p.startX;
+            renderY = p.startY;
+            explosionLight = 1.0;
+            explosionScale = 0.4;
+          } else {
+            const t = Math.min(1, (elapsed - p.burstDelay) / p.burstDuration);
+            // High-velocity deceleration (Quartic ease-out)
+            const inv = 1 - t;
+            const ease = 1 - inv * inv * inv * inv;
+
+            renderX = p.startX + (p.x - p.startX) * ease;
+            renderY = p.startY + (p.y - p.startY) * ease;
+            explosionLight = (1 - ease) * 1.0;
+            explosionScale = 0.4 + 0.6 * ease;
+          }
+        }
+
         // 2. Interactive mouse repulsion & lighting
         let mouseBoost = 0;
         let repelX = 0;
         let repelY = 0;
 
         if (mouseX > 0 && mouseY > 0) {
-          const mdx = p.x - mouseX;
-          const mdy = p.y - mouseY;
+          const mdx = renderX - mouseX;
+          const mdy = renderY - mouseY;
           const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
           const maxDist = 240; // Bán kính hút mở rộng (240px)
 
@@ -260,20 +326,20 @@ export function CubeVoxelField() {
         }
 
         // 3. Fading around hero headline text
-        const dx = (p.x - cx) / (width * 0.45);
-        const dy = (p.y - cy) / (height * 0.4);
+        const dx = (renderX - cx) / (width * 0.45);
+        const dy = (renderY - cy) / (height * 0.4);
         const centerDist = Math.sqrt(dx * dx + dy * dy);
         const centerMask = Math.min(1, Math.max(0.06, centerDist - 0.22));
 
         // 4. Subtle living shimmer/pulse
         const shimmer = 0.85 + 0.25 * Math.sin(now * 0.0018 + p.phase);
         const effectiveAlpha = Math.min(1, (p.baseAlpha * shimmer + mouseBoost) * centerMask);
-        const lightMod = 1.0 + mouseBoost * 0.6;
+        const lightMod = 1.0 + mouseBoost * 0.6 + explosionLight;
 
         drawIsometricCube(
-          p.x + repelX,
-          p.y + repelY,
-          p.size,
+          renderX + repelX,
+          renderY + repelY,
+          p.size * explosionScale,
           effectiveAlpha,
           p.shade,
           lightMod
