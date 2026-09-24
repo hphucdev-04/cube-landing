@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, Terminal, ShieldCheck } from "lucide-react";
+import { Check, Copy, ShieldCheck } from "lucide-react";
 
 export function InstallBox() {
   const [copied, setCopied] = useState(false);
@@ -19,38 +19,38 @@ export function InstallBox() {
   };
 
   return (
-    <div id="install" className="w-full max-w-2xl mx-auto">
+    <div id="install" className="w-full max-w-xl mx-auto">
       <div className="relative group">
-        {/* Glow effect */}
-        <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#00F0FF]/30 via-[#10B981]/20 to-[#A855F7]/30 blur-xl opacity-60 group-hover:opacity-100 transition-all duration-700" />
+        {/* Subtle accent glow */}
+        <div className="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-[#5EEAD4]/20 via-white/5 to-[#5EEAD4]/20 blur-sm opacity-40 group-hover:opacity-80 transition-opacity duration-500" />
 
         {/* Outer terminal box */}
-        <div className="relative rounded-xl bg-[#0F1117]/95 border border-white/[0.12] group-hover:border-[#00F0FF]/50 p-3 sm:p-4 backdrop-blur-2xl shadow-2xl transition-all">
+        <div className="relative rounded-lg bg-[#18181B] border border-[#27272A] group-hover:border-[#5EEAD4]/40 p-2.5 sm:p-3 shadow-xl transition-colors">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             {/* Terminal prompt and command text */}
-            <div className="flex items-center gap-2.5 overflow-x-auto py-1 scrollbar-none">
-              <span className="text-[#00F0FF] font-mono text-xs font-semibold select-none">
+            <div className="flex items-center gap-2.5 overflow-x-auto px-2 py-1 scrollbar-none font-mono text-xs sm:text-[13px]">
+              <span className="text-[#5EEAD4] font-semibold select-none">
                 PS&gt;
               </span>
-              <code className="font-mono text-xs sm:text-sm text-gray-200 select-all whitespace-nowrap">
+              <code className="text-[#FFFFFF] select-all whitespace-nowrap">
                 {command}
               </code>
             </div>
 
-            {/* Copy button */}
+            {/* Copy button (radius 8px / control token) */}
             <button
               onClick={handleCopy}
-              className={`shrink-0 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-mono font-medium transition-all ${
+              className={`shrink-0 flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer ${
                 copied
-                  ? "bg-[#10B981] text-black shadow-[0_0_20px_rgba(16,185,129,0.5)]"
-                  : "bg-white/[0.08] hover:bg-[#00F0FF] text-white hover:text-black border border-white/10 hover:border-transparent hover:shadow-[0_0_20px_rgba(0,240,255,0.4)]"
+                  ? "bg-[#5EEAD4] text-black"
+                  : "bg-white/10 hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent"
               }`}
               title="Copy to clipboard"
             >
               {copied ? (
                 <>
-                  <Check className="w-3.5 h-3.5 stroke-[3]" />
-                  <span>Copied!</span>
+                  <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                  <span>Copied</span>
                 </>
               ) : (
                 <>
@@ -63,16 +63,16 @@ export function InstallBox() {
         </div>
       </div>
 
-      {/* Verification & platform notes */}
-      <div className="mt-3.5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-gray-400 font-mono">
-        <span className="flex items-center gap-1.5 text-gray-300">
-          <ShieldCheck className="w-4 h-4 text-[#10B981]" />
+      {/* Verification notes */}
+      <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-[#A1A1AA] font-mono">
+        <span className="flex items-center gap-1.5 text-white/80">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#5EEAD4]" />
           <span>SHA-256 Verified Release</span>
         </span>
-        <span className="text-gray-600">•</span>
+        <span className="text-[#27272A]">•</span>
         <span>Windows x64 Native</span>
-        <span className="text-gray-600">•</span>
-        <span className="text-gray-400">Zero dependencies required (~2s install)</span>
+        <span className="text-[#27272A]">•</span>
+        <span>~2s Standalone Install</span>
       </div>
     </div>
   );

@@ -8,13 +8,12 @@ import {
   CheckCircle2,
   FileCode,
   FolderGit2,
-  Sparkles,
 } from "lucide-react";
 import { SCENARIOS, type Scenario } from "./scenarios";
 
 export function TerminalSimulator() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { amount: 0.3, once: false });
+  const isInView = useInView(containerRef, { amount: 0.25, once: false });
 
   const [activeScenarioIndex, setActiveScenarioIndex] = useState(0);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -60,13 +59,15 @@ export function TerminalSimulator() {
 
         if (isCancelled) break;
         setCurrentStepIndex(i + 1);
-        await new Promise((r) => {
-          timeoutId = setTimeout(r, step.delayMs);
-        });
+
+        const stepDelay = step.delayMs || 800;
+        await new Promise((r) => setTimeout(r, stepDelay));
       }
     };
 
-    runScenario();
+    timeoutId = setTimeout(() => {
+      runScenario();
+    }, 250);
 
     return () => {
       isCancelled = true;
@@ -75,17 +76,17 @@ export function TerminalSimulator() {
   }, [isInView, activeScenarioIndex, scenario]);
 
   return (
-    <section id="terminal" className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-      {/* Section Header */}
-      <div className="text-center mb-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-xs font-mono text-gray-300 mb-3">
-          <Terminal className="w-3.5 h-3.5 text-[#00F0FF]" />
+    <div id="showcase" className="w-full max-w-5xl mx-auto">
+      {/* Section Subhead */}
+      <div className="text-center mb-8">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#18181B] border border-[#27272A] text-xs font-mono text-[#A1A1AA] mb-3">
+          <Terminal className="w-3.5 h-3.5 text-[#5EEAD4]" />
           <span>Interactive Live Showcase</span>
         </div>
-        <h2 className="text-2xl sm:text-4xl font-bold text-white tracking-tight">
-          Watch Cube Operate in Real Time
+        <h2 className="text-2xl sm:text-3xl font-medium text-white tracking-tight">
+          Watch Cube operate in real time.
         </h2>
-        <p className="mt-2 text-sm sm:text-base text-gray-400 max-w-xl mx-auto">
+        <p className="mt-2 text-sm text-[#A1A1AA] max-w-xl mx-auto">
           Autonomously inspects files, reasons through diffs, and commits atomic
           code changes directly inside your terminal.
         </p>
@@ -101,10 +102,10 @@ export function TerminalSimulator() {
               setCurrentStepIndex(0);
               setDisplayedInput("");
             }}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-all flex items-center gap-2 ${
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-colors flex items-center gap-2 cursor-pointer ${
               activeScenarioIndex === index
-                ? "bg-[#00F0FF]/15 text-[#00F0FF] border border-[#00F0FF]/40 shadow-[0_0_15px_rgba(0,240,255,0.2)]"
-                : "bg-white/[0.03] text-gray-400 hover:text-gray-200 border border-white/[0.06] hover:bg-white/[0.06]"
+                ? "bg-[#18181B] text-[#5EEAD4] border border-[#5EEAD4]/40 shadow-sm"
+                : "bg-[#18181B]/60 text-[#A1A1AA] hover:text-white border border-[#27272A] hover:bg-[#18181B]"
             }`}
           >
             <span>{item.label}</span>
@@ -115,10 +116,10 @@ export function TerminalSimulator() {
       {/* macOS Terminal Window Container */}
       <div
         ref={containerRef}
-        className="relative rounded-2xl bg-[#090A0F]/95 border border-white/[0.12] shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_40px_rgba(0,240,255,0.06)] overflow-hidden backdrop-blur-2xl transition-all"
+        className="relative rounded-xl bg-[#090A0E] border border-[#27272A] shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden transition-all"
       >
         {/* macOS Title Bar */}
-        <div className="px-4 py-3 bg-[#0F1117]/90 border-b border-white/[0.08] flex items-center justify-between select-none">
+        <div className="px-4 py-3 bg-[#18181B] border-b border-[#27272A] flex items-center justify-between select-none">
           {/* macOS Traffic Light Buttons */}
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/50 shadow-sm" />
@@ -127,32 +128,32 @@ export function TerminalSimulator() {
           </div>
 
           {/* Window Title */}
-          <div className="flex items-center gap-2 text-xs font-mono text-gray-400">
-            <FolderGit2 className="w-3.5 h-3.5 text-[#00F0FF]" />
-            <span className="text-gray-300 font-medium">cube — ~/workspace</span>
+          <div className="flex items-center gap-2 text-xs font-mono text-[#A1A1AA]">
+            <FolderGit2 className="w-3.5 h-3.5 text-[#5EEAD4]" />
+            <span className="text-white/90 font-medium">cube — ~/workspace</span>
           </div>
 
           {/* Model Status Pill */}
-          <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.08] text-[11px] font-mono text-gray-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
+          <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#050505] border border-[#27272A] text-[11px] font-mono text-[#A1A1AA]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#5EEAD4] animate-pulse" />
             <span>{scenario.model}</span>
           </div>
         </div>
 
         {/* Terminal Body Content */}
-        <div className="p-4 sm:p-6 font-mono text-xs sm:text-sm min-h-[360px] sm:min-h-[420px] flex flex-col gap-4 text-gray-300 overflow-x-auto leading-relaxed">
+        <div className="p-4 sm:p-6 font-mono text-xs sm:text-[13px] min-h-[380px] sm:min-h-[440px] flex flex-col gap-4 text-neutral-300 overflow-x-auto leading-relaxed">
           {/* Welcome ASCII Mini Header */}
-          <div className="text-gray-600 text-[11px] select-none">
+          <div className="text-neutral-500 text-[11px] select-none">
             [Cube Agent v1.0.0 — Memory: LibSQL SQLite — Session: active]
           </div>
 
           {/* User Prompt Step */}
           <div className="flex items-start gap-2.5 text-white">
-            <span className="text-[#00F0FF] select-none font-bold">❯</span>
+            <span className="text-[#5EEAD4] select-none font-bold">❯</span>
             <span>
               {displayedInput}
               {isTyping && (
-                <span className="inline-block w-2 h-4 ml-1 bg-[#00F0FF] animate-pulse align-middle" />
+                <span className="inline-block w-2 h-4 ml-1 bg-[#5EEAD4] animate-pulse align-middle" />
               )}
             </span>
           </div>
@@ -165,14 +166,14 @@ export function TerminalSimulator() {
               return (
                 <div
                   key={idx}
-                  className="rounded-lg p-3 bg-[#F59E0B]/10 border border-[#F59E0B]/25 text-[#F59E0B] flex items-start gap-2.5 text-xs"
+                  className="rounded-lg p-3 bg-[#18181B]/80 border border-[#27272A] text-neutral-300 flex items-start gap-2.5 text-xs"
                 >
-                  <Cpu className="w-4 h-4 shrink-0 mt-0.5 animate-spin" />
+                  <Cpu className="w-4 h-4 text-[#5EEAD4] shrink-0 mt-0.5 animate-spin" />
                   <div className="flex flex-col gap-1">
-                    <span className="font-semibold uppercase tracking-wider text-[10px]">
+                    <span className="font-semibold uppercase tracking-wider text-[10px] text-[#5EEAD4]">
                       Reasoning Stream
                     </span>
-                    <span className="text-gray-200">{step.content}</span>
+                    <span className="text-[#A1A1AA]">{step.content}</span>
                   </div>
                 </div>
               );
@@ -182,30 +183,30 @@ export function TerminalSimulator() {
               return (
                 <div
                   key={idx}
-                  className="rounded-lg p-3 bg-white/[0.03] border border-white/[0.08] flex flex-col gap-2"
+                  className="rounded-lg p-3 bg-[#18181B]/60 border border-[#27272A] flex flex-col gap-2"
                 >
-                  <div className="flex items-center gap-2 text-[#00F0FF] text-xs">
+                  <div className="flex items-center gap-2 text-[#5EEAD4] text-xs">
                     <span className="font-bold">❖</span>
                     <span className="font-semibold">{step.toolName}</span>
-                    <span className="text-gray-400 text-[11px]">
+                    <span className="text-[#A1A1AA] text-[11px]">
                       {step.content.replace(`${step.toolName} `, "")}
                     </span>
                   </div>
 
                   {/* Diff preview if present */}
                   {step.diff && (
-                    <div className="rounded bg-black/50 p-2.5 border border-white/[0.06] text-xs font-mono space-y-1">
-                      <div className="text-gray-400 text-[11px] mb-1 flex items-center gap-1.5">
-                        <FileCode className="w-3.5 h-3.5" />
+                    <div className="rounded bg-[#050505] p-2.5 border border-[#27272A] text-xs font-mono space-y-1">
+                      <div className="text-[#A1A1AA] text-[11px] mb-1 flex items-center gap-1.5">
+                        <FileCode className="w-3.5 h-3.5 text-[#5EEAD4]" />
                         <span>{step.diff.file}</span>
                       </div>
                       {step.diff.deletions.map((del, dIdx) => (
-                        <div key={dIdx} className="text-red-400 bg-red-950/30 px-1 py-0.5 rounded">
+                        <div key={dIdx} className="text-rose-400 bg-rose-950/20 px-1 py-0.5 rounded">
                           {del}
                         </div>
                       ))}
                       {step.diff.additions.map((add, aIdx) => (
-                        <div key={aIdx} className="text-emerald-400 bg-emerald-950/30 px-1 py-0.5 rounded">
+                        <div key={aIdx} className="text-emerald-400 bg-emerald-950/20 px-1 py-0.5 rounded">
                           {add}
                         </div>
                       ))}
@@ -217,8 +218,8 @@ export function TerminalSimulator() {
 
             if (step.type === "tool-result") {
               return (
-                <div key={idx} className="text-xs text-gray-400 pl-4 border-l border-white/10 flex items-center gap-2">
-                  <span className="text-gray-500">↳</span>
+                <div key={idx} className="text-xs text-[#A1A1AA] pl-4 border-l border-[#27272A] flex items-center gap-2">
+                  <span className="text-neutral-500">↳</span>
                   <span>{step.content}</span>
                 </div>
               );
@@ -228,7 +229,7 @@ export function TerminalSimulator() {
               return (
                 <div
                   key={idx}
-                  className="p-3.5 rounded-lg bg-emerald-950/20 border border-emerald-500/25 text-emerald-300 text-xs sm:text-sm flex items-start gap-2.5 leading-relaxed whitespace-pre-line"
+                  className="p-3.5 rounded-lg bg-[#18181B] border border-emerald-500/20 text-emerald-300 text-xs sm:text-sm flex items-start gap-2.5 leading-relaxed whitespace-pre-line"
                 >
                   <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400 mt-0.5" />
                   <div>{step.content}</div>
@@ -238,7 +239,7 @@ export function TerminalSimulator() {
 
             if (step.type === "status") {
               return (
-                <div key={idx} className="text-xs text-gray-400 italic bg-white/[0.02] p-2 rounded border border-white/5">
+                <div key={idx} className="text-xs text-[#A1A1AA] italic bg-[#18181B]/40 p-2 rounded border border-[#27272A]">
                   {step.content}
                 </div>
               );
@@ -249,13 +250,13 @@ export function TerminalSimulator() {
 
           {/* Idle prompt indicator at end */}
           {currentStepIndex >= scenario.steps.length && (
-            <div className="flex items-center gap-2 text-gray-500 pt-2 border-t border-white/[0.06]">
-              <span className="text-gray-600 font-bold">❯</span>
-              <span className="text-xs text-gray-500">Awaiting next instruction...</span>
+            <div className="flex items-center gap-2 text-neutral-500 pt-2 border-t border-[#27272A]">
+              <span className="text-[#5EEAD4] font-bold">❯</span>
+              <span className="text-xs text-[#A1A1AA]">Awaiting next instruction...</span>
             </div>
           )}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

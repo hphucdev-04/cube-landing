@@ -1,54 +1,37 @@
 @import "tailwindcss";
 
 :root {
-  --background: #08090c;
-  --foreground: #f3f4f6;
-  --card: #0f1117;
-  --card-border: rgba(255, 255, 255, 0.08);
-  --cyan-accent: #00f0ff;
-  --emerald-accent: #10b981;
-  --amber-accent: #f59e0b;
-  --purple-accent: #a855f7;
+  --background: #050505;
+  --surface: #18181B;
+  --accent: #5EEAD4;
+  --border: #27272A;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A1A1AA;
 }
 
 body {
-  background-color: #08090c;
-  color: #f3f4f6;
+  background-color: #050505;
+  color: #FFFFFF;
   overflow-x: hidden;
 }
 
 ::selection {
-  background: rgba(0, 240, 255, 0.25);
-  color: #ffffff;
+  background: rgba(94, 234, 212, 0.25);
+  color: #5EEAD4;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #08090c;
+  background: #050505;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e2433;
+  background: #27272A;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00f0ff;
-}
-
-@keyframes pulseGlow {
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-}
-
-.animate-pulse-glow {
-  animation: pulseGlow 6s ease-in-out infinite;
+  background: #5EEAD4;
 }

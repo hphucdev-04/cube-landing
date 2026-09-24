@@ -1,29 +1,22 @@
 "use client";
 
 import { InstallBox } from "@/components/hero/install-box";
-import { Terminal, Heart, Sparkles } from "lucide-react";
+import { Terminal } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-[#1F2430] bg-[#050608] overflow-hidden">
-      {/* Background glow for CTA */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-gradient-to-b from-[#00F0FF]/10 to-transparent blur-[120px] pointer-events-none" />
-
+    <footer className="relative border-t border-[#27272A] bg-[#050505] overflow-hidden">
       {/* Final Pre-Footer Call to Action */}
-      <div className="relative max-w-5xl mx-auto pt-24 pb-20 px-4 sm:px-6 lg:px-8 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#00F0FF]/30 bg-[#00F0FF]/10 text-[#00F0FF] mb-6">
-          <Sparkles className="w-3.5 h-3.5" />
+      <div className="relative max-w-4xl mx-auto pt-20 pb-16 px-4 sm:px-6 lg:px-8 text-center">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#5EEAD4] mb-5">
           <span>ZERO PREREQUISITES REQUIRED</span>
         </div>
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-6">
-          Elevate Your Terminal Workflow in{" "}
-          <span className="bg-gradient-to-r from-[#00F0FF] via-[#A855F7] to-[#10B981] bg-clip-text text-transparent">
-            Under 30 Seconds
-          </span>
+        <h2 className="text-3xl sm:text-4xl font-medium text-white tracking-tight mb-4">
+          Elevate your terminal workflow in under 30 seconds.
         </h2>
-        <p className="max-w-2xl mx-auto text-base sm:text-lg text-neutral-400 mb-10">
-          Install the standalone binary with a single command. Connect your existing subscriptions or
+        <p className="max-w-xl mx-auto text-sm sm:text-base text-[#A1A1AA] mb-8">
+          Install the standalone binary with a single PowerShell command. Connect your existing subscriptions or
           run offline with local models immediately.
         </p>
 
@@ -34,66 +27,55 @@ export function Footer() {
       </div>
 
       {/* Main Footer Links & Copyright */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 border-t border-[#1F2430]/80">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 border-t border-[#27272A]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           {/* Brand */}
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00F0FF] via-[#A855F7] to-[#10B981] p-[1px]">
-              <div className="w-full h-full bg-[#08090C] rounded-lg flex items-center justify-center">
-                <Terminal className="w-4 h-4 text-[#00F0FF]" />
-              </div>
+          <div className="flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-md bg-[#18181B] border border-[#27272A] flex items-center justify-center text-[#5EEAD4]">
+              <Terminal className="w-3.5 h-3.5" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-white text-base tracking-tight font-mono">CUBE</span>
-                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/20">
-                  v0.1.0
-                </span>
-              </div>
-              <p className="text-xs text-neutral-500">Autonomous AI Pair Programmer CLI</p>
-            </div>
+            <span className="font-semibold text-sm text-white font-sans">
+              Cube
+            </span>
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#18181B] text-[#A1A1AA] border border-[#27272A]">
+              v1.0.0
+            </span>
           </div>
 
           {/* Links */}
-          <div className="flex flex-wrap items-center gap-6 text-sm text-neutral-400">
-            <a
-              href="#features"
-              className="hover:text-white transition-colors"
-            >
-              Features
+          <div className="flex flex-wrap items-center gap-5 text-xs text-[#A1A1AA]">
+            <a href="#agent" className="hover:text-white transition-colors">
+              Agent
             </a>
-            <a
-              href="#gateways"
-              className="hover:text-white transition-colors"
-            >
+            <a href="#tui" className="hover:text-white transition-colors">
+              TUI
+            </a>
+            <a href="#themes" className="hover:text-white transition-colors">
+              Themes
+            </a>
+            <a href="#gateways" className="hover:text-white transition-colors">
               Gateways
             </a>
-            <a
-              href="#commands"
-              className="hover:text-white transition-colors"
-            >
+            <a href="#commands" className="hover:text-white transition-colors">
               Commands
             </a>
-            <a
-              href="#faq"
-              className="hover:text-white transition-colors"
-            >
+            <a href="#faq" className="hover:text-white transition-colors">
               FAQ
             </a>
             <a
-              href="https://github.com"
+              href="https://github.com/hphucdev-04/cube"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-neutral-400 hover:text-white transition-colors"
+              className="flex items-center gap-1.5 hover:text-white transition-colors"
             >
-              <GithubIcon className="w-4 h-4" />
+              <GithubIcon className="w-3.5 h-3.5" />
               <span>GitHub</span>
             </a>
           </div>
 
           {/* Copyright */}
-          <div className="text-xs text-neutral-500 flex items-center gap-1 font-mono">
-            <span>Built for developers who live in the terminal.</span>
+          <div className="text-xs text-[#A1A1AA]/60 font-mono">
+            <span>MIT Licensed</span>
           </div>
         </div>
       </div>

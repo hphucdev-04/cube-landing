@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { KeyRound, Shield, Laptop, CheckCircle, ArrowRight, Sparkles } from "lucide-react";
+import { KeyRound, Shield, Laptop, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type GatewayType = "oauth" | "api" | "local";
@@ -14,8 +14,6 @@ interface GatewayCategory {
   tagline: string;
   description: string;
   accent: string;
-  borderAccent: string;
-  bgGlow: string;
   providers: {
     name: string;
     model: string;
@@ -30,14 +28,12 @@ const GATEWAY_CATEGORIES: GatewayCategory[] = [
   {
     id: "oauth",
     title: "Subscription OAuth",
-    badge: "Most Popular",
+    badge: "Zero Token Markup",
     icon: Shield,
     tagline: "Use your existing AI subscriptions. Zero extra token costs.",
     description:
       "Authenticate directly with your personal or team account via secure browser PKCE OAuth. Consume your monthly quota directly with zero middleman markup.",
-    accent: "text-[#00F0FF]",
-    borderAccent: "border-[#00F0FF]/40",
-    bgGlow: "from-[#00F0FF]/15 via-transparent to-transparent",
+    accent: "text-[#5EEAD4]",
     codeSnippet: `/gateway oauth anthropic
 # Browser opens secure PKCE OAuth callback
 # Signed in as: user@company.com (Claude Pro/Team)
@@ -63,9 +59,7 @@ const GATEWAY_CATEGORIES: GatewayCategory[] = [
     tagline: "Pay-as-you-go keys from any major model foundry.",
     description:
       "Bring your developer API keys directly from Anthropic, OpenAI, OpenRouter, DeepSeek, Groq, Cerebras, and more. Keys are encrypted at rest on your machine.",
-    accent: "text-[#A855F7]",
-    borderAccent: "border-[#A855F7]/40",
-    bgGlow: "from-[#A855F7]/15 via-transparent to-transparent",
+    accent: "text-[#5EEAD4]",
     codeSnippet: `/gateway api openrouter
 # Stored encrypted key in ~/.cube/auth.json
 # Active Model: deepseek/deepseek-r1
@@ -91,9 +85,7 @@ const GATEWAY_CATEGORIES: GatewayCategory[] = [
     tagline: "Run entirely offline on your local GPU. Zero telemetry.",
     description:
       "Connect seamlessly to Ollama, LM Studio, or custom vLLM servers running on your workstation. No internet connection required. Absolute data sovereign privacy.",
-    accent: "text-[#10B981]",
-    borderAccent: "border-[#10B981]/40",
-    bgGlow: "from-[#10B981]/15 via-transparent to-transparent",
+    accent: "text-[#5EEAD4]",
     codeSnippet: `/gateway local ollama
 # Detected local Ollama instance on http://localhost:11434
 # Active Model: qwen2.5-coder:32b-instruct-q8_0
@@ -118,33 +110,24 @@ export function GatewaySection() {
   const active = GATEWAY_CATEGORIES.find((cat) => cat.id === activeTab)!;
 
   return (
-    <section id="gateways" className="relative py-28 px-4 sm:px-6 lg:px-8 border-t border-[#1F2430]">
-      {/* Background ambient lighting */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-[#00F0FF]/5 rounded-full blur-[140px]" />
-      </div>
-
-      <div className="relative max-w-7xl mx-auto">
+    <section id="gateways" className="relative py-20 px-4 sm:px-6 lg:px-8 border-t border-[#27272A]">
+      <div className="relative max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#00F0FF]/30 bg-[#00F0FF]/10 text-[#00F0FF] mb-4">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>UNMATCHED FREEDOM</span>
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#5EEAD4] mb-4">
+            <span>MODEL ROUTING</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-6">
-            Your Subscriptions. Your Keys.{" "}
-            <span className="bg-gradient-to-r from-[#00F0FF] via-[#A855F7] to-[#10B981] bg-clip-text text-transparent">
-              Zero Lock-In.
-            </span>
+          <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-white mb-4">
+            Your Subscriptions. Your Keys. Zero Lock-In.
           </h2>
-          <p className="text-base sm:text-lg text-neutral-400">
-            Never pay a 2x token markup again. Sign in directly with your existing AI memberships,
-            switch provider keys on the fly, or code completely offline on airplane mode.
+          <p className="text-base text-[#A1A1AA] leading-relaxed">
+            Never pay a 2x token markup. Sign in with your existing memberships,
+            switch provider keys on the fly, or code completely offline.
           </p>
         </div>
 
-        {/* Tab Controls */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
+        {/* Tab Controls (radius 8px / control token) */}
+        <div className="flex flex-wrap justify-center gap-2 mb-10">
           {GATEWAY_CATEGORIES.map((cat) => {
             const Icon = cat.icon;
             const isSelected = activeTab === cat.id;
@@ -153,20 +136,20 @@ export function GatewaySection() {
                 key={cat.id}
                 onClick={() => setActiveTab(cat.id)}
                 className={cn(
-                  "flex items-center gap-3 px-5 py-3 rounded-xl border text-sm font-medium transition-all duration-200 cursor-pointer",
+                  "flex items-center gap-2.5 px-4 py-2 rounded-lg border text-sm font-medium transition-colors cursor-pointer",
                   isSelected
-                    ? `${cat.borderAccent} bg-[#161B22] text-white shadow-lg shadow-black/40`
-                    : "border-[#1F2430] bg-[#0D1117]/80 text-neutral-400 hover:text-white hover:border-[#2D333B]"
+                    ? "border-[#5EEAD4]/40 bg-[#18181B] text-white shadow-sm"
+                    : "border-[#27272A] bg-[#18181B]/50 text-[#A1A1AA] hover:text-white hover:bg-[#18181B]"
                 )}
               >
-                <Icon className={cn("w-4 h-4", isSelected ? cat.accent : "text-neutral-500")} />
+                <Icon className={cn("w-4 h-4", isSelected ? "text-[#5EEAD4]" : "text-neutral-500")} />
                 <span>{cat.title}</span>
                 <span
                   className={cn(
-                    "px-2 py-0.5 text-xs font-mono rounded-md border",
+                    "px-1.5 py-0.5 text-[11px] font-mono rounded border",
                     isSelected
-                      ? "border-current/30 bg-white/5 text-white"
-                      : "border-neutral-800 bg-neutral-900/60 text-neutral-500"
+                      ? "border-[#5EEAD4]/30 bg-[#5EEAD4]/10 text-[#5EEAD4]"
+                      : "border-[#27272A] bg-[#050505] text-[#A1A1AA]"
                   )}
                 >
                   {cat.badge}
@@ -176,62 +159,48 @@ export function GatewaySection() {
           })}
         </div>
 
-        {/* Tab Content Display */}
-        <div
-          className={cn(
-            "relative rounded-2xl border p-6 sm:p-8 lg:p-10 bg-[#0D1117]/90 backdrop-blur-xl transition-all duration-300",
-            active.borderAccent
-          )}
-        >
-          {/* Subtle gradient wash */}
-          <div
-            className={cn(
-              "absolute inset-0 rounded-2xl bg-gradient-to-br opacity-50 pointer-events-none",
-              active.bgGlow
-            )}
-          />
-
-          <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        {/* Tab Content Display (radius 8px, surface #18181B, border #27272A) */}
+        <div className="rounded-lg border border-[#27272A] p-6 sm:p-8 bg-[#18181B]">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left Column: Details & Perks */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="space-y-3">
-                <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider font-semibold">
-                  <span className={active.accent}>● GATEWAY TYPE:</span>
-                  <span className="text-white">{active.title}</span>
+              <div className="space-y-2">
+                <div className="text-xs font-mono uppercase tracking-wider text-[#5EEAD4]">
+                  GATEWAY: {active.title}
                 </div>
-                <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                <h3 className="text-xl sm:text-2xl font-medium text-white tracking-tight">
                   {active.tagline}
                 </h3>
-                <p className="text-neutral-400 leading-relaxed text-sm sm:text-base">
+                <p className="text-[#A1A1AA] text-sm leading-relaxed">
                   {active.description}
                 </p>
               </div>
 
               {/* Provider Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {active.providers.map((provider) => (
                   <div
                     key={provider.name}
-                    className="p-3.5 rounded-xl border border-[#1F2430] bg-[#161B22]/70 hover:border-[#2D333B] transition-colors"
+                    className="p-3 rounded-lg border border-[#27272A] bg-[#050505]/70"
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-semibold text-white">{provider.name}</span>
-                      <span className="inline-flex items-center gap-1 text-[11px] font-mono text-[#10B981]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                      <span className="text-xs font-semibold text-white">{provider.name}</span>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono text-[#5EEAD4]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#5EEAD4]" />
                         {provider.status}
                       </span>
                     </div>
                     <div className="text-xs text-neutral-300 font-mono truncate">{provider.model}</div>
-                    <div className="text-[11px] text-neutral-500 mt-1">{provider.detail}</div>
+                    <div className="text-[11px] text-[#A1A1AA] mt-1">{provider.detail}</div>
                   </div>
                 ))}
               </div>
 
               {/* Bullet perks */}
-              <ul className="space-y-2.5 pt-2">
+              <ul className="space-y-2 pt-1">
                 {active.perks.map((perk, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-neutral-300">
-                    <CheckCircle className={cn("w-4 h-4 shrink-0 mt-0.5", active.accent)} />
+                    <CheckCircle className="w-4 h-4 shrink-0 mt-0.5 text-[#5EEAD4]" />
                     <span>{perk}</span>
                   </li>
                 ))}
@@ -240,30 +209,30 @@ export function GatewaySection() {
 
             {/* Right Column: Terminal Snippet Preview */}
             <div className="lg:col-span-5">
-              <div className="rounded-xl border border-[#1F2430] bg-[#08090C] overflow-hidden shadow-2xl">
+              <div className="rounded-lg border border-[#27272A] bg-[#050505] overflow-hidden shadow-xl">
                 {/* macOS chrome bar */}
-                <div className="flex items-center justify-between px-4 py-3 bg-[#111318] border-b border-[#1F2430]">
+                <div className="flex items-center justify-between px-3.5 py-2.5 bg-[#18181B] border-b border-[#27272A]">
                   <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-[#FF5F56]" />
-                    <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
-                    <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
                   </div>
-                  <span className="text-xs font-mono text-neutral-400">cube ~ switch-gateway</span>
-                  <div className="w-12" />
+                  <span className="text-xs font-mono text-[#A1A1AA]">cube ~ switch-gateway</span>
+                  <div className="w-8" />
                 </div>
 
                 {/* Terminal Content */}
-                <div className="p-5 font-mono text-xs sm:text-sm leading-relaxed overflow-x-auto text-neutral-300">
-                  <div className="flex items-center gap-2 text-neutral-500 mb-3 text-xs">
+                <div className="p-4 font-mono text-xs sm:text-[13px] leading-relaxed overflow-x-auto text-neutral-300">
+                  <div className="flex items-center gap-2 text-neutral-500 mb-2 text-xs">
                     <span>$</span>
                     <span className="text-neutral-400">cube</span>
                   </div>
                   <pre className="text-neutral-300 whitespace-pre-wrap">
                     {active.codeSnippet}
                   </pre>
-                  <div className="mt-4 pt-4 border-t border-[#1F2430] flex items-center justify-between text-xs text-neutral-500">
-                    <span className="text-[#10B981] flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
+                  <div className="mt-3 pt-3 border-t border-[#27272A] flex items-center justify-between text-xs text-neutral-500">
+                    <span className="text-[#5EEAD4] flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#5EEAD4] animate-pulse" />
                       Session Ready
                     </span>
                     <span className="font-mono text-[11px]">latency: ~12ms</span>

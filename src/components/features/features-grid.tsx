@@ -6,137 +6,124 @@ import {
   Bot,
   Compass,
   ShieldCheck,
-  Lock,
+  Palette,
   ArrowUpRight,
 } from "lucide-react";
 
 const FEATURES = [
   {
-    icon: Monitor,
-    title: "Flicker-Free Terminal Experience",
-    badge: "Native Performance",
-    color: "from-[#00F0FF]/20 to-transparent",
-    border: "group-hover:border-[#00F0FF]/50",
-    iconColor: "text-[#00F0FF]",
-    description:
-      "Engineered with differential-rendering technology for zero flicker, instant input response, rich syntax highlighting, and responsive layout splits inside your favorite shell.",
-  },
-  {
-    icon: Zap,
-    title: "Bring Your Own AI Subscriptions",
-    badge: "Zero Token Markup",
-    color: "from-[#A855F7]/20 to-transparent",
-    border: "group-hover:border-[#A855F7]/50",
-    iconColor: "text-[#A855F7]",
-    description:
-      "Sign in directly with your existing Claude Pro, ChatGPT Plus, or Grok accounts via OAuth. Or plug in any of 15+ API keys, or run 100% offline with local Ollama models.",
-  },
-  {
+    id: "agent",
     icon: Bot,
-    title: "Autonomous Multi-Turn Execution",
-    badge: "Agentic Loop",
-    color: "from-[#10B981]/20 to-transparent",
-    border: "group-hover:border-[#10B981]/50",
-    iconColor: "text-[#10B981]",
+    title: "Autonomous Agent Engine",
+    badge: "Mastra Core",
+    iconColor: "text-[#5EEAD4]",
     description:
-      "Cube plans, reads files, runs build commands, analyzes test failures, and writes code autonomously with full human-in-the-loop approval at every sensitive step.",
+      "Cube plans, reads files, runs build commands, analyzes test failures, and writes code iteratively with human-in-the-loop approvals for sensitive bash commands.",
   },
   {
+    id: "tui",
+    icon: Monitor,
+    title: "Differential-Rendering TUI",
+    badge: "pi-tui Engine",
+    iconColor: "text-[#5EEAD4]",
+    description:
+      "Engineered with differential-rendering technology for zero flicker, instant input response, rich syntax highlighting, and clean split panes in any shell.",
+  },
+  {
+    id: "themes",
+    icon: Palette,
+    title: "WCAG-Audited Themes",
+    badge: "Accessible Color",
+    iconColor: "text-[#5EEAD4]",
+    description:
+      "Carefully audited contrast ratios across multiple developer palettes: Obsidian, Tokyo Night, Catppuccin Mocha, and High-Contrast Monochrome.",
+  },
+  {
+    id: "auth",
+    icon: Zap,
+    title: "Multi-Mode Authentication",
+    badge: "Zero Token Markup",
+    iconColor: "text-[#5EEAD4]",
+    description:
+      "Sign in with your existing Claude Pro, ChatGPT Plus, or Grok memberships via browser PKCE OAuth, bring developer API keys, or run 100% offline with Ollama.",
+  },
+  {
+    id: "context",
     icon: Compass,
     title: "Instant Codebase Context",
     badge: "AGENTS.md Discovery",
-    color: "from-[#F59E0B]/20 to-transparent",
-    border: "group-hover:border-[#F59E0B]/50",
-    iconColor: "text-[#F59E0B]",
+    iconColor: "text-[#5EEAD4]",
     description:
       "Automatically discovers architecture guidelines and repository conventions from AGENTS.md across directory trees. No manual prompt copying required.",
   },
   {
+    id: "safety",
     icon: ShieldCheck,
-    title: "Safe, Reversible Code Mutations",
-    badge: "Atomic Disk Writes",
-    color: "from-[#00F0FF]/20 to-transparent",
-    border: "group-hover:border-[#00F0FF]/50",
-    iconColor: "text-[#00F0FF]",
+    title: "Atomic Mutations & Memory",
+    badge: "LibSQL Persistence",
+    iconColor: "text-[#5EEAD4]",
     description:
-      "Every change is inspected via clear diff previews before execution. Atomic file persistence guarantees zero half-written edits or corrupted workspaces.",
-  },
-  {
-    icon: Lock,
-    title: "100% Local & Privacy-First",
-    badge: "Zero Data Retention",
-    color: "from-[#10B981]/20 to-transparent",
-    border: "group-hover:border-[#10B981]/50",
-    iconColor: "text-[#10B981]",
-    description:
-      "Your credentials, chat history, and memory databases stay locked on your machine (~/.cube). Network calls stream directly to provider endpoints without middleman servers.",
+      "Disk writes execute atomically to prevent partial writes. Long-term session memory and conversation threads are backed by local SQLite on your machine.",
   },
 ];
 
 export function FeaturesGrid() {
   return (
-    <section id="features" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      {/* Section Header */}
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-xs font-mono text-gray-300 mb-4">
-          <Zap className="w-3.5 h-3.5 text-[#00F0FF]" />
-          <span>Core Capabilities</span>
+    <section id="agent" className="relative py-20 px-4 sm:px-6 lg:px-8 border-t border-[#27272A]">
+      <div className="relative max-w-6xl mx-auto">
+        {/* Section Header */}
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#5EEAD4] mb-4">
+            <span>CORE ARCHITECTURE</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-white mb-4">
+            Engineered for developers who live in the shell.
+          </h2>
+          <p className="text-base text-[#A1A1AA] leading-relaxed">
+            Every layer of Cube is designed for minimal latency, ergonomic terminal navigation,
+            and complete control over your models and data.
+          </p>
         </div>
-        <h2 className="text-3xl sm:text-5xl font-bold text-white tracking-tight leading-tight">
-          Everything You Need to Code at Warp Speed
-        </h2>
-        <p className="mt-4 text-base sm:text-lg text-gray-400">
-          Built from the ground up to eliminate friction between terminal commands,
-          reasoning models, and your codebase.
-        </p>
-      </div>
 
-      {/* Bento Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {FEATURES.map((feat, idx) => {
-          const Icon = feat.icon;
-          return (
-            <div
-              key={idx}
-              className={`group relative rounded-2xl p-6 sm:p-8 bg-[#0F1117]/80 border border-white/[0.08] ${feat.border} hover:bg-[#131620] transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-lg hover:shadow-2xl`}
-            >
-              {/* Gradient card background */}
+        {/* 6 Feature Cards: surface #18181B, border #27272A, card-padding 24px, radius 8px */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {FEATURES.map((item) => {
+            const Icon = item.icon;
+            return (
               <div
-                className={`absolute top-0 right-0 w-36 h-36 bg-gradient-to-bl ${feat.color} blur-2xl pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity`}
-              />
-
-              <div>
-                {/* Header row */}
-                <div className="flex items-center justify-between mb-6">
-                  <div
-                    className={`w-12 h-12 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center ${feat.iconColor} group-hover:scale-110 transition-transform`}
-                  >
-                    <Icon className="w-6 h-6" />
+                key={item.id}
+                id={item.id}
+                className="group relative rounded-lg border border-[#27272A] bg-[#18181B] p-6 hover:border-[#5EEAD4]/40 transition-colors flex flex-col justify-between"
+              >
+                <div>
+                  {/* Top Bar: Icon + Badge */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-10 h-10 rounded-lg bg-[#050505] border border-[#27272A] flex items-center justify-center group-hover:border-[#5EEAD4]/40 transition-colors">
+                      <Icon className={`w-5 h-5 ${item.iconColor}`} />
+                    </div>
+                    <span className="text-[11px] font-mono px-2 py-0.5 rounded border border-[#27272A] bg-[#050505] text-[#A1A1AA]">
+                      {item.badge}
+                    </span>
                   </div>
-                  <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-gray-300">
-                    {feat.badge}
-                  </span>
+
+                  {/* Title & Description */}
+                  <h3 className="text-base font-semibold text-white mb-2 font-sans tracking-tight">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-[#A1A1AA] leading-relaxed">
+                    {item.description}
+                  </p>
                 </div>
 
-                {/* Title */}
-                <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-[#00F0FF] transition-colors">
-                  {feat.title}
-                </h3>
-
-                {/* Description */}
-                <p className="text-sm text-gray-400 leading-relaxed">
-                  {feat.description}
-                </p>
+                {/* Subtle bottom link */}
+                <div className="pt-4 mt-4 border-t border-[#27272A]/60 flex items-center justify-between text-xs text-neutral-500 font-mono group-hover:text-[#5EEAD4] transition-colors">
+                  <span>Explore subsystem</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </div>
               </div>
-
-              {/* Bottom subtle link indicator */}
-              <div className="mt-6 pt-4 border-t border-white/[0.04] flex items-center justify-between text-xs font-mono text-gray-500 group-hover:text-gray-300 transition-colors">
-                <span>Learn more</span>
-                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </section>
   );

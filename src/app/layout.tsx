@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
-  title: "Cube — Autonomous AI Coding Agent for Your Terminal",
+  title: "Cube — Coding Agent, Engineered in the Terminal",
   description:
-    "Differential-rendering TUI, multi-gateway model routing (Claude, Grok, Gemini, OpenAI, Ollama), local SQLite memory, and atomic workspace mutations right inside your console.",
+    "A TypeScript coding agent CLI with a custom TUI, multi-mode authentication, tool system, and workspace memory.",
   keywords: [
     "AI coding agent",
     "terminal UI",
@@ -30,16 +32,16 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Cube Team" }],
   openGraph: {
-    title: "Cube — Autonomous AI Coding Agent for Your Terminal",
+    title: "Cube — Coding Agent, Engineered in the Terminal",
     description:
-      "Differential-rendering TUI, multi-gateway model routing, local SQLite memory, and atomic workspace mutations.",
+      "A coding agent that lives where you already work. Multi-gateway model routing, local LibSQL memory, and atomic workspace mutations.",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Cube — Autonomous AI Coding Agent for Your Terminal",
-    description: "The autonomous coding agent built for your terminal.",
+    title: "Cube — Coding Agent, Engineered in the Terminal",
+    description: "A coding agent that lives where you already work.",
   },
 };
 
@@ -51,9 +53,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark scroll-smooth`}
+      className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased dark scroll-smooth`}
     >
-      <body className="min-h-full flex flex-col bg-[#08090C] text-[#F3F4F6] font-sans selection:bg-[#00F0FF]/30 selection:text-white">
+      <body className="min-h-full flex flex-col bg-[#050505] text-[#FFFFFF] font-sans selection:bg-[#5EEAD4]/20 selection:text-[#5EEAD4]">
         {children}
       </body>
     </html>
