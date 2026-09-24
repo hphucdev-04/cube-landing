@@ -6,7 +6,7 @@ import { GithubIcon } from "@/components/ui/icons";
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-[#27272A] bg-[#050505] overflow-hidden">
+    <footer className="relative border-t border-[#27272A] bg-transparent overflow-hidden">
       {/* Final Pre-Footer Call to Action */}
       <div className="relative max-w-4xl mx-auto pt-20 pb-16 px-4 sm:px-6 lg:px-8 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-5">

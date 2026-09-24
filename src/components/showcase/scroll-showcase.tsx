@@ -250,7 +250,7 @@ export function ScrollShowcase() {
   }, [activeIndex, activeFeature]);
 
   return (
-    <section id="showcase" className="relative border-t border-[#27272A] bg-[#050505]">
+    <section id="showcase" className="relative border-t border-[#27272A] bg-transparent">
       {/* Section Eyebrow Header */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-4">
