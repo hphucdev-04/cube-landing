@@ -197,10 +197,32 @@ const FEATURES: ShowcaseFeature[] = [
 
 export function ScrollShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [activeStepIndex, setActiveStepIndex] = useState(0);
+  const [videoSrc, setVideoSrc] = useState<string | null>(null);
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const activeFeature = FEATURES[activeIndex];
+
+  // Auto-detect if user has recorded footage in public/
+  useEffect(() => {
+    const checkVideo = async () => {
+      try {
+        const res = await fetch("/hero-demo.mp4", { method: "HEAD" });
+        if (res.ok) {
+          setVideoSrc("/hero-demo.mp4");
+          return;
+        }
+      } catch {}
+
+      try {
+        const res2 = await fetch("/demo.mp4", { method: "HEAD" });
+        if (res2.ok) {
+          setVideoSrc("/demo.mp4");
+        }
+      } catch {}
+    };
+
+    checkVideo();
+  }, []);
 
   // Set up IntersectionObserver to sync scroll position with active feature demo
   useEffect(() => {
@@ -211,7 +233,6 @@ export function ScrollShowcase() {
             const index = Number(entry.target.getAttribute("data-index"));
             if (!isNaN(index)) {
               setActiveIndex(index);
-              setActiveStepIndex(0);
             }
           }
         });
@@ -229,25 +250,7 @@ export function ScrollShowcase() {
     return () => observer.disconnect();
   }, []);
 
-  // Line-by-line reveal animation whenever active feature changes
-  useEffect(() => {
-    setActiveStepIndex(0);
-    let isCancelled = false;
 
-    const playSteps = async () => {
-      for (let i = 0; i <= activeFeature.steps.length; i++) {
-        if (isCancelled) break;
-        setActiveStepIndex(i);
-        await new Promise((r) => setTimeout(r, 600));
-      }
-    };
-
-    playSteps();
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [activeIndex, activeFeature]);
 
   return (
     <section id="showcase" className="relative border-t border-[#27272A] bg-transparent">
@@ -326,95 +329,21 @@ export function ScrollShowcase() {
                 <div className="w-12 shrink-0 hidden sm:block" />
               </div>
 
-              {/* Terminal Screen Content */}
-              <div className="p-5 font-mono text-[13px] min-h-[380px] sm:min-h-[440px] flex flex-col gap-3 text-white leading-[1.5] overflow-x-auto">
-                <div className="text-[#A1A1AA]/50 text-[11px] select-none">
-                  [Cube CLI · Feature: {activeFeature.title}]
-                </div>
-
-                {activeFeature.steps.slice(0, activeStepIndex).map((step, sIdx) => {
-                  if (step.type === "prompt") {
-                    return (
-                      <div key={sIdx} className="flex items-start gap-2.5 text-white pt-1">
-                        <span className="text-white font-bold select-none">❯</span>
-                        <span className="font-medium">{step.text}</span>
-                      </div>
-                    );
-                  }
-
-                  if (step.type === "thought") {
-                    return (
-                      <div
-                        key={sIdx}
-                        className="p-2.5 rounded border border-[#27272A] bg-[#18181B] text-xs text-[#A1A1AA] flex items-center gap-2"
-                      >
-                        <span className="text-white font-mono">🧠</span>
-                        <span>{step.text}</span>
-                      </div>
-                    );
-                  }
-
-                  if (step.type === "tool") {
-                    return (
-                      <div
-                        key={sIdx}
-                        className="p-3 rounded border border-[#27272A] bg-[#18181B]/70 space-y-1.5 text-xs"
-                      >
-                        <div className="text-white font-semibold flex items-center gap-2">
-                          <span>{step.text}</span>
-                        </div>
-                        {step.subText && (
-                          <pre className="text-[#A1A1AA] whitespace-pre-wrap font-mono text-[12px] pl-2 border-l border-[#27272A]">
-                            {step.subText}
-                          </pre>
-                        )}
-                      </div>
-                    );
-                  }
-
-                  if (step.type === "choice") {
-                    return (
-                      <div
-                        key={sIdx}
-                        className="p-3 rounded border border-[#27272A] bg-[#18181B]/90 space-y-2 text-xs"
-                      >
-                        <div className="text-white font-medium">{step.text}</div>
-                        {step.subText && (
-                          <pre className="text-[#A1A1AA] whitespace-pre-wrap font-mono leading-relaxed pl-1">
-                            {step.subText}
-                          </pre>
-                        )}
-                      </div>
-                    );
-                  }
-
-                  if (step.type === "info") {
-                    return (
-                      <div key={sIdx} className="text-xs text-[#A1A1AA] pl-4 border-l border-[#27272A]">
-                        {step.text}
-                      </div>
-                    );
-                  }
-
-                  if (step.type === "result") {
-                    return (
-                      <div
-                        key={sIdx}
-                        className="p-2.5 rounded border border-[#27272A] bg-[#18181B] text-white text-xs flex items-center gap-2 font-medium"
-                      >
-                        <Check className="w-3.5 h-3.5 text-white shrink-0" />
-                        <span>{step.text}</span>
-                      </div>
-                    );
-                  }
-
-                  return null;
-                })}
-
-                {/* Blinking cursor at end of reveal */}
-                {activeStepIndex < activeFeature.steps.length && (
-                  <div className="flex items-center gap-1.5 text-[#A1A1AA] text-xs pt-1">
-                    <span className="w-1.5 h-3.5 bg-white animate-pulse" />
+              {/* Terminal Screen Content (Empty for recording / Live video demo) */}
+              <div className="relative min-h-[380px] sm:min-h-[460px] bg-[#090A0E] flex flex-col justify-start overflow-hidden">
+                {videoSrc ? (
+                  <video
+                    src={videoSrc}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="p-6 font-mono text-[13px] text-white flex items-center gap-2">
+                    <span className="text-white select-none font-bold">❯</span>
+                    <span className="w-2 h-4 bg-white animate-pulse" />
                   </div>
                 )}
               </div>

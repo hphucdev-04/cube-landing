@@ -1,79 +1,33 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useInView } from "framer-motion";
-import {
-  Terminal,
-  Cpu,
-  CheckCircle2,
-  FileCode,
-  FolderGit2,
-} from "lucide-react";
-import { SCENARIOS, type Scenario } from "./scenarios";
+import { Terminal, FolderGit2 } from "lucide-react";
 
 export function TerminalSimulator() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { amount: 0.25, once: false });
+  const [videoSrc, setVideoSrc] = useState<string | null>(null);
 
-  const [activeScenarioIndex, setActiveScenarioIndex] = useState(0);
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [displayedInput, setDisplayedInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-
-  const scenario = SCENARIOS[activeScenarioIndex];
-
-  // Auto-play / replay when entering / leaving viewport
   useEffect(() => {
-    if (!isInView) {
-      // Reset when scrolled out of view
-      setCurrentStepIndex(0);
-      setDisplayedInput("");
-      setIsTyping(false);
-      return;
-    }
-
-    // When scrolled into view: start executing steps
-    let isCancelled = false;
-    let timeoutId: NodeJS.Timeout;
-
-    const runScenario = async () => {
-      setCurrentStepIndex(0);
-      setDisplayedInput("");
-
-      for (let i = 0; i < scenario.steps.length; i++) {
-        if (isCancelled) break;
-        const step = scenario.steps[i];
-
-        if (step.type === "user-input") {
-          setIsTyping(true);
-          setDisplayedInput("");
-          const text = step.content;
-          for (let c = 0; c <= text.length; c++) {
-            if (isCancelled) break;
-            setDisplayedInput(text.slice(0, c));
-            await new Promise((r) => setTimeout(r, 22));
-          }
-          setIsTyping(false);
-          await new Promise((r) => setTimeout(r, 400));
+    // Check if recorded footage is available in public/
+    const checkVideo = async () => {
+      try {
+        const res = await fetch("/hero-demo.mp4", { method: "HEAD" });
+        if (res.ok) {
+          setVideoSrc("/hero-demo.mp4");
+          return;
         }
+      } catch {}
 
-        if (isCancelled) break;
-        setCurrentStepIndex(i + 1);
-
-        const stepDelay = step.delayMs || 800;
-        await new Promise((r) => setTimeout(r, stepDelay));
-      }
+      try {
+        const res2 = await fetch("/demo.mp4", { method: "HEAD" });
+        if (res2.ok) {
+          setVideoSrc("/demo.mp4");
+        }
+      } catch {}
     };
 
-    timeoutId = setTimeout(() => {
-      runScenario();
-    }, 250);
-
-    return () => {
-      isCancelled = true;
-      clearTimeout(timeoutId);
-    };
-  }, [isInView, activeScenarioIndex, scenario]);
+    checkVideo();
+  }, []);
 
   return (
     <div id="showcase" className="w-full max-w-5xl mx-auto">
@@ -90,27 +44,6 @@ export function TerminalSimulator() {
           Autonomously inspects files, reasons through diffs, and commits atomic
           code changes directly inside your terminal.
         </p>
-      </div>
-
-      {/* Scenario Selector Tabs */}
-      <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
-        {SCENARIOS.map((item, index) => (
-          <button
-            key={item.id}
-            onClick={() => {
-              setActiveScenarioIndex(index);
-              setCurrentStepIndex(0);
-              setDisplayedInput("");
-            }}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-colors flex items-center gap-2 cursor-pointer ${
-              activeScenarioIndex === index
-                ? "bg-[#18181B] text-white border border-[#27272A] shadow-sm"
-                : "bg-[#18181B]/50 text-[#A1A1AA] hover:text-white border border-[#27272A]/50 hover:bg-[#18181B]"
-            }`}
-          >
-            <span>{item.label}</span>
-          </button>
-        ))}
       </div>
 
       {/* macOS Terminal Window Container */}
@@ -139,119 +72,21 @@ export function TerminalSimulator() {
           <div className="w-12 shrink-0 hidden sm:block" />
         </div>
 
-        {/* Terminal Body Content */}
-        <div className="p-4 sm:p-6 font-mono text-xs sm:text-[13px] min-h-[380px] sm:min-h-[440px] flex flex-col gap-4 text-[#FFFFFF] overflow-x-auto leading-relaxed">
-          {/* Welcome ASCII Mini Header */}
-          <div className="text-[#A1A1AA]/60 text-[11px] select-none">
-            [Cube Agent v1.0.0 — Memory: LibSQL SQLite — Session: active]
-          </div>
-
-          {/* User Prompt Step */}
-          <div className="flex items-start gap-2.5 text-white">
-            <span className="text-white select-none font-bold">❯</span>
-            <span>
-              {displayedInput}
-              {isTyping && (
-                <span className="inline-block w-2 h-4 ml-1 bg-white animate-pulse align-middle" />
-              )}
-            </span>
-          </div>
-
-          {/* Streamed Steps */}
-          {scenario.steps.slice(0, currentStepIndex).map((step, idx) => {
-            if (step.type === "user-input") return null;
-
-            if (step.type === "reasoning") {
-              return (
-                <div
-                  key={idx}
-                  className="rounded-lg p-3 bg-[#18181B] border border-[#27272A] text-white flex items-start gap-2.5 text-xs"
-                >
-                  <Cpu className="w-4 h-4 text-[#A1A1AA] shrink-0 mt-0.5 animate-spin" />
-                  <div className="flex flex-col gap-1">
-                    <span className="font-semibold uppercase tracking-wider text-[10px] text-[#A1A1AA]">
-                      Reasoning Stream
-                    </span>
-                    <span className="text-[#A1A1AA]">{step.content}</span>
-                  </div>
-                </div>
-              );
-            }
-
-            if (step.type === "tool-call") {
-              return (
-                <div
-                  key={idx}
-                  className="rounded-lg p-3 bg-[#18181B] border border-[#27272A] flex flex-col gap-2"
-                >
-                  <div className="flex items-center gap-2 text-white text-xs">
-                    <span className="font-bold text-[#A1A1AA]">❖</span>
-                    <span className="font-semibold">{step.toolName}</span>
-                    <span className="text-[#A1A1AA] text-[11px]">
-                      {step.content.replace(`${step.toolName} `, "")}
-                    </span>
-                  </div>
-
-                  {/* Diff preview if present */}
-                  {step.diff && (
-                    <div className="rounded bg-[#050505] p-2.5 border border-[#27272A] text-xs font-mono space-y-1">
-                      <div className="text-[#A1A1AA] text-[11px] mb-1 flex items-center gap-1.5">
-                        <FileCode className="w-3.5 h-3.5 text-[#A1A1AA]" />
-                        <span>{step.diff.file}</span>
-                      </div>
-                      {step.diff.deletions.map((del, dIdx) => (
-                        <div key={dIdx} className="text-neutral-400 bg-white/5 px-1 py-0.5 rounded">
-                          {del}
-                        </div>
-                      ))}
-                      {step.diff.additions.map((add, aIdx) => (
-                        <div key={aIdx} className="text-white bg-white/10 px-1 py-0.5 rounded font-medium">
-                          {add}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            }
-
-            if (step.type === "tool-result") {
-              return (
-                <div key={idx} className="text-xs text-[#A1A1AA] pl-4 border-l border-[#27272A] flex items-center gap-2">
-                  <span className="text-neutral-500">↳</span>
-                  <span>{step.content}</span>
-                </div>
-              );
-            }
-
-            if (step.type === "assistant-text") {
-              return (
-                <div
-                  key={idx}
-                  className="p-3.5 rounded-lg bg-[#18181B] border border-[#27272A] text-white text-xs sm:text-sm flex items-start gap-2.5 leading-relaxed whitespace-pre-line"
-                >
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-white mt-0.5" />
-                  <div>{step.content}</div>
-                </div>
-              );
-            }
-
-            if (step.type === "status") {
-              return (
-                <div key={idx} className="text-xs text-[#A1A1AA] italic bg-[#18181B]/40 p-2 rounded border border-[#27272A]">
-                  {step.content}
-                </div>
-              );
-            }
-
-            return null;
-          })}
-
-          {/* Idle prompt indicator at end */}
-          {currentStepIndex >= scenario.steps.length && (
-            <div className="flex items-center gap-2 text-neutral-500 pt-2 border-t border-[#27272A]">
-              <span className="text-white font-bold">❯</span>
-              <span className="text-xs text-[#A1A1AA]">Awaiting next instruction...</span>
+        {/* Terminal Body Content (Empty for recording / Live video player) */}
+        <div className="relative min-h-[380px] sm:min-h-[460px] bg-[#090A0E] flex flex-col justify-start overflow-hidden">
+          {videoSrc ? (
+            <video
+              src={videoSrc}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="p-6 font-mono text-[13px] text-white flex items-center gap-2">
+              <span className="text-white select-none font-bold">❯</span>
+              <span className="w-2 h-4 bg-white animate-pulse" />
             </div>
           )}
         </div>
