@@ -1,196 +1,110 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  Terminal,
-  KeyRound,
-  Wrench,
-  Hash,
-  ShieldCheck,
-  Palette,
-  GitFork,
-  Check,
-  ArrowRight,
-} from "lucide-react";
+import { Terminal } from "lucide-react";
+import { Cube3DNavigator } from "./cube-navigator-3d";
 import { cn } from "@/lib/utils";
 
 interface ShowcaseFeature {
   id: string;
+  label: string;
+  faceName: string;
   badge: string;
   title: string;
   tagline: string;
   description: string;
-  model: string;
-  steps: {
-    type: "prompt" | "thought" | "tool" | "choice" | "result" | "info";
-    text: string;
-    subText?: string;
-  }[];
+  bullets: string[];
 }
 
 const FEATURES: ShowcaseFeature[] = [
   {
-    id: "auth",
-    badge: "01 · MULTI-MODE AUTH",
-    title: "Your Subscriptions. Your Keys. Zero Markup.",
-    tagline: "Bring what you already pay for.",
+    id: "gateway",
+    label: "Gateway",
+    faceName: "FRONT",
+    badge: "01 · FRONT FACE: GATEWAY",
+    title: "Multi-Gateway Model Matrix",
+    tagline: "Your subscriptions. Your keys. Zero lock-in.",
     description:
-      "Authenticate directly with your Claude Pro, ChatGPT Plus, or Grok memberships via browser PKCE OAuth 2.0. Plug in any of 15+ developer API keys, or code 100% offline air-gapped with Ollama.",
-    model: "claude-3-7-sonnet",
-    steps: [
-      { type: "prompt", text: "/gateway" },
-      {
-        type: "choice",
-        text: "Select Active Model Gateway:",
-        subText:
-          "  [1] ● (Active) Subscription OAuth (Claude Pro / Plus / Grok)\n  [2] ○ Developer API Key (15+ Providers)\n  [3] ○ 100% Offline (Ollama / LM Studio)",
-      },
-      {
-        type: "info",
-        text: "Authenticating via secure browser PKCE OAuth...",
-      },
-      {
-        type: "result",
-        text: "✔ Connected: user@company.com (Claude Pro/Team) — Zero per-token markup",
-      },
+      "Connect directly to Claude Pro, ChatGPT Plus, or Grok memberships via browser PKCE OAuth 2.0 with zero token markup. Plug in any of 15+ developer API keys, or run 100% offline with local Ollama models.",
+    bullets: [
+      "PKCE OAuth for Claude Pro / ChatGPT Plus / Grok",
+      "15+ Developer API providers with unified fallback routing",
+      "100% Air-gapped offline inference via Ollama & LM Studio",
     ],
   },
   {
-    id: "tools",
-    badge: "02 · TOOL SYSTEM",
-    title: "Mastra-Powered Autonomous Execution",
-    tagline: "Autonomous multi-turn agent loop.",
+    id: "skill",
+    label: "Skill",
+    faceName: "RIGHT",
+    badge: "02 · RIGHT FACE: SKILL",
+    title: "Workspace Skill & Rule Discovery",
+    tagline: "Architectural context right where you code.",
     description:
-      "Cube plans, inspects files, runs build commands, analyzes test failures, and applies atomic code edits with full human-in-the-loop tool approval safety.",
-    model: "claude-3-7-sonnet",
-    steps: [
-      {
-        type: "prompt",
-        text: "Fix upstream timeout race condition in oauth.gateway.ts",
-      },
-      {
-        type: "thought",
-        text: "Thought for 2.1s · Analyzing AbortController signal handling & exponential backoff",
-      },
-      {
-        type: "tool",
-        text: "❖ fs:read_file",
-        subText: "cube-agent/src/gateways/oauth.gateway.ts (lines 140-195)",
-      },
-      {
-        type: "tool",
-        text: "❖ fs:atomic_edit",
-        subText: "- const TIMEOUT = 5000;\n+ const TIMEOUT = 30000;\n+ const backoff = Math.min(1000 * 2 ** attempt, 10000);",
-      },
-      {
-        type: "result",
-        text: "✔ Applied atomic disk write · Verified clean compilation",
-      },
+      "Cube crawls project directories and walks up parent folders to automatically discover AGENTS.md rules, repository guidelines, and custom skill scripts. Injected into every turn with zero prompt copy-pasting.",
+    bullets: [
+      "Automatic AGENTS.md rule discovery across parent trees",
+      "Dynamic skill loading with isolated execution runtimes",
+      "Zero prompt maintenance across multiple monorepos",
     ],
   },
   {
-    id: "commands",
-    badge: "03 · SLASH COMMANDS",
-    title: "Home-Row Keyboard Control",
-    tagline: "Instant precision without context switching.",
-    description:
-      "Switch active models on the fly with /model, manage memory with /compact, fork conversation branches with /fork, or resume previous agent sessions with zero interruption.",
-    model: "claude-3-7-sonnet",
-    steps: [
-      { type: "prompt", text: "/model claude-3-7-sonnet" },
-      {
-        type: "result",
-        text: "✔ Active model: claude-3-7-sonnet-20250219 (Thinking budget: 16k tokens)",
-      },
-      { type: "prompt", text: "/compact" },
-      {
-        type: "thought",
-        text: "Compacting conversation memory with semantic summarizer...",
-      },
-      {
-        type: "result",
-        text: "✔ Tokens before: 138,200 → after: 14,100 (-89.8% memory freed)",
-      },
-    ],
-  },
-  {
-    id: "approvals",
-    badge: "04 · INTERACTIVE Q&A",
+    id: "hitl",
+    label: "HITL",
+    faceName: "TOP",
+    badge: "03 · TOP FACE: HITL",
     title: "Human-in-the-Loop Safeguards",
-    tagline: "Total control over irreversible actions.",
+    tagline: "Absolute developer authority.",
     description:
-      "When Cube prepares sensitive file patches or executes potentially destructive shell commands, interactive arrow-key pickers prompt for your explicit approval.",
-    model: "claude-3-7-sonnet",
-    steps: [
-      {
-        type: "prompt",
-        text: "Deploy database migration to local SQLite store",
-      },
-      {
-        type: "choice",
-        text: "? Execute sensitive bash command: 'pnpm db:migrate --force'?",
-        subText:
-          "  [1] ● (Recommended) Approve and execute command\n  [2] ○ Review generated migration script first\n  [3] ○ Abort action\n\n[↑/↓: navigate • Enter: select]",
-      },
-      {
-        type: "result",
-        text: "✔ Approved by developer · Migration 20260924_auth applied successfully",
-      },
+      "No silent overwrites or rogue actions. Before applying atomic disk modifications or running potentially destructive terminal commands, Cube prompts for explicit developer confirmation with full unified diff previews.",
+    bullets: [
+      "Human confirmation required for sensitive bash commands",
+      "Side-by-side colorized unified diff previews before write",
+      "One-key rollback and atomic disk commit guarantees",
     ],
   },
   {
-    id: "themes",
-    badge: "05 · MULTI-THEME TUI",
-    title: "WCAG-Audited Terminal Color System",
-    tagline: "Differential-rendering with zero flicker.",
+    id: "qa",
+    label: "Q&A",
+    faceName: "LEFT",
+    badge: "04 · LEFT FACE: Q&A",
+    title: "Interactive Intent Clarification",
+    tagline: "Resolve ambiguity before writing code.",
     description:
-      "Powered by pi-tui for instant redraws and fluid cursor responsiveness. Toggle across 8 built-in developer palettes, each audited for strict WCAG contrast compliance.",
-    model: "claude-3-7-sonnet",
-    steps: [
-      { type: "prompt", text: "/theme" },
-      {
-        type: "choice",
-        text: "Select Terminal Theme:",
-        subText:
-          "  [1] ● Obsidian (Dark Monochrome)\n  [2] ○ Tokyo Night\n  [3] ○ Catppuccin Mocha\n  [4] ○ High-Contrast Clean",
-      },
-      {
-        type: "result",
-        text: "✔ Differential-render pipeline updated · 0ms layout flicker",
-      },
+      "When requirements are underspecified or architectural tradeoffs arise, Cube presents keyboard-driven multiple-choice questions right in your shell to lock down exact implementation specs.",
+    bullets: [
+      "Interactive arrow-key multiple choice in terminal TUI",
+      "Clarify underspecified requirements early in planning",
+      "Instant architectural alignment without endless chat loops",
     ],
   },
   {
-    id: "subagents",
-    badge: "06 · SUBAGENT DELEGATION",
-    title: "Parallel Agent Workflows",
-    tagline: "Spawn dedicated agents for complex refactors.",
+    id: "mcp",
+    label: "MCP",
+    faceName: "BOTTOM",
+    badge: "05 · BOTTOM FACE: MCP",
+    title: "Model Context Protocol Foundation",
+    tagline: "Universal tool & data interoperability.",
     description:
-      "Cube divides large architectural tasks into isolated parallel subagents. Parent tasks orchestrate research and test generation concurrently without blocking your session.",
-    model: "claude-3-7-sonnet",
-    steps: [
-      {
-        type: "prompt",
-        text: "Refactor session store and generate unit tests concurrently",
-      },
-      {
-        type: "info",
-        text: "⑂ Spawning 2 parallel subagent worker threads...",
-      },
-      {
-        type: "tool",
-        text: "  ┌ Subagent #1 [Refactor]: Updating LibSQL session adapters...",
-        subText: "    ✔ Completed in 1.4s (3 files modified)",
-      },
-      {
-        type: "tool",
-        text: "  └ Subagent #2 [Test Suite]: Generating 18 unit assertions...",
-        subText: "    ✔ Completed in 1.9s (18 passed, 0 failed)",
-      },
-      {
-        type: "result",
-        text: "✔ All subagent work merged cleanly into workspace",
-      },
+      "Built-in Model Context Protocol (MCP) client architecture. Seamlessly connect external tool servers, database inspectors, browser automation runtimes, and proprietary enterprise endpoints through open standards.",
+    bullets: [
+      "Universal MCP client supporting stdio and SSE transports",
+      "Connect databases, GitHub, browser automation, and APIs",
+      "Community server ecosystem with zero custom adapter code",
+    ],
+  },
+  {
+    id: "subagent",
+    label: "Subagent",
+    faceName: "BACK",
+    badge: "06 · BACK FACE: SUBAGENT",
+    title: "Parallel Subagent Task Delegation",
+    tagline: "Orchestrate autonomous worker teams.",
+    description:
+      "Deconstruct massive refactoring projects into isolated parallel subagent workers. Subagents conduct deep codebase exploration, write tests, and apply scoped edits concurrently without blocking your main prompt loop.",
+    bullets: [
+      "Spawn background worker subagents with isolated context",
+      "Parallel codebase exploration, refactoring, and test writing",
+      "Automatic dependency resolution and unified pull review",
     ],
   },
 ];
@@ -199,8 +113,6 @@ export function ScrollShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [videoSrc, setVideoSrc] = useState<string | null>(null);
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  const activeFeature = FEATURES[activeIndex];
 
   // Auto-detect if user has recorded footage in public/
   useEffect(() => {
@@ -250,28 +162,36 @@ export function ScrollShowcase() {
     return () => observer.disconnect();
   }, []);
 
-
+  const handleSelectFacet = (index: number) => {
+    setActiveIndex(index);
+    const targetEl = sectionRefs.current[index];
+    if (targetEl) {
+      targetEl.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  };
 
   return (
     <section id="showcase" className="relative border-t border-[#27272A] bg-transparent">
       {/* Section Eyebrow Header */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-4">
-          <span>Interactive Live Showcase</span>
+          <span>6 FACETS OF CUBE</span>
         </div>
         <h2 className="text-3xl sm:text-4xl lg:text-[40px] font-medium tracking-tight text-white leading-[1.15]">
           Watch Cube operate in real time.
         </h2>
         <p className="mt-3 text-base text-[#A1A1AA] max-w-xl mx-auto">
-          Scroll through core capabilities. The terminal panel updates and replays dynamically
-          with every feature.
+          6 core architectural pillars, 6 faces of the cube. The 3D cube navigator rotates and locks onto each facet as you scroll.
         </p>
       </div>
 
       {/* Two-Column Scroll-Synced Layout */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative">
-          {/* Left Column: Stacked feature sections (each min-h-[70vh] to 100vh) */}
+          {/* Left Column: Stacked feature sections (min-h-[75vh] each) */}
           <div className="lg:col-span-5 space-y-12 lg:space-y-0">
             {FEATURES.map((feature, idx) => (
               <div
@@ -282,31 +202,57 @@ export function ScrollShowcase() {
                 data-index={idx}
                 className={cn(
                   "min-h-[50vh] lg:min-h-[75vh] flex flex-col justify-center py-12 transition-opacity duration-300",
-                  activeIndex === idx ? "opacity-100" : "opacity-40 hover:opacity-70"
+                  activeIndex === idx ? "opacity-100" : "opacity-35 hover:opacity-60"
                 )}
               >
                 <div className="space-y-4">
-                  <div className="text-xs font-mono text-[#A1A1AA] tracking-wider">
+                  <div className="text-xs font-mono text-white/70 tracking-wider">
                     {feature.badge}
                   </div>
                   <h3 className="text-2xl sm:text-3xl font-medium text-white tracking-tight leading-snug">
                     {feature.title}
                   </h3>
+                  <div className="text-sm font-mono text-[#A1A1AA]">
+                    {feature.tagline}
+                  </div>
                   <p className="text-sm sm:text-base text-[#A1A1AA] leading-relaxed">
                     {feature.description}
                   </p>
-                  <div className="pt-2 flex items-center gap-2 text-xs font-mono text-white/70">
-                    <span>Feature {idx + 1} of {FEATURES.length}</span>
+
+                  {/* Bullet points */}
+                  <ul className="space-y-2 pt-2">
+                    {feature.bullets.map((b, bIdx) => (
+                      <li key={bIdx} className="text-xs font-mono text-white/90 flex items-start gap-2">
+                        <span className="text-white select-none">›</span>
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="pt-2 flex items-center gap-2 text-xs font-mono text-[#A1A1AA]/60">
+                    <span>Facet {idx + 1} of 6</span>
                     <span className="text-[#27272A]">•</span>
-                    <span>Scroll to preview</span>
+                    <span>Cube Face: {feature.faceName}</span>
                   </div>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Right Column: Sticky macOS Terminal Panel */}
-          <div className="lg:col-span-7 lg:sticky lg:top-24 pb-16">
+          {/* Right Column: Sticky 3D Cube Navigator + macOS Terminal Panel */}
+          <div className="lg:col-span-7 lg:sticky lg:top-20 pb-16">
+            {/* Concept 1: 3D Isometric Wireframe Cube Navigator */}
+            <Cube3DNavigator
+              activeIndex={activeIndex}
+              onSelectIndex={handleSelectFacet}
+              features={FEATURES.map((f) => ({
+                id: f.id,
+                label: f.label,
+                faceName: f.faceName,
+              }))}
+            />
+
+            {/* macOS Terminal Window Container */}
             <div className="rounded-[10px] border border-[#27272A] bg-[#0D0D0F] shadow-[0_25px_60px_rgba(0,0,0,0.9)] overflow-hidden">
               {/* macOS Window Chrome */}
               <div className="px-4 py-3 bg-[#18181B] border-b border-[#27272A] flex items-center justify-between select-none">
