@@ -5,6 +5,8 @@ import { useEffect, useRef } from "react";
 interface CubeParticle {
   x: number;
   y: number;
+  targetX: number;
+  targetY: number;
   originX: number;
   originY: number;
   size: number;
@@ -16,11 +18,6 @@ interface CubeParticle {
   phase: number;
   floatSpeed: number;
   rotSpeed: number;
-  // Big Bang intro explosion parameters
-  startX: number;
-  startY: number;
-  burstDelay: number;
-  burstDuration: number;
 }
 
 // Lightweight 2D Perlin-like noise generator
@@ -95,7 +92,9 @@ export function CubeVoxelField() {
     document.addEventListener("mouseleave", onMouseLeave, { passive: true });
 
     let isInitialized = false;
-    let startTime = 0;
+    let isIntroActive = true;
+    let introProgress = 0;
+    let lastTime = 0;
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -121,16 +120,16 @@ export function CubeVoxelField() {
       let attempts = 0;
       while (particles.length < targetCount && attempts < targetCount * 5) {
         attempts++;
-        const x = Math.random() * width;
-        const y = Math.random() * height;
+        const targetX = Math.random() * width;
+        const targetY = Math.random() * height;
 
         // Radial distance from hero center
-        const dx = (x - cx) / (width * 0.48);
-        const dy = (y - cy) / (height * 0.42);
+        const dx = (targetX - cx) / (width * 0.48);
+        const dy = (targetY - cy) / (height * 0.42);
         const distFromCenter = Math.sqrt(dx * dx + dy * dy);
 
         // Noise clustering
-        const n = noise2D(x * 0.0022, y * 0.0022);
+        const n = noise2D(targetX * 0.0022, targetY * 0.0022);
         const centerSuppression = Math.min(1, Math.max(0, (distFromCenter - 0.28) * 1.8));
         const spawnProb = centerSuppression * (n > 0.4 ? 0.85 : 0.1);
 
@@ -139,38 +138,36 @@ export function CubeVoxelField() {
           const shade = 0.45 + Math.random() * 0.55; // [0.45, 1.0]
           const baseAlpha = 0.18 + Math.random() * 0.65;
 
-          // Big Bang initial singularity: all particles originate from tight center core
-          const burstAngle = Math.random() * Math.PI * 2;
-          const burstRadius = Math.random() * 12; // tightly concentrated in 12px core
-          const startX = isIntro ? cx + Math.cos(burstAngle) * burstRadius : x;
-          const startY = isIntro ? cy + Math.sin(burstAngle) * burstRadius : y;
+          // Vector from hero center to destination target
+          const angle = Math.atan2(targetY - cy, targetX - cx);
+          const dist = Math.hypot(targetX - cx, targetY - cy);
 
-          // Radial distance ratio for explosion wave stagger
-          const pDist = Math.hypot(x - cx, y - cy);
-          const maxD = Math.hypot(width * 0.5, height * 0.5);
-          const distRatio = Math.min(1, pDist / maxD);
-          const burstDelay = distRatio * 120 + Math.random() * 50; // 0..170ms wave
-          const burstDuration = 1100 + Math.random() * 300; // 1.1s - 1.4s
+          // Initial explosive burst velocity directed outward
+          const blastSpeed = isIntro
+            ? Math.min(30, (dist / (width * 0.45)) * 18 + 6 + Math.random() * 8)
+            : 0;
+
+          const startR = isIntro ? Math.random() * 12 : 0;
+          const posX = isIntro ? cx + Math.cos(angle) * startR : targetX;
+          const posY = isIntro ? cy + Math.sin(angle) * startR : targetY;
 
           particles.push({
-            x,
-            y,
-            originX: x,
-            originY: y,
+            x: posX,
+            y: posY,
+            targetX,
+            targetY,
+            originX: targetX,
+            originY: targetY,
             size,
             shade,
             baseAlpha,
             alpha: baseAlpha,
-            // Visibly smooth upward & drifting velocity
-            vx: (Math.random() - 0.5) * 0.35,
-            vy: -0.15 - Math.random() * 0.35, // Slow rising voxel flow
+            // Explosive vector outward during intro; standard drift otherwise
+            vx: isIntro ? Math.cos(angle) * blastSpeed : (Math.random() - 0.5) * 0.35,
+            vy: isIntro ? Math.sin(angle) * blastSpeed : -0.15 - Math.random() * 0.35,
             phase: Math.random() * Math.PI * 2,
             floatSpeed: 0.001 + Math.random() * 0.002,
             rotSpeed: 0.0015 + Math.random() * 0.003,
-            startX,
-            startY,
-            burstDelay,
-            burstDuration,
           });
         }
       }
@@ -232,75 +229,70 @@ export function CubeVoxelField() {
 
     const render = (now: number) => {
       if (isHidden) {
+        lastTime = now;
         animationFrameId = requestAnimationFrame(render);
         return;
       }
 
-      if (startTime === 0) startTime = now;
-      const elapsed = now - startTime;
-      const isIntroComplete = elapsed > 1650;
+      if (lastTime === 0) lastTime = now;
+      const rawDt = now - lastTime;
+      lastTime = now;
+      // Clamped delta-time prevents frame drops from causing large jumps
+      const dt = Math.max(8, Math.min(32, rawDt));
+      const timeFactor = dt / 16.67; // Normalized 60fps unit
 
       ctx.clearRect(0, 0, width, height);
 
       const cx = width / 2;
       const cy = height * 0.38;
 
-      // Soft monochromatic Big Bang flash at center core in the first 500ms
-      if (elapsed < 500) {
-        const flashT = elapsed / 500;
-        const flashAlpha = (1 - flashT) * (1 - flashT) * 0.45;
-        const flashRadius = 30 + flashT * Math.min(width, height) * 0.4;
-        const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, flashRadius);
-        gradient.addColorStop(0, `rgba(255, 255, 255, ${flashAlpha * 0.7})`);
-        gradient.addColorStop(0.3, `rgba(255, 255, 255, ${flashAlpha * 0.25})`);
-        gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, width, height);
-      }
+      // Mouse smooth interpolation
+      mouseX += (targetMouseX - mouseX) * 0.1 * timeFactor;
+      mouseY += (targetMouseY - mouseY) * 0.1 * timeFactor;
 
-      // Smooth mouse interpolation
-      mouseX += (targetMouseX - mouseX) * 0.1;
-      mouseY += (targetMouseY - mouseY) * 0.1;
+      if (isIntroActive) {
+        introProgress += 0.016 * timeFactor; // ~1.0s to complete
+        if (introProgress >= 1) {
+          isIntroActive = false;
+          // Smoothly hand off to standard gentle floating drift velocities
+          for (let j = 0; j < particles.length; j++) {
+            particles[j].vx = (Math.random() - 0.5) * 0.35;
+            particles[j].vy = -0.15 - Math.random() * 0.35;
+          }
+        }
+      }
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
-        // 1. Organic Sinusoidal Motion + Vertical Drift
-        p.phase += p.floatSpeed * 15;
-        p.x += p.vx + Math.sin(p.phase) * 0.35;
-        p.y += p.vy + Math.cos(p.phase * 0.8) * 0.2;
+        if (isIntroActive) {
+          // Continuous physics integration: blast velocity + friction + spring attraction
+          p.x += p.vx * timeFactor;
+          p.y += p.vy * timeFactor;
 
-        // Wrap around viewport edges seamlessly
-        if (p.y < -20) {
-          p.y = height + 20;
-          p.x = Math.random() * width;
-        }
-        if (p.x < -20) p.x = width + 20;
-        if (p.x > width + 20) p.x = -20;
+          const friction = Math.pow(0.88, timeFactor);
+          p.vx *= friction;
+          p.vy *= friction;
 
-        // Big Bang intro explosion interpolation
-        let renderX = p.x;
-        let renderY = p.y;
-        let explosionLight = 0;
-        let explosionScale = 1;
+          // Spring towards target
+          const dx = p.targetX - p.x;
+          const dy = p.targetY - p.y;
+          const spring = 1 - Math.pow(1 - 0.09, timeFactor);
+          p.x += dx * spring;
+          p.y += dy * spring;
+        } else {
+          // 1. Organic Sinusoidal Motion + Vertical Drift (Standard loop)
+          p.phase += p.floatSpeed * 15 * timeFactor;
+          p.x += (p.vx + Math.sin(p.phase) * 0.35) * timeFactor;
+          p.y += (p.vy + Math.cos(p.phase * 0.8) * 0.2) * timeFactor;
 
-        if (!isIntroComplete) {
-          if (elapsed < p.burstDelay) {
-            renderX = p.startX;
-            renderY = p.startY;
-            explosionLight = 1.0;
-            explosionScale = 0.4;
-          } else {
-            const t = Math.min(1, (elapsed - p.burstDelay) / p.burstDuration);
-            // High-velocity deceleration (Quartic ease-out)
-            const inv = 1 - t;
-            const ease = 1 - inv * inv * inv * inv;
-
-            renderX = p.startX + (p.x - p.startX) * ease;
-            renderY = p.startY + (p.y - p.startY) * ease;
-            explosionLight = (1 - ease) * 1.0;
-            explosionScale = 0.4 + 0.6 * ease;
+          // Wrap around viewport edges seamlessly
+          if (p.y < -20) {
+            p.y = height + 20;
+            p.x = Math.random() * width;
           }
+          if (p.x < -20) p.x = width + 20;
+          if (p.x > width + 20) p.x = -20;
         }
 
         // 2. Interactive mouse repulsion & lighting
@@ -309,8 +301,8 @@ export function CubeVoxelField() {
         let repelY = 0;
 
         if (mouseX > 0 && mouseY > 0) {
-          const mdx = renderX - mouseX;
-          const mdy = renderY - mouseY;
+          const mdx = p.x - mouseX;
+          const mdy = p.y - mouseY;
           const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
           const maxDist = 240; // Bán kính hút mở rộng (240px)
 
@@ -326,20 +318,21 @@ export function CubeVoxelField() {
         }
 
         // 3. Fading around hero headline text
-        const dx = (renderX - cx) / (width * 0.45);
-        const dy = (renderY - cy) / (height * 0.4);
+        const dx = (p.x - cx) / (width * 0.45);
+        const dy = (p.y - cy) / (height * 0.4);
         const centerDist = Math.sqrt(dx * dx + dy * dy);
         const centerMask = Math.min(1, Math.max(0.06, centerDist - 0.22));
 
         // 4. Subtle living shimmer/pulse
         const shimmer = 0.85 + 0.25 * Math.sin(now * 0.0018 + p.phase);
         const effectiveAlpha = Math.min(1, (p.baseAlpha * shimmer + mouseBoost) * centerMask);
+        const explosionLight = isIntroActive ? (1 - introProgress) * 0.8 : 0;
         const lightMod = 1.0 + mouseBoost * 0.6 + explosionLight;
 
         drawIsometricCube(
-          renderX + repelX,
-          renderY + repelY,
-          p.size * explosionScale,
+          p.x + repelX,
+          p.y + repelY,
+          p.size,
           effectiveAlpha,
           p.shade,
           lightMod
