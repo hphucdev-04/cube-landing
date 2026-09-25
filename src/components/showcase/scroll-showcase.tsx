@@ -109,27 +109,13 @@ const FEATURES: ShowcaseFeature[] = [
   },
 ];
 
+// Set to "/hero-demo.mp4" when you add your recorded footage to public/hero-demo.mp4
+const DEMO_VIDEO_PATH: string | null = null;
+
 export function ScrollShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [videoSrc, setVideoSrc] = useState<string | null>(null);
+  const [videoSrc] = useState<string | null>(DEMO_VIDEO_PATH);
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  // Auto-detect if user has recorded footage in public/
-  useEffect(() => {
-    const checkVideo = async () => {
-      try {
-        const res = await fetch("/api/video-status");
-        if (res.ok) {
-          const data = await res.json();
-          if (data.hasVideo && data.src) {
-            setVideoSrc(data.src);
-          }
-        }
-      } catch {}
-    };
-
-    checkVideo();
-  }, []);
 
   // Set up IntersectionObserver to sync scroll position with active feature demo
   useEffect(() => {
