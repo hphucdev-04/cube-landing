@@ -1,118 +1,147 @@
 "use client";
 
-import {
-  Monitor,
-  Zap,
-  Bot,
-  Compass,
-  ShieldCheck,
-  Palette,
-  ArrowUpRight,
-} from "lucide-react";
-
-const FEATURES = [
-  {
-    id: "agent",
-    icon: Bot,
-    title: "Autonomous Agent Engine",
-    badge: "Mastra Core",
-    description:
-      "Cube plans, reads files, runs build commands, analyzes test failures, and writes code iteratively with human-in-the-loop approvals for sensitive bash commands.",
-  },
-  {
-    id: "tui",
-    icon: Monitor,
-    title: "Differential-Rendering TUI",
-    badge: "pi-tui Engine",
-    description:
-      "Engineered with differential-rendering technology for zero flicker, instant input response, rich syntax highlighting, and clean split panes in any shell.",
-  },
-  {
-    id: "themes",
-    icon: Palette,
-    title: "WCAG-Audited Themes",
-    badge: "Accessible Color",
-    description:
-      "Carefully audited contrast ratios across multiple developer palettes: Obsidian, Tokyo Night, Catppuccin Mocha, and High-Contrast Monochrome.",
-  },
-  {
-    id: "auth",
-    icon: Zap,
-    title: "Multi-Mode Authentication",
-    badge: "Zero Token Markup",
-    description:
-      "Sign in with your existing Claude Pro, ChatGPT Plus, or Grok memberships via browser PKCE OAuth, bring developer API keys, or run 100% offline with Ollama.",
-  },
-  {
-    id: "context",
-    icon: Compass,
-    title: "Instant Codebase Context",
-    badge: "AGENTS.md Discovery",
-    description:
-      "Automatically discovers architecture guidelines and repository conventions from AGENTS.md across directory trees. No manual prompt copying required.",
-  },
-  {
-    id: "safety",
-    icon: ShieldCheck,
-    title: "Atomic Mutations & Memory",
-    badge: "LibSQL Persistence",
-    description:
-      "Disk writes execute atomically to prevent partial writes. Long-term session memory and conversation threads are backed by local SQLite on your machine.",
-  },
-];
+import { useState } from "react";
+import { ArrowUpRight, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { CubeHarness3D, HARNESS_FACES } from "./cube-harness-3d";
 
 export function FeaturesGrid() {
+  const [activeFaceIndex, setActiveFaceIndex] = useState(0);
+
   return (
-    <section id="agent" className="relative py-20 px-4 sm:px-6 lg:px-8 border-t border-[#27272A]">
+    <section id="agent" className="relative py-24 px-4 sm:px-6 lg:px-8 border-t border-[#27272A] overflow-hidden">
+      {/* Background ambient lighting */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-white/[0.02] blur-[120px] rounded-full pointer-events-none" />
+
       <div className="relative max-w-6xl mx-auto">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-4">
-            <span>CORE ARCHITECTURE</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+            <span>CORE ARCHITECTURE // 6-FACE AGENT HARNESS</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-white mb-4">
-            Engineered for developers who live in the shell.
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-white mb-5 font-sans">
+            The 6 Faces of the Cube Harness.
           </h2>
-          <p className="text-base text-[#A1A1AA] leading-relaxed">
-            Every layer of Cube is designed for minimal latency, ergonomic terminal navigation,
-            and complete control over your models and data.
+          <p className="text-base sm:text-lg text-[#A1A1AA] leading-relaxed">
+            Mỗi mặt của khối Cube đại diện cho một phân hệ trọng yếu trong kiến trúc Agent Harness:{" "}
+            <span className="text-white font-medium">Model, Loop, Tool, Context, Memory và Guardrail</span>.
+            Khối hình học vững chắc hợp nhất 6 mảnh ghép thành một tác tử lập trình tự trị đáng tin cậy.
           </p>
         </div>
 
-        {/* 6 Feature Cards: surface #18181B, border #27272A, card-padding 24px, radius 8px */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {FEATURES.map((item) => {
-            const Icon = item.icon;
+        {/* 3D Exploded Cube Interactive Visual Stage */}
+        <div className="mb-14">
+          <CubeHarness3D
+            activeFaceIndex={activeFaceIndex}
+            onSelectFace={(index) => setActiveFaceIndex(index)}
+          />
+        </div>
+
+        {/* 6 Harness Cards Grid: Model, Loop, Tool, Context, Memory, Guardrail */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+          {HARNESS_FACES.map((face, index) => {
+            const Icon = face.icon;
+            const isActive = activeFaceIndex === index;
+
             return (
               <div
-                key={item.id}
-                id={item.id}
-                className="group relative rounded-lg border border-[#27272A] bg-[#18181B] p-6 hover:border-white/20 transition-colors flex flex-col justify-between"
+                key={face.id}
+                id={face.id}
+                onClick={() => setActiveFaceIndex(index)}
+                className={cn(
+                  "group relative rounded-xl border p-6 flex flex-col justify-between transition-all duration-300 cursor-pointer",
+                  isActive
+                    ? "bg-[#18181B] border-white shadow-[0_0_30px_rgba(255,255,255,0.08)] ring-1 ring-white/30"
+                    : "bg-[#18181B]/80 border-[#27272A] hover:border-white/30 hover:bg-[#18181B]"
+                )}
               >
                 <div>
-                  {/* Top Bar: Icon + Badge */}
+                  {/* Top Bar: Icon + Face Tag & Badge */}
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-10 h-10 rounded-lg bg-[#050505] border border-[#27272A] flex items-center justify-center text-white">
+                    <div
+                      className={cn(
+                        "w-11 h-11 rounded-lg border flex items-center justify-center transition-colors",
+                        isActive
+                          ? "bg-white text-black border-white shadow-md"
+                          : "bg-[#050505] border-[#27272A] text-white group-hover:border-white/40"
+                      )}
+                    >
                       <Icon className="w-5 h-5" />
                     </div>
-                    <span className="text-[11px] font-mono px-2 py-0.5 rounded border border-[#27272A] bg-[#050505] text-[#A1A1AA]">
-                      {item.badge}
-                    </span>
+
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded border border-[#27272A] bg-[#050505] text-[#A1A1AA]">
+                        FACE {face.index} · {face.faceName}
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Title & Description */}
-                  <h3 className="text-base font-semibold text-white mb-2 font-sans tracking-tight">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-[#A1A1AA] leading-relaxed">
-                    {item.description}
+                  {/* Role & Title */}
+                  <div className="mb-3">
+                    <div className="text-[11px] font-mono text-[#A1A1AA] uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                      <span>{face.role}</span>
+                      {isActive && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0 animate-ping" />
+                      )}
+                    </div>
+                    <h3 className="text-lg font-semibold text-white font-sans tracking-tight">
+                      {face.title}
+                    </h3>
+                  </div>
+
+                  {/* Summary */}
+                  <p className="text-sm text-[#A1A1AA] leading-relaxed mb-5">
+                    {face.summary}
                   </p>
                 </div>
 
-                {/* Subtle bottom link */}
-                <div className="pt-4 mt-4 border-t border-[#27272A]/60 flex items-center justify-between text-xs text-[#A1A1AA]/60 font-mono group-hover:text-white transition-colors">
-                  <span>Explore subsystem</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                <div>
+                  {/* Tech Specs Chips */}
+                  <div className="flex flex-wrap gap-1.5 pt-4 mb-4 border-t border-[#27272A]/70">
+                    {face.specs.map((spec) => (
+                      <span
+                        key={spec}
+                        className={cn(
+                          "text-[10px] font-mono px-2 py-0.5 rounded border transition-colors",
+                          isActive
+                            ? "bg-[#050505] text-white border-white/20"
+                            : "bg-[#050505]/70 text-[#A1A1AA] border-[#27272A]"
+                        )}
+                      >
+                        {spec}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Bottom Inspection Link */}
+                  <div
+                    className={cn(
+                      "flex items-center justify-between text-xs font-mono pt-3 border-t border-[#27272A]/50 transition-colors",
+                      isActive
+                        ? "text-white font-semibold"
+                        : "text-[#A1A1AA]/70 group-hover:text-white"
+                    )}
+                  >
+                    <span className="flex items-center gap-1.5">
+                      {isActive ? (
+                        <>
+                          <Sparkles className="w-3.5 h-3.5 text-white" />
+                          <span>Mặt đang chọn trên 3D Cube</span>
+                        </>
+                      ) : (
+                        <span>Chọn mặt [{face.index}] trên 3D</span>
+                      )}
+                    </span>
+                    <ArrowUpRight
+                      className={cn(
+                        "w-4 h-4 transition-transform",
+                        isActive
+                          ? "translate-x-0.5 -translate-y-0.5 text-white"
+                          : "group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      )}
+                    />
+                  </div>
                 </div>
               </div>
             );
