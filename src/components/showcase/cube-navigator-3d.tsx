@@ -25,6 +25,14 @@ const FACE_ROTATIONS = [
 
 const FACE_NAMES = ["FRONT", "RIGHT", "TOP", "LEFT", "BOTTOM", "BACK"];
 const FACE_SHORT = ["GATEWAY", "SKILL", "HITL", "Q&A", "MCP", "SUBAGENT"];
+const FACE_CAPABILITIES = [
+  "Multi-gateway model routing & OAuth",
+  "Hierarchical AGENTS.md rule discovery",
+  "Human-in-the-loop bash confirmation",
+  "Interactive shell-native clarification",
+  "Model Context Protocol integrations",
+  "Parallel subagent task delegation",
+];
 
 export function Cube3DNavigator({
   activeIndex,
@@ -163,7 +171,7 @@ export function Cube3DNavigator({
             {FACE_SHORT[activeIndex]}
           </div>
           <p className="text-[11px] text-[#A1A1AA] font-mono">
-            Rotates dynamically as you scroll
+            {FACE_CAPABILITIES[activeIndex] || "Core architectural pillar"}
           </p>
         </div>
       </div>

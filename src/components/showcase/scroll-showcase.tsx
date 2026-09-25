@@ -116,6 +116,85 @@ const FEATURES: ShowcaseFeature[] = [
   },
 ];
 
+interface TerminalPreview {
+  command: string;
+  badge: string;
+  lines: { type: "info" | "success" | "warn" | "text" | "prompt"; text: string }[];
+}
+
+const FEATURE_TERMINAL_PREVIEWS: Record<string, TerminalPreview> = {
+  gateway: {
+    command: "/gateway oauth anthropic",
+    badge: "GATEWAY ROUTER",
+    lines: [
+      { type: "info", text: "Initiating browser PKCE OAuth 2.0 handshake..." },
+      { type: "success", text: "✔ Authenticated with Claude Pro (anthropic)" },
+      { type: "text", text: "  Active Model : claude-3-7-sonnet-20250219" },
+      { type: "text", text: "  Thinking     : Enabled (effort: high)" },
+      { type: "text", text: "  Billing      : Direct monthly subscription ($0 markup)" },
+      { type: "prompt", text: "Ready for instructions." },
+    ],
+  },
+  skill: {
+    command: "/status --context",
+    badge: "WORKSPACE DISCOVERY",
+    lines: [
+      { type: "info", text: "Scanning repository tree from D:\\projects\\payments..." },
+      { type: "success", text: "✔ Located Git root and 3 rule files:" },
+      { type: "text", text: "  • AGENTS.md (Monorepo boundary, pnpm, strict ESM)" },
+      { type: "text", text: "  • .agents/skills/database.md (Migration safety protocols)" },
+      { type: "text", text: "  • .cube/rules/formatting.md (Prettier and 100-col wrapping)" },
+      { type: "prompt", text: "Project conventions loaded into prompt context." },
+    ],
+  },
+  hitl: {
+    command: "cube refactor --safe",
+    badge: "SAFE EXECUTION",
+    lines: [
+      { type: "warn", text: "▲ HUMAN-IN-THE-LOOP APPROVAL REQUIRED" },
+      { type: "text", text: "  Action   : atomic_file_write -> src/auth/token-store.ts" },
+      { type: "text", text: "  Diff     : +38 lines, -12 lines (AES-256 encryption)" },
+      { type: "warn", text: "  Command  : pnpm --filter @cube/runtime test:auth" },
+      { type: "text", text: "  [Y] Approve & Execute   [D] View Unified Diff   [N] Abort" },
+      { type: "prompt", text: "Awaiting developer keystroke..." },
+    ],
+  },
+  qa: {
+    command: "cube plan \"migrate session store\"",
+    badge: "INTENT CLARIFICATION",
+    lines: [
+      { type: "info", text: "Architectural decision point detected:" },
+      { type: "text", text: "? Select target persistence engine for session threads:" },
+      { type: "success", text: "  ❯ 1. Embedded LibSQL (Local SQLite, zero network latency)" },
+      { type: "text", text: "    2. PostgreSQL with pgvector (Remote multi-machine sync)" },
+      { type: "text", text: "    3. In-memory ephemeral (Discards state on exit)" },
+      { type: "prompt", text: "Use ↑/↓ arrows to select, Enter to confirm" },
+    ],
+  },
+  mcp: {
+    command: "cube mcp status",
+    badge: "MODEL CONTEXT PROTOCOL",
+    lines: [
+      { type: "info", text: "Checking active Model Context Protocol connections..." },
+      { type: "success", text: "✔ 2 MCP servers connected via stdio:" },
+      { type: "text", text: "  • @modelcontextprotocol/server-postgres (12 schema tools)" },
+      { type: "text", text: "  • github-mcp-server (issues, PRs, review comments)" },
+      { type: "prompt", text: "All 18 external tools registered into agent schema." },
+    ],
+  },
+  subagent: {
+    command: "cube run --parallel",
+    badge: "PARALLEL WORKERS",
+    lines: [
+      { type: "info", text: "Spawning isolated background subagent workers..." },
+      { type: "success", text: "✔ Worker #1 [Explorer]: Analyzed 84 import dependencies" },
+      { type: "success", text: "✔ Worker #2 [Tester]: Executing 32 integration test suites" },
+      { type: "info", text: "• Worker #3 [Refactorer]: Applying AST codemod in branch" },
+      { type: "prompt", text: "Main thread unblocked. Turns streaming live." },
+    ],
+  },
+};
+
 export function ScrollShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [failedVideos, setFailedVideos] = useState<Record<string, boolean>>({});
@@ -167,13 +246,13 @@ export function ScrollShowcase() {
       {/* Section Eyebrow Header */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-4">
-          <span>6 FACETS OF CUBE</span>
+          <span>6 ARCHITECTURAL PILLARS</span>
         </div>
         <h2 className="text-3xl sm:text-4xl lg:text-[40px] font-medium tracking-tight text-white leading-[1.15]">
-          Watch Cube operate in real time.
+          Six dimensions of terminal intelligence.
         </h2>
         <p className="mt-3 text-base text-[#A1A1AA] max-w-xl mx-auto">
-          6 core architectural pillars, 6 faces of the cube. The 3D cube navigator rotates and locks onto each facet as you scroll.
+          Engineered for speed, privacy, and full developer agency. Explore how Cube orchestrates models, workspace context, and safe execution directly inside your shell.
         </p>
       </div>
 
@@ -256,7 +335,7 @@ export function ScrollShowcase() {
                 <div className="flex items-center gap-2 text-xs font-mono text-[#A1A1AA] truncate px-2">
                   <Terminal className="w-3.5 h-3.5 text-white shrink-0" />
                   <span className="text-white font-medium truncate">
-                    D:\your-project | openai/gpt-6-astra (high)
+                    ~/workspace/cube | claude-3-7-sonnet (thinking: high)
                   </span>
                 </div>
 
@@ -280,18 +359,53 @@ export function ScrollShowcase() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="p-6 font-mono text-[13px] text-white flex flex-col gap-3">
-                    <div className="text-xs font-mono text-[#A1A1AA]/60 flex items-center gap-2">
-                      <span className="px-1.5 py-0.5 rounded border border-[#27272A] bg-[#18181B] text-white/80">
-                        {activeFeature.faceName} FACE
-                      </span>
-                      <span>·</span>
-                      <span className="text-white/60">{activeFeature.label} demo recording target</span>
+                  <div className="p-6 font-mono text-[13px] text-white flex flex-col justify-between h-full min-h-[380px] sm:min-h-[460px]">
+                    <div className="space-y-3">
+                      {/* Terminal header line with prompt */}
+                      <div className="flex items-center gap-2 pb-2 border-b border-[#27272A]/60">
+                        <span className="text-[#A1A1AA] select-none text-xs">~/workspace/cube</span>
+                        <span className="text-[#27272A]">•</span>
+                        <span className="text-xs text-white/80 font-semibold">
+                          {FEATURE_TERMINAL_PREVIEWS[activeFeature.id]?.badge || activeFeature.faceName}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2 text-sm text-white pt-1">
+                        <span className="text-white select-none font-bold">❯</span>
+                        <span className="text-white font-medium">
+                          {FEATURE_TERMINAL_PREVIEWS[activeFeature.id]?.command || `cube ${activeFeature.id}`}
+                        </span>
+                      </div>
+
+                      {/* Output lines */}
+                      <div className="space-y-1.5 pt-2 text-xs sm:text-[13px]">
+                        {FEATURE_TERMINAL_PREVIEWS[activeFeature.id]?.lines.map((line, lIdx) => (
+                          <div
+                            key={lIdx}
+                            className={cn(
+                              "font-mono leading-relaxed",
+                              line.type === "info" && "text-[#A1A1AA]",
+                              line.type === "success" && "text-white font-medium",
+                              line.type === "warn" && "text-white font-semibold",
+                              line.type === "text" && "text-[#A1A1AA]/80",
+                              line.type === "prompt" && "text-white/60 pt-2"
+                            )}
+                          >
+                            {line.text}
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2 text-sm pt-2">
-                      <span className="text-white select-none font-bold">❯</span>
-                      <span className="text-[#A1A1AA]/50 text-xs">cube {activeFeature.id}</span>
-                      <span className="w-2 h-4 bg-white animate-pulse" />
+
+                    {/* Bottom Status & Blinking Cursor */}
+                    <div className="pt-4 border-t border-[#27272A]/40 flex items-center justify-between text-xs text-[#A1A1AA]">
+                      <div className="flex items-center gap-2">
+                        <span className="text-white select-none font-bold">❯</span>
+                        <span className="w-2 h-4 bg-white animate-pulse" />
+                      </div>
+                      <span className="text-[11px] font-mono text-[#A1A1AA]/50">
+                        {activeFeature.faceName} FACE · {activeFeature.label.toUpperCase()}
+                      </span>
                     </div>
                   </div>
                 )}
