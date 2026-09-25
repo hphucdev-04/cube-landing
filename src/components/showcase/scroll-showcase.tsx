@@ -14,6 +14,7 @@ interface ShowcaseFeature {
   tagline: string;
   description: string;
   bullets: string[];
+  videoSrc: string;
 }
 
 const FEATURES: ShowcaseFeature[] = [
@@ -21,6 +22,7 @@ const FEATURES: ShowcaseFeature[] = [
     id: "gateway",
     label: "Gateway",
     faceName: "FRONT",
+    videoSrc: "/demos/gateway.mp4",
     badge: "01 · FRONT FACE: GATEWAY",
     title: "Multi-Gateway Model Matrix",
     tagline: "Your subscriptions. Your keys. Zero lock-in.",
@@ -36,6 +38,7 @@ const FEATURES: ShowcaseFeature[] = [
     id: "skill",
     label: "Skill",
     faceName: "RIGHT",
+    videoSrc: "/demos/skill.mp4",
     badge: "02 · RIGHT FACE: SKILL",
     title: "Workspace Skill & Rule Discovery",
     tagline: "Architectural context right where you code.",
@@ -51,6 +54,7 @@ const FEATURES: ShowcaseFeature[] = [
     id: "hitl",
     label: "HITL",
     faceName: "TOP",
+    videoSrc: "/demos/hitl.mp4",
     badge: "03 · TOP FACE: HITL",
     title: "Human-in-the-Loop Safeguards",
     tagline: "Absolute developer authority.",
@@ -66,6 +70,7 @@ const FEATURES: ShowcaseFeature[] = [
     id: "qa",
     label: "Q&A",
     faceName: "LEFT",
+    videoSrc: "/demos/qa.mp4",
     badge: "04 · LEFT FACE: Q&A",
     title: "Interactive Intent Clarification",
     tagline: "Resolve ambiguity before writing code.",
@@ -81,6 +86,7 @@ const FEATURES: ShowcaseFeature[] = [
     id: "mcp",
     label: "MCP",
     faceName: "BOTTOM",
+    videoSrc: "/demos/mcp.mp4",
     badge: "05 · BOTTOM FACE: MCP",
     title: "Model Context Protocol Foundation",
     tagline: "Universal tool & data interoperability.",
@@ -96,6 +102,7 @@ const FEATURES: ShowcaseFeature[] = [
     id: "subagent",
     label: "Subagent",
     faceName: "BACK",
+    videoSrc: "/demos/subagent.mp4",
     badge: "06 · BACK FACE: SUBAGENT",
     title: "Parallel Subagent Task Delegation",
     tagline: "Orchestrate autonomous worker teams.",
@@ -109,13 +116,14 @@ const FEATURES: ShowcaseFeature[] = [
   },
 ];
 
-// Set to "/hero-demo.mp4" when you add your recorded footage to public/hero-demo.mp4
-const DEMO_VIDEO_PATH: string | null = null;
-
 export function ScrollShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [videoSrc] = useState<string | null>(DEMO_VIDEO_PATH);
+  const [failedVideos, setFailedVideos] = useState<Record<string, boolean>>({});
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const activeFeature = FEATURES[activeIndex] || FEATURES[0];
+  const currentVideo = activeFeature.videoSrc;
+  const isVideoAvailable = currentVideo && !failedVideos[currentVideo];
 
   // Set up IntersectionObserver to sync scroll position with active feature demo
   useEffect(() => {
@@ -256,21 +264,35 @@ export function ScrollShowcase() {
                 <div className="w-12 shrink-0 hidden sm:block" />
               </div>
 
-              {/* Terminal Screen Content (Empty for recording / Live video demo) */}
+              {/* Terminal Screen Content (Plays video of active facet, or shows prompt with facet info) */}
               <div className="relative min-h-[380px] sm:min-h-[460px] bg-[#090A0E] flex flex-col justify-start overflow-hidden">
-                {videoSrc ? (
+                {isVideoAvailable ? (
                   <video
-                    src={videoSrc}
+                    key={currentVideo}
+                    src={currentVideo}
                     autoPlay
                     loop
                     muted
                     playsInline
+                    onError={() => {
+                      setFailedVideos((prev) => ({ ...prev, [currentVideo]: true }));
+                    }}
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="p-6 font-mono text-[13px] text-white flex items-center gap-2">
-                    <span className="text-white select-none font-bold">❯</span>
-                    <span className="w-2 h-4 bg-white animate-pulse" />
+                  <div className="p-6 font-mono text-[13px] text-white flex flex-col gap-3">
+                    <div className="text-xs font-mono text-[#A1A1AA]/60 flex items-center gap-2">
+                      <span className="px-1.5 py-0.5 rounded border border-[#27272A] bg-[#18181B] text-white/80">
+                        {activeFeature.faceName} FACE
+                      </span>
+                      <span>·</span>
+                      <span className="text-white/60">{activeFeature.label} demo recording target</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm pt-2">
+                      <span className="text-white select-none font-bold">❯</span>
+                      <span className="text-[#A1A1AA]/50 text-xs">cube {activeFeature.id}</span>
+                      <span className="w-2 h-4 bg-white animate-pulse" />
+                    </div>
                   </div>
                 )}
               </div>
