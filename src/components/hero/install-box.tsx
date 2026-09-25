@@ -5,7 +5,7 @@ import { Check, Copy, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface InstallOption {
-  id: "powershell" | "wsl" | "macos" | "npm";
+  id: "windown" | "linux" | "macos" | "npm";
   label: string;
   prompt: string;
   command: string;
@@ -14,16 +14,16 @@ interface InstallOption {
 
 const INSTALL_OPTIONS: InstallOption[] = [
   {
-    id: "powershell",
-    label: "PowerShell",
-    prompt: "PS>",
+    id: "windown",
+    label: "Windown",
+    prompt: ">",
     command:
       "irm https://pub-3313f2900e0948b5849dc47c989406ab.r2.dev/install.ps1 | iex",
     platform: "Windows x64 Native",
   },
   {
-    id: "wsl",
-    label: "WSL / Linux",
+    id: "linux",
+    label: "Linux",
     prompt: "$",
     command:
       "curl -fsSL https://pub-3313f2900e0948b5849dc47c989406ab.r2.dev/install.sh | bash",
@@ -31,7 +31,7 @@ const INSTALL_OPTIONS: InstallOption[] = [
   },
   {
     id: "macos",
-    label: "macOS",
+    label: "MacOS",
     prompt: "$",
     command:
       "curl -fsSL https://pub-3313f2900e0948b5849dc47c989406ab.r2.dev/install.sh | bash",
@@ -47,7 +47,7 @@ const INSTALL_OPTIONS: InstallOption[] = [
 ];
 
 export function InstallBox() {
-  const [activeTab, setActiveTab] = useState<InstallOption["id"]>("powershell");
+  const [activeTab, setActiveTab] = useState<InstallOption["id"]>("windown");
   const [copied, setCopied] = useState(false);
 
   const activeOption = INSTALL_OPTIONS.find((opt) => opt.id === activeTab)!;
@@ -64,7 +64,7 @@ export function InstallBox() {
 
   return (
     <div id="install" className="w-full max-w-xl mx-auto">
-      {/* Platform Tabs (PowerShell, WSL/Linux, macOS, npm) */}
+      {/* Platform Tabs (Windown, Linux, MacOS, npm) */}
       <div className="flex items-center justify-center gap-1.5 mb-2.5">
         {INSTALL_OPTIONS.map((opt) => {
           const isSelected = activeTab === opt.id;

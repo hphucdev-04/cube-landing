@@ -269,7 +269,7 @@ export function ScrollShowcase() {
                 <div className="flex items-center gap-2 text-xs font-mono text-[#A1A1AA] truncate px-2">
                   <Terminal className="w-3.5 h-3.5 text-white shrink-0" />
                   <span className="text-white font-medium truncate">
-                    ~/workspace/cube | claude-3-7-sonnet (thinking: high)
+                    ~/your-project | gpt-6-astra (high)
                   </span>
                 </div>
 
