@@ -118,17 +118,12 @@ export function ScrollShowcase() {
   useEffect(() => {
     const checkVideo = async () => {
       try {
-        const res = await fetch("/hero-demo.mp4", { method: "HEAD" });
+        const res = await fetch("/api/video-status");
         if (res.ok) {
-          setVideoSrc("/hero-demo.mp4");
-          return;
-        }
-      } catch {}
-
-      try {
-        const res2 = await fetch("/demo.mp4", { method: "HEAD" });
-        if (res2.ok) {
-          setVideoSrc("/demo.mp4");
+          const data = await res.json();
+          if (data.hasVideo && data.src) {
+            setVideoSrc(data.src);
+          }
         }
       } catch {}
     };

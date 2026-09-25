@@ -53,9 +53,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased dark scroll-smooth`}
     >
-      <body className="min-h-full flex flex-col bg-[#050505] text-[#FFFFFF] font-sans selection:bg-white/20 selection:text-white">
+      <body
+        suppressHydrationWarning
+        className="min-h-full flex flex-col bg-[#050505] text-[#FFFFFF] font-sans selection:bg-white/20 selection:text-white"
+      >
         {children}
       </body>
     </html>
