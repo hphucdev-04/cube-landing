@@ -67,7 +67,7 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
   };
 
   return (
-    <div id="install" className="w-full max-w-xl sm:max-w-2xl mx-auto">
+    <div id="install" className="w-full max-w-md sm:max-w-[550px] mx-auto">
       {/* Platform Tabs (Windows, Linux, MacOS, npm) with Smooth Sliding Indicator */}
       <div className="flex items-center justify-center gap-1.5 mb-2.5">
         {INSTALL_OPTIONS.map((opt) => {
@@ -101,10 +101,10 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
 
       <div className="relative group">
         {/* Outer terminal box (surface-2 #0D0D0F, border #27272A, terminal-mono) */}
-        <div className="relative rounded-lg bg-[#0D0D0F] border border-[#27272A] group-hover:border-white/30 p-2.5 sm:p-3 shadow-xl transition-colors">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div className="relative rounded-lg bg-[#0D0D0F] border border-[#27272A] group-hover:border-white/30 p-2 sm:p-2.5 shadow-xl transition-colors">
+          <div className="flex items-center justify-between gap-2 sm:gap-3">
             {/* Terminal prompt and command text with smooth crossfade animation */}
-            <div className="flex-1 min-w-0 flex items-center gap-2.5 overflow-x-auto px-2 py-1 scrollbar-none font-mono text-xs sm:text-[13px]">
+            <div className="flex-1 min-w-0 flex items-center gap-2 overflow-x-auto px-1.5 py-0.5 scrollbar-none font-mono text-xs sm:text-[13px]">
               <span className="text-[#A1A1AA] font-semibold select-none shrink-0">
                 {activeOption.prompt}
               </span>
@@ -168,7 +168,6 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
           </motion.span>
         </AnimatePresence>
         <span className="text-[#27272A] select-none shrink-0">•</span>
-        <span className="shrink-0 text-white font-medium">~2s Standalone Install</span>
       </div>
 
       {/* Live Download / Install Counter Badge */}
