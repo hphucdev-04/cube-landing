@@ -33,7 +33,7 @@ export function Hero() {
         {/* Two-Button CTA Row */}
         <div className="flex flex-wrap items-center justify-center gap-3.5 mb-10">
           <a
-            href="https://github.com/hphucdev-04/cube"
+            href="https://github.com/hphucdev-04"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#18181B] border border-[#27272A] hover:border-white/30 text-white font-medium text-sm transition-colors"

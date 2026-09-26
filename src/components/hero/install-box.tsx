@@ -4,6 +4,7 @@ import { useState, useId } from "react";
 import { Check, Copy, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { DownloadCounterBadge } from "./download-counter";
 
 interface InstallOption {
   id: "windows" | "linux" | "macos" | "npm";
@@ -19,7 +20,7 @@ const INSTALL_OPTIONS: InstallOption[] = [
     label: "Windows",
     prompt: ">",
     command:
-      "irm https://pub-3313f2900e0948b5849dc47c989406ab.r2.dev/install.ps1 | iex",
+      "irm https://cube-agent.pages.dev/install.ps1 | iex",
     platform: "Windows x64",
   },
   {
@@ -27,7 +28,7 @@ const INSTALL_OPTIONS: InstallOption[] = [
     label: "Linux",
     prompt: "$",
     command:
-      "curl -fsSL https://pub-3313f2900e0948b5849dc47c989406ab.r2.dev/install.sh | bash",
+      "curl -fsSL https://cube-agent.pages.dev/install.sh | bash",
     platform: "Linux & WSL2",
   },
   {
@@ -35,7 +36,7 @@ const INSTALL_OPTIONS: InstallOption[] = [
     label: "MacOS",
     prompt: "$",
     command:
-      "curl -fsSL https://pub-3313f2900e0948b5849dc47c989406ab.r2.dev/install.sh | bash",
+      "curl -fsSL https://cube-agent.pages.dev/install.sh | bash",
     platform: "macOS Universal",
   },
   {
@@ -169,6 +170,9 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
         <span className="text-[#27272A] select-none shrink-0">•</span>
         <span className="shrink-0 text-white font-medium">~2s Standalone Install</span>
       </div>
+
+      {/* Live Download / Install Counter Badge */}
+      <DownloadCounterBadge />
     </div>
   );
 }

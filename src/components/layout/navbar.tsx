@@ -171,7 +171,7 @@ export function Navbar() {
           {/* Desktop Actions */}
           <div className="hidden sm:flex items-center pr-1">
             <a
-              href="https://github.com/hphucdev-04/cube"
+              href="https://github.com/hphucdev-04"
               target="_blank"
               rel="noopener noreferrer"
               className="p-1.5 rounded-full text-[#A1A1AA] hover:text-white hover:bg-white/10 transition-colors flex items-center justify-center"
@@ -229,7 +229,7 @@ export function Navbar() {
 
             <div className="pt-2 mt-1 border-t border-[#27272A] flex items-center justify-between px-2">
               <a
-                href="https://github.com/hphucdev-04/cube"
+                href="https://github.com/hphucdev-04"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs text-[#A1A1AA] hover:text-white flex items-center gap-1.5 py-1"
