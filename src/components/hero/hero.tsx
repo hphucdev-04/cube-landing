@@ -6,7 +6,7 @@ import { GithubIcon } from "@/components/ui/icons";
 
 export function Hero() {
   return (
-    <section className="relative pt-24 pb-16 sm:pt-28 sm:pb-20 px-4 sm:px-6 lg:px-8">
+    <section id="hero" className="relative pt-24 pb-16 sm:pt-28 sm:pb-20 px-4 sm:px-6 lg:px-8">
       <div className="relative max-w-4xl mx-auto text-center flex flex-col items-center">
         {/* Release / Status Pill Badge */}
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#18181B] border border-[#27272A] mb-8 shadow-sm">
@@ -22,7 +22,7 @@ export function Hero() {
 
         {/* Headline: display-lg (Inter 500, 64px, lineHeight 1.04) */}
         <h1 className="text-4xl sm:text-6xl lg:text-[64px] font-medium tracking-tight text-white leading-[1.04] max-w-3xl mb-6">
-          A coding agent that lives where you already work.
+          A coding agent that lives where you already work
         </h1>
 
         {/* Subhead: body-md (Inter 400, 16px, lineHeight 1.6) */}
@@ -32,14 +32,6 @@ export function Hero() {
 
         {/* Two-Button CTA Row */}
         <div className="flex flex-wrap items-center justify-center gap-3.5 mb-10">
-          <a
-            href="#install"
-            className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-white text-black hover:bg-neutral-200 font-medium text-sm transition-colors shadow-lg cursor-pointer"
-          >
-            <span>Get Started</span>
-            <ArrowRight className="w-4 h-4" />
-          </a>
-
           <a
             href="https://github.com/hphucdev-04/cube"
             target="_blank"
@@ -60,7 +52,7 @@ export function Hero() {
         </div>
 
         {/* Instant Install Command Box */}
-        <InstallBox />
+        <InstallBox idPrefix="hero" />
       </div>
     </section>
   );

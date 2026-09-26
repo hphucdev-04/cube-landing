@@ -9,6 +9,10 @@
   --text-secondary: #A1A1AA;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: #050505;
   color: #FFFFFF;

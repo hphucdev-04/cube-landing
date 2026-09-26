@@ -13,3 +13,60 @@ export function GithubIcon({ className = "w-4 h-4" }: { className?: string }) {
     </svg>
   );
 }
+
+export function CubeLogoIcon({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="cube-logo-top" x1="6" y1="4" x2="26" y2="15.5" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FFFFFF" />
+          <stop offset="100%" stopColor="#E4E4E7" />
+        </linearGradient>
+        <linearGradient id="cube-logo-left" x1="6" y1="9.75" x2="16" y2="27" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#D4D4D8" />
+          <stop offset="100%" stopColor="#8E8E93" />
+        </linearGradient>
+        <linearGradient id="cube-logo-right" x1="26" y1="9.75" x2="16" y2="27" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#4B4B52" />
+          <stop offset="100%" stopColor="#242428" />
+        </linearGradient>
+      </defs>
+
+      {/* Top Face (White) */}
+      <path
+        d="M16 3.5 L26.5 9.5 L16 15.5 L5.5 9.5 Z"
+        fill="url(#cube-logo-top)"
+        stroke="#121214"
+        strokeWidth="0.8"
+        strokeLinejoin="round"
+      />
+
+      {/* Left Face (Silver) */}
+      <path
+        d="M5.5 9.5 L16 15.5 L16 27.5 L5.5 21.5 Z"
+        fill="url(#cube-logo-left)"
+        stroke="#121214"
+        strokeWidth="0.8"
+        strokeLinejoin="round"
+      />
+
+      {/* Right Face (Charcoal) */}
+      <path
+        d="M26.5 9.5 L26.5 21.5 L16 27.5 L16 15.5 Z"
+        fill="url(#cube-logo-right)"
+        stroke="#121214"
+        strokeWidth="0.8"
+        strokeLinejoin="round"
+      />
+
+      {/* Center Inset Crease */}
+      <line x1="16" y1="15.5" x2="16" y2="27.5" stroke="#121214" strokeWidth="0.8" />
+    </svg>
+  );
+}

@@ -138,18 +138,25 @@ export function ScrollShowcase() {
     }
   };
 
+  const isProgrammaticScroll = useRef(false);
+  const scrollLockTimeout = useRef<NodeJS.Timeout | null>(null);
+
   // Set up IntersectionObserver to sync scroll position with active feature demo
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
+        // Prevent intermediate section triggers during programmatic smooth scrolling
+        if (isProgrammaticScroll.current) return;
+
+        for (const entry of entries) {
           if (entry.isIntersecting) {
             const index = Number(entry.target.getAttribute("data-index"));
             if (!isNaN(index)) {
               setActiveIndex(index);
+              break;
             }
           }
-        });
+        }
       },
       {
         root: null,
@@ -161,11 +168,21 @@ export function ScrollShowcase() {
       if (el) observer.observe(el);
     });
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (scrollLockTimeout.current) clearTimeout(scrollLockTimeout.current);
+    };
   }, []);
 
   const handleSelectFacet = (index: number) => {
+    isProgrammaticScroll.current = true;
     setActiveIndex(index);
+
+    if (scrollLockTimeout.current) clearTimeout(scrollLockTimeout.current);
+    scrollLockTimeout.current = setTimeout(() => {
+      isProgrammaticScroll.current = false;
+    }, 850);
+
     const targetEl = sectionRefs.current[index];
     if (targetEl) {
       targetEl.scrollIntoView({
@@ -176,14 +193,16 @@ export function ScrollShowcase() {
   };
 
   return (
-    <section id="showcase" className="relative border-t border-[#27272A] bg-transparent">
+    <section id="demo" className="relative border-t border-[#27272A] bg-transparent">
+      <span id="showcase" className="sr-only" />
       {/* Section Eyebrow Header */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-4">
-          <span>6 ARCHITECTURAL PILLARS</span>
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-4 shadow-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+          <span>CORE TERMINAL CAPABILITIES</span>
         </div>
         <h2 className="text-3xl sm:text-4xl lg:text-[40px] font-medium tracking-tight text-white leading-[1.15]">
-          Six dimensions of terminal intelligence.
+          Terminal intelligence engineered for developer flow
         </h2>
         <p className="mt-3 text-base text-[#A1A1AA] max-w-xl mx-auto">
           Engineered for speed, privacy, and full developer agency. Explore how Cube orchestrates models, workspace context, and safe execution directly inside your shell.

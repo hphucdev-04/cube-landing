@@ -108,12 +108,12 @@ export function CommandPalette() {
       <div className="relative max-w-6xl mx-auto">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-4">
-            <Hash className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-4 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
             <span>COMMAND INTERFACE</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-white mb-4">
-            Command-Line Precision. Built for Flow.
+          <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-white mb-4 font-sans">
+            Command-line precision built for flow
           </h2>
           <p className="text-base text-[#A1A1AA] leading-relaxed">
             Keep your fingers on home row. Instant slash commands give you total control over models,

@@ -3,7 +3,6 @@ import { Navbar } from "@/components/layout/navbar";
 import { Hero } from "@/components/hero/hero";
 import { ScrollShowcase } from "@/components/showcase/scroll-showcase";
 import { FeaturesGrid } from "@/components/features/features-grid";
-import { GatewaySection } from "@/components/gateways/gateway-section";
 import { CommandPalette } from "@/components/commands/command-palette";
 import { FaqAccordion } from "@/components/faq/faq-accordion";
 import { Footer } from "@/components/layout/footer";
@@ -21,14 +20,11 @@ export default function Home() {
         {/* Section 1: Full-width Hero with Install one-liner */}
         <Hero />
 
-        {/* Section 2: Two-column, scroll-synced terminal showcase */}
-        <ScrollShowcase />
-
-        {/* Core Architecture Capabilities (Agent, TUI, Themes, Safety) */}
+        {/* Section 2: Core Architecture Capabilities (6 Core Components Agent Harness) */}
         <FeaturesGrid />
 
-        {/* Model Routing Matrix (OAuth, API Keys, Local Ollama) */}
-        <GatewaySection />
+        {/* Section 3: Two-column, scroll-synced terminal showcase */}
+        <ScrollShowcase />
 
         {/* Interactive Slash Command Palette */}
         <CommandPalette />

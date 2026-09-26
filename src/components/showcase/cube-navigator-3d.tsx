@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 interface Cube3DNavigatorProps {
@@ -13,7 +13,7 @@ interface Cube3DNavigatorProps {
   }[];
 }
 
-// 6 Faces of Cube mapped to 3D rotation angles
+// Target 3D rotation angles for each face
 const FACE_ROTATIONS = [
   { x: -18, y: 25 },   // 0: Front  (Gateway)
   { x: -18, y: -65 },  // 1: Right  (Skill)
@@ -22,6 +22,11 @@ const FACE_ROTATIONS = [
   { x: 75, y: 25 },    // 4: Bottom (MCP)
   { x: -18, y: 205 },  // 5: Back   (Subagent)
 ];
+
+function getShortestAngle(current: number, target: number): number {
+  const diff = ((target - current + 180) % 360 + 360) % 360 - 180;
+  return current + diff;
+}
 
 const FACE_NAMES = ["FRONT", "RIGHT", "TOP", "LEFT", "BOTTOM", "BACK"];
 const FACE_SHORT = ["GATEWAY", "SKILL", "HITL", "Q&A", "MCP", "SUBAGENT"];
@@ -39,8 +44,16 @@ export function Cube3DNavigator({
   onSelectIndex,
   features,
 }: Cube3DNavigatorProps) {
-  const currentRotation = useMemo(() => {
-    return FACE_ROTATIONS[activeIndex] || FACE_ROTATIONS[0];
+  const [rotation, setRotation] = useState(() => FACE_ROTATIONS[activeIndex] || FACE_ROTATIONS[0]);
+
+  useEffect(() => {
+    const target = FACE_ROTATIONS[activeIndex];
+    if (target) {
+      setRotation((prev) => ({
+        x: getShortestAngle(prev.x, target.x),
+        y: getShortestAngle(prev.y, target.y),
+      }));
+    }
   }, [activeIndex]);
 
   const cubeSize = 72; // px
@@ -49,7 +62,7 @@ export function Cube3DNavigator({
   return (
     <div className="flex items-center justify-between gap-4 p-3.5 rounded-[10px] bg-[#18181B] border border-[#27272A] mb-4 shadow-lg select-none">
       {/* 3D Isometric Rotating Cube */}
-      <div className="flex items-center gap-3.5">
+      <div className="flex items-center gap-5">
         <div
           className="relative w-20 h-20 flex items-center justify-center shrink-0"
           style={{ perspective: "600px" }}
@@ -58,8 +71,9 @@ export function Cube3DNavigator({
             className="relative w-[72px] h-[72px]"
             style={{
               transformStyle: "preserve-3d",
-              transform: `rotateX(${currentRotation.x}deg) rotateY(${currentRotation.y}deg)`,
-              transition: "transform 0.75s cubic-bezier(0.2, 0.9, 0.3, 1.2)",
+              transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
+              transition: "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+              willChange: "transform",
             }}
           >
             {/* Front: Gateway */}
@@ -171,7 +185,7 @@ export function Cube3DNavigator({
             {FACE_SHORT[activeIndex]}
           </div>
           <p className="text-[11px] text-[#A1A1AA] font-mono">
-            {FACE_CAPABILITIES[activeIndex] || "Core architectural pillar"}
+            {FACE_CAPABILITIES[activeIndex] || "Core runtime capability"}
           </p>
         </div>
       </div>

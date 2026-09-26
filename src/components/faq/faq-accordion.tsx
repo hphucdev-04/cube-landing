@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { HelpCircle, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface FaqItem {
   question: string;
@@ -43,31 +44,31 @@ const FAQS: FaqItem[] = [
 ];
 
 export function FaqAccordion() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
   return (
-    <section id="faq" className="relative py-20 px-4 sm:px-6 lg:px-8 border-t border-[#27272A]">
-      <div className="relative max-w-3xl mx-auto">
+    <section id="faq" className="relative min-h-[88vh] flex flex-col justify-center py-16 sm:py-20 px-4 sm:px-6 lg:px-8 border-t border-[#27272A]">
+      <div className="relative max-w-3xl mx-auto w-full">
         {/* Section Header */}
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-4">
-            <HelpCircle className="w-3.5 h-3.5" />
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-2.5 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
             <span>KNOWLEDGE BASE</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-white mb-4">
+          <h2 className="text-2xl sm:text-3xl font-medium tracking-tight text-white mb-1.5 font-sans">
             Frequently Asked Questions
           </h2>
-          <p className="text-base text-[#A1A1AA]">
+          <p className="text-xs sm:text-sm text-[#A1A1AA]">
             Architecture, data privacy, subscriptions, and getting started.
           </p>
         </div>
 
         {/* Accordion List (radius 8px / card token) */}
-        <div className="space-y-2.5">
+        <div className="space-y-2">
           {FAQS.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
@@ -82,28 +83,52 @@ export function FaqAccordion() {
               >
                 <button
                   onClick={() => toggle(index)}
-                  className="w-full px-5 py-4 flex items-center justify-between text-left gap-4 cursor-pointer"
+                  className="w-full px-4 sm:px-5 py-3 sm:py-3.5 flex items-center justify-between text-left gap-4 cursor-pointer"
                 >
-                  <span className="text-sm sm:text-base font-medium text-white">
+                  <span className="text-xs sm:text-sm font-medium text-white">
                     {faq.question}
                   </span>
                   <div
                     className={cn(
-                      "w-6 h-6 rounded-md flex items-center justify-center border transition-transform shrink-0",
+                      "w-5 h-5 rounded-md flex items-center justify-center border transition-transform shrink-0",
                       isOpen
                         ? "border-white/20 bg-[#050505] text-white rotate-180"
                         : "border-[#27272A] bg-[#050505] text-[#A1A1AA]"
                     )}
                   >
-                    <ChevronDown className="w-3.5 h-3.5" />
+                    <ChevronDown className="w-3 h-3" />
                   </div>
                 </button>
 
-                {isOpen && (
-                  <div className="px-5 pb-5 text-sm text-[#A1A1AA] leading-relaxed border-t border-[#27272A]/60 pt-3">
-                    {faq.answer}
-                  </div>
-                )}
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      key="content"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{
+                        height: "auto",
+                        opacity: 1,
+                        transition: {
+                          height: { duration: 0.24, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: 0.18, delay: 0.04 },
+                        },
+                      }}
+                      exit={{
+                        height: 0,
+                        opacity: 0,
+                        transition: {
+                          height: { duration: 0.2, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: 0.12 },
+                        },
+                      }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-4 sm:px-5 pb-4 text-xs sm:text-sm text-[#A1A1AA] leading-relaxed border-t border-[#27272A]/60 pt-2.5">
+                        {faq.answer}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             );
           })}

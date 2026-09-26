@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import { Check, Copy, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface InstallOption {
-  id: "windown" | "linux" | "macos" | "npm";
+  id: "windows" | "linux" | "macos" | "npm";
   label: string;
   prompt: string;
   command: string;
@@ -14,12 +15,12 @@ interface InstallOption {
 
 const INSTALL_OPTIONS: InstallOption[] = [
   {
-    id: "windown",
-    label: "Windown",
+    id: "windows",
+    label: "Windows",
     prompt: ">",
     command:
       "irm https://pub-3313f2900e0948b5849dc47c989406ab.r2.dev/install.ps1 | iex",
-    platform: "Windows x64 Native",
+    platform: "Windows x64",
   },
   {
     id: "linux",
@@ -27,7 +28,7 @@ const INSTALL_OPTIONS: InstallOption[] = [
     prompt: "$",
     command:
       "curl -fsSL https://pub-3313f2900e0948b5849dc47c989406ab.r2.dev/install.sh | bash",
-    platform: "Linux / WSL2 (x86_64 / arm64)",
+    platform: "Linux & WSL2",
   },
   {
     id: "macos",
@@ -35,19 +36,21 @@ const INSTALL_OPTIONS: InstallOption[] = [
     prompt: "$",
     command:
       "curl -fsSL https://pub-3313f2900e0948b5849dc47c989406ab.r2.dev/install.sh | bash",
-    platform: "Apple Silicon & Intel",
+    platform: "macOS Universal",
   },
   {
     id: "npm",
     label: "npm",
     prompt: "$",
     command: "npm install -g @cube/cli",
-    platform: "Node.js >= 22.13.0",
+    platform: "Node.js >=22",
   },
 ];
 
-export function InstallBox() {
-  const [activeTab, setActiveTab] = useState<InstallOption["id"]>("windown");
+export function InstallBox({ idPrefix }: { idPrefix?: string }) {
+  const autoId = useId();
+  const prefix = idPrefix || autoId;
+  const [activeTab, setActiveTab] = useState<InstallOption["id"]>("windows");
   const [copied, setCopied] = useState(false);
 
   const activeOption = INSTALL_OPTIONS.find((opt) => opt.id === activeTab)!;
@@ -63,8 +66,8 @@ export function InstallBox() {
   };
 
   return (
-    <div id="install" className="w-full max-w-xl mx-auto">
-      {/* Platform Tabs (Windown, Linux, MacOS, npm) */}
+    <div id="install" className="w-full max-w-xl sm:max-w-2xl mx-auto">
+      {/* Platform Tabs (Windows, Linux, MacOS, npm) with Smooth Sliding Indicator */}
       <div className="flex items-center justify-center gap-1.5 mb-2.5">
         {INSTALL_OPTIONS.map((opt) => {
           const isSelected = activeTab === opt.id;
@@ -76,13 +79,20 @@ export function InstallBox() {
                 setCopied(false);
               }}
               className={cn(
-                "px-3 py-1 rounded-md text-xs font-mono transition-colors cursor-pointer",
+                "relative px-3.5 py-1 rounded-md text-xs font-mono transition-colors cursor-pointer select-none",
                 isSelected
-                  ? "bg-[#18181B] text-white border border-[#27272A] shadow-sm font-semibold"
-                  : "text-[#A1A1AA] hover:text-white border border-transparent hover:bg-[#18181B]/40"
+                  ? "text-black font-semibold"
+                  : "text-[#A1A1AA] hover:text-white font-medium"
               )}
             >
-              {opt.label}
+              {isSelected && (
+                <motion.span
+                  layoutId={`${prefix}-activeInstallTab`}
+                  className="absolute inset-0 rounded-md bg-white shadow-sm z-0"
+                  transition={{ type: "spring", stiffness: 480, damping: 35 }}
+                />
+              )}
+              <span className="relative z-10">{opt.label}</span>
             </button>
           );
         })}
@@ -92,14 +102,23 @@ export function InstallBox() {
         {/* Outer terminal box (surface-2 #0D0D0F, border #27272A, terminal-mono) */}
         <div className="relative rounded-lg bg-[#0D0D0F] border border-[#27272A] group-hover:border-white/30 p-2.5 sm:p-3 shadow-xl transition-colors">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            {/* Terminal prompt and command text */}
-            <div className="flex items-center gap-2.5 overflow-x-auto px-2 py-1 scrollbar-none font-mono text-xs sm:text-[13px]">
-              <span className="text-[#A1A1AA] font-semibold select-none">
+            {/* Terminal prompt and command text with smooth crossfade animation */}
+            <div className="flex-1 min-w-0 flex items-center gap-2.5 overflow-x-auto px-2 py-1 scrollbar-none font-mono text-xs sm:text-[13px]">
+              <span className="text-[#A1A1AA] font-semibold select-none shrink-0">
                 {activeOption.prompt}
               </span>
-              <code className="text-[#FFFFFF] select-all whitespace-nowrap">
-                {activeOption.command}
-              </code>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.code
+                  key={`${prefix}-${activeTab}`}
+                  initial={{ opacity: 0, x: 6 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -6 }}
+                  transition={{ duration: 0.16, ease: "easeOut" }}
+                  className="text-[#FFFFFF] select-all whitespace-nowrap block"
+                >
+                  {activeOption.command}
+                </motion.code>
+              </AnimatePresence>
             </div>
 
             {/* Copy button (radius 8px / control token) */}
@@ -128,16 +147,27 @@ export function InstallBox() {
         </div>
       </div>
 
-      {/* Verification notes */}
-      <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-[#A1A1AA] font-mono">
-        <span className="flex items-center gap-1.5 text-white">
+      {/* Verification notes with animated platform label and 2s install badge */}
+      <div className="mt-3 flex flex-nowrap items-center justify-center gap-x-2.5 sm:gap-x-4 text-[11px] sm:text-xs text-[#A1A1AA] font-mono whitespace-nowrap overflow-x-auto scrollbar-none">
+        <span className="flex items-center gap-1.5 text-white shrink-0">
           <ShieldCheck className="w-3.5 h-3.5 text-white" />
           <span>SHA-256 Verified Release</span>
         </span>
-        <span className="text-[#27272A]">•</span>
-        <span>{activeOption.platform}</span>
-        <span className="text-[#27272A]">•</span>
-        <span>~2s Standalone Install</span>
+        <span className="text-[#27272A] select-none shrink-0">•</span>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.span
+            key={`${prefix}-${activeTab}`}
+            initial={{ opacity: 0, y: 2 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -2 }}
+            transition={{ duration: 0.15 }}
+            className="shrink-0"
+          >
+            {activeOption.platform}
+          </motion.span>
+        </AnimatePresence>
+        <span className="text-[#27272A] select-none shrink-0">•</span>
+        <span className="shrink-0 text-white font-medium">~2s Standalone Install</span>
       </div>
     </div>
   );
