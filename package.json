@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "deploy": "next build && wrangler pages deploy out --project-name=cube-landing --branch=main",
+    "deploy": "next build && wrangler pages deploy out --project-name=cube-agent --branch=main",
     "start": "next start",
     "lint": "eslint"
   },
