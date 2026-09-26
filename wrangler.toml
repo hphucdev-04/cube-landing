@@ -3,3 +3,6 @@ pages_build_output_dir = "out"
 compatibility_date = "2026-09-23"
 compatibility_flags = ["nodejs_compat"]
 
+[[kv_namespaces]]
+binding = "CUBE_STATS"
+id = "e6b5d254e7924311a0d45be9502cc0aa"
