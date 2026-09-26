@@ -180,14 +180,23 @@ function TerminalScreen({
   currentVideo: string;
   onVideoError: () => void;
 }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {});
+    }
+  }, [activeFeature.id, currentVideo]);
+
   return (
     <div className="relative min-h-[320px] sm:min-h-[420px] bg-[#090A0E] flex flex-col justify-start overflow-hidden">
       {isVideoAvailable ? (
         <video
+          ref={videoRef}
           key={`${activeFeature.id}-${currentVideo}`}
           src={currentVideo}
           autoPlay
-          loop
           muted
           playsInline
           onError={onVideoError}
