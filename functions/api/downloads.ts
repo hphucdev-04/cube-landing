@@ -12,20 +12,15 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     console.error("KV read error:", err);
   }
 
-  // Base milestone seed + real-time downloads
-  const baseSeed = 1420;
-  const total = baseSeed + count;
-
   return new Response(
     JSON.stringify({
-      total,
+      total: count,
       raw: count,
-      baseSeed,
     }),
     {
       headers: {
         "content-type": "application/json",
-        "cache-control": "public, max-age=30, s-maxage=60",
+        "cache-control": "public, max-age=10, s-maxage=10",
         "access-control-allow-origin": "*",
       },
     }

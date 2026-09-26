@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Download } from "lucide-react";
 
 export function useDownloadCount() {
-  const [count, setCount] = useState<number>(1420);
+  const [count, setCount] = useState<number>(0);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -21,7 +20,6 @@ export function useDownloadCount() {
         }
       })
       .catch(() => {
-        // Fallback to initial base count if API not reachable
         if (isMounted) setLoaded(true);
       });
 
@@ -35,18 +33,21 @@ export function useDownloadCount() {
 
 export function DownloadCounterBadge() {
   const { count } = useDownloadCount();
-  const [displayCount, setDisplayCount] = useState(count > 100 ? count - 30 : 0);
+  const [displayCount, setDisplayCount] = useState(0);
 
   useEffect(() => {
+    if (count === 0) {
+      setDisplayCount(0);
+      return;
+    }
     let startTimestamp: number | null = null;
-    const duration = 1200; // ms
-    const startValue = displayCount;
+    const duration = 1000; // ms
+    const startValue = 0;
     const endValue = count;
 
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      // Ease out cubic
       const easeProgress = 1 - Math.pow(1 - progress, 3);
       const current = Math.floor(startValue + (endValue - startValue) * easeProgress);
       setDisplayCount(current);
@@ -67,7 +68,7 @@ export function DownloadCounterBadge() {
       <span className="text-white font-semibold">
         {displayCount.toLocaleString()}
       </span>
-      <span>developers installed across Windows, macOS & Linux</span>
+      <span>developers installed across Windows, MacOS & Linux</span>
     </div>
   );
 }
