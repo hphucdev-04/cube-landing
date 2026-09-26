@@ -165,19 +165,7 @@ export default function Image() {
               color: "#FFFFFF",
             }}
           >
-            Windows • Linux • macOS
-          </div>
-          <div
-            style={{
-              padding: "8px 20px",
-              borderRadius: "999px",
-              backgroundColor: "#FFFFFF",
-              color: "#000000",
-              fontSize: "16px",
-              fontWeight: 600,
-            }}
-          >
-            ~2s Standalone Install
+            Windows • Linux • MacOS
           </div>
           <div
             style={{

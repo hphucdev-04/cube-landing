@@ -76,7 +76,7 @@ const jsonLd = {
     {
       "@type": "SoftwareApplication",
       "name": "Cube",
-      "operatingSystem": "Windows, macOS, Linux",
+      "operatingSystem": "Windows, MacOS, Linux",
       "applicationCategory": "DeveloperApplication",
       "description":
         "A TypeScript coding agent CLI with a custom differential-rendering TUI, multi-mode authentication, tool system, and workspace memory.",

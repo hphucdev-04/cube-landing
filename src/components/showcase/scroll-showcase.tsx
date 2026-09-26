@@ -352,7 +352,7 @@ export function ScrollShowcase() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-10 sm:pb-12 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-4 shadow-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-          <span>CORE TERMINAL CAPABILITIES</span>
+          <span>CORE CAPABILITIES</span>
         </div>
         <h2 className="text-3xl sm:text-4xl lg:text-[40px] font-medium tracking-tight text-white leading-[1.15]">
           Terminal intelligence engineered for developer flow
