@@ -445,7 +445,7 @@ export function ScrollShowcase() {
                 <div className="flex items-center gap-2 text-xs font-mono text-[#A1A1AA] truncate px-2">
                   <Terminal className="w-3.5 h-3.5 text-white shrink-0" />
                   <span className="text-white font-medium truncate">
-                    D:\cube | gpt-6-astra
+                    D:\your-project 
                   </span>
                 </div>
 
@@ -524,7 +524,7 @@ export function ScrollShowcase() {
             <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#A1A1AA] truncate px-1">
               <Terminal className="w-3 h-3 text-white shrink-0" />
               <span className="text-white font-medium truncate">
-                D:\cube | gpt-6-astra
+                D:\your-project 
               </span>
             </div>
 
