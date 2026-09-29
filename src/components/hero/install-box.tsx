@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { DownloadCounterBadge } from "./download-counter";
 
 interface InstallOption {
-  id: "windows" | "linux" | "macos" | "npm";
+  id: "windows" | "linux" | "macos" | "npm" | "pnpm";
   label: string;
   prompt: string;
   command: string;
@@ -24,14 +24,6 @@ const INSTALL_OPTIONS: InstallOption[] = [
     platform: "Windows x64",
   },
   {
-    id: "linux",
-    label: "Linux",
-    prompt: "$",
-    command:
-      "curl -fsSL https://cube-agent.pages.dev/install.sh | bash",
-    platform: "Linux & WSL2",
-  },
-  {
     id: "macos",
     label: "MacOS",
     prompt: "$",
@@ -40,11 +32,26 @@ const INSTALL_OPTIONS: InstallOption[] = [
     platform: "macOS Universal",
   },
   {
+    id: "linux",
+    label: "Linux",
+    prompt: "$",
+    command:
+      "curl -fsSL https://cube-agent.pages.dev/install.sh | bash",
+    platform: "Linux & WSL2",
+  },
+  {
     id: "npm",
     label: "npm",
     prompt: "$",
-    command: "npm install -g @cube/cli",
-    platform: "Node.js >=22",
+    command: "npm install -g @cube-harness/cli",
+    platform: "Node.js >=18",
+  },
+  {
+    id: "pnpm",
+    label: "pnpm",
+    prompt: "$",
+    command: "pnpm add -g @cube-harness/cli",
+    platform: "Node.js >=18",
   },
 ];
 
@@ -67,14 +74,15 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
   };
 
   return (
-    <div id="install" className="w-full max-w-md sm:max-w-[550px] mx-auto">
-      {/* Platform Tabs (Windows, Linux, MacOS, npm) with Smooth Sliding Indicator */}
-      <div className="flex items-center justify-center gap-1.5 mb-2.5">
+    <div id="install" className="w-full flex flex-col items-center mx-auto">
+      {/* Platform Tabs (Windows, MacOS, Linux, npm, pnpm) with Smooth Sliding Indicator */}
+      <div className="relative z-20 flex items-center justify-center gap-1.5 mb-2.5">
         {INSTALL_OPTIONS.map((opt) => {
           const isSelected = activeTab === opt.id;
           return (
             <button
               key={opt.id}
+              type="button"
               onClick={() => {
                 setActiveTab(opt.id);
                 setCopied(false);
@@ -93,18 +101,23 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
                   transition={{ type: "spring", stiffness: 480, damping: 35 }}
                 />
               )}
-              <span className="relative z-10">{opt.label}</span>
+              <span className="relative z-10 pointer-events-none">{opt.label}</span>
             </button>
           );
         })}
       </div>
 
-      <div className="relative group">
+      {/* Auto-fitting, spring-animated terminal card that fits command length exactly */}
+      <motion.div
+        layout
+        transition={{ type: "spring", stiffness: 420, damping: 32 }}
+        className="relative group w-fit max-w-[95vw] sm:max-w-2xl mx-auto"
+      >
         {/* Outer terminal box (surface-2 #0D0D0F, border #27272A, terminal-mono) */}
         <div className="relative rounded-lg bg-[#0D0D0F] border border-[#27272A] group-hover:border-white/30 p-2 sm:p-2.5 shadow-xl transition-colors">
-          <div className="flex items-center justify-between gap-2 sm:gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-4">
             {/* Terminal prompt and command text with smooth crossfade animation */}
-            <div className="flex-1 min-w-0 flex items-center gap-2 overflow-x-auto px-1.5 py-0.5 scrollbar-none font-mono text-xs sm:text-[13px]">
+            <div className="flex items-center gap-2 px-1.5 py-0.5 font-mono text-xs sm:text-[13px] whitespace-nowrap overflow-x-auto scrollbar-none">
               <span className="text-[#A1A1AA] font-semibold select-none shrink-0">
                 {activeOption.prompt}
               </span>
@@ -115,7 +128,7 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -6 }}
                   transition={{ duration: 0.16, ease: "easeOut" }}
-                  className="text-[#FFFFFF] select-all whitespace-nowrap block"
+                  className="text-[#FFFFFF] select-all whitespace-nowrap shrink-0 block"
                 >
                   {activeOption.command}
                 </motion.code>
@@ -124,6 +137,7 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
 
             {/* Copy button (radius 8px / control token) */}
             <button
+              type="button"
               onClick={handleCopy}
               className={`shrink-0 flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer ${
                 copied
@@ -146,7 +160,7 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Verification notes with animated platform label and 2s install badge */}
       <div className="mt-3 flex flex-nowrap items-center justify-center gap-x-2.5 sm:gap-x-4 text-[11px] sm:text-xs text-[#A1A1AA] font-mono whitespace-nowrap overflow-x-auto scrollbar-none">
