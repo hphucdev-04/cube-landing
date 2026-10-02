@@ -190,7 +190,14 @@ function TerminalScreen({
   }, [activeFeature.id, currentVideo]);
 
   return (
-    <div className="relative min-h-[320px] sm:min-h-[420px] bg-[#090A0E] flex flex-col justify-start overflow-hidden">
+    <div
+      className={cn(
+        "relative bg-[#090A0E] overflow-hidden",
+        isVideoAvailable
+          ? "w-full"
+          : "min-h-[320px] sm:min-h-[420px] flex flex-col justify-start"
+      )}
+    >
       {isVideoAvailable ? (
         <video
           ref={videoRef}
@@ -200,7 +207,7 @@ function TerminalScreen({
           muted
           playsInline
           onError={onVideoError}
-          className="w-full h-full object-cover"
+          className="w-full h-auto block"
         />
       ) : (
         <div className="p-4 sm:p-6 font-mono text-xs sm:text-[13px] text-white flex flex-col justify-between h-full min-h-[320px] sm:min-h-[420px]">
