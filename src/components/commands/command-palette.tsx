@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Terminal, Search, ChevronRight, Copy, Check } from "lucide-react";
+import { Search, ChevronRight, Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CommandItem {

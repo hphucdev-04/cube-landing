@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Terminal, ChevronLeft, ChevronRight } from "lucide-react";
+import { Terminal, ChevronLeft, ChevronRight, Film, Clock } from "lucide-react";
 import { Cube3DNavigator } from "./cube-navigator-3d";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -168,6 +168,7 @@ const FEATURES: ShowcaseFeature[] = [
 ];
 
 const VIDEO_EXTENSIONS = [".mp4", ".webm"];
+const AVAILABLE_DEMOS = new Set(["gateway", "hitl", "qa"]);
 
 function TerminalScreen({
   activeFeature,
@@ -195,7 +196,7 @@ function TerminalScreen({
         "relative bg-[#090A0E] overflow-hidden",
         isVideoAvailable
           ? "w-full"
-          : "min-h-[320px] sm:min-h-[420px] flex flex-col justify-start"
+          : "min-h-[340px] sm:min-h-[440px] flex flex-col justify-start"
       )}
     >
       {isVideoAvailable ? (
@@ -210,70 +211,64 @@ function TerminalScreen({
           className="w-full h-auto block"
         />
       ) : (
-        <div className="p-4 sm:p-6 font-mono text-xs sm:text-[13px] text-white flex flex-col justify-between h-full min-h-[320px] sm:min-h-[420px]">
-          <div className="space-y-3">
-            {/* Terminal prompt bar */}
-            <div className="flex items-center gap-2 text-xs text-[#A1A1AA] pb-3 border-b border-[#27272A]/50 overflow-hidden">
-              <span className="text-[#27C93F] shrink-0">●</span>
-              <span className="text-white font-medium shrink-0">cube-session</span>
-              <span className="text-[#27272A] shrink-0">•</span>
-              <span className="shrink-0">{activeFeature.faceName} FACE</span>
-              <span className="text-[#27272A] shrink-0 hidden sm:inline">•</span>
-              <span className="text-white/60 truncate hidden sm:inline">{activeFeature.tagline}</span>
+        <div className="p-5 sm:p-8 font-mono text-xs sm:text-[13px] text-white flex flex-col justify-between h-full min-h-[340px] sm:min-h-[440px] bg-gradient-to-b from-[#090A0E] via-[#0D0E13] to-[#08080C]">
+          {/* Header info bar */}
+          <div className="flex items-center gap-2 text-xs text-[#A1A1AA] pb-3 border-b border-[#27272A]/50 overflow-hidden w-full">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+            <span className="text-white font-medium shrink-0">cube-demo</span>
+            <span className="text-[#27272A] shrink-0">•</span>
+            <span className="shrink-0">{activeFeature.faceName} FACE</span>
+            <span className="text-[#27272A] shrink-0 hidden sm:inline">•</span>
+            <span className="text-amber-300/80 truncate hidden sm:inline">Demo Video Coming Soon</span>
+          </div>
+
+          {/* Centered Coming Soon Presentation */}
+          <div className="flex flex-col items-center justify-center text-center my-auto py-4">
+            <div className="relative mb-3.5">
+              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-white/[0.04] border border-[#27272A] flex items-center justify-center shadow-lg shadow-black/60">
+                <Film className="w-6 h-6 text-[#A1A1AA]" />
+              </div>
+              <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400/20 border-2 border-[#090A0E] flex items-center justify-center">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              </span>
             </div>
 
-            {/* Simulated Shell Execution */}
-            <div className="space-y-2 pt-1">
-              {activeFeature.terminalLines?.map((line, idx) => (
-                <div key={idx} className="flex items-start gap-2.5 leading-relaxed text-[11px] sm:text-[13px]">
-                  {line.type === "cmd" ? (
-                    <>
-                      <span className="text-white select-none font-bold shrink-0">❯</span>
-                      <span className="text-white font-semibold">{line.text}</span>
-                    </>
-                  ) : line.type === "success" ? (
-                    <>
-                      <span className="text-[#27C93F] select-none shrink-0 font-bold">✔</span>
-                      <span className="text-[#E4E4E7]">{line.text}</span>
-                    </>
-                  ) : line.type === "warn" ? (
-                    <>
-                      <span className="text-[#FFBD2E] select-none shrink-0 font-bold">⚠</span>
-                      <span className="text-[#FFBD2E]">{line.text}</span>
-                    </>
-                  ) : line.type === "info" ? (
-                    <>
-                      <span className="text-[#60A5FA] select-none shrink-0">ℹ</span>
-                      <span className="text-[#D4D4D8]">{line.text}</span>
-                    </>
-                  ) : line.type === "bullet" ? (
-                    <>
-                      <span className="text-[#A1A1AA] select-none shrink-0">▸</span>
-                      <span className="text-[#E4E4E7]">{line.text}</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-transparent select-none shrink-0">›</span>
-                      <span className="text-[#A1A1AA]">{line.text}</span>
-                    </>
-                  )}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#18181B] border border-[#27272A] text-xs font-mono text-[#A1A1AA] mb-3">
+              <Clock className="w-3.5 h-3.5 text-amber-300" />
+              <span className="text-white font-medium">Demo Coming Soon</span>
+              <span className="text-[#27272A]">•</span>
+              <span className="text-amber-300">Recording in Progress</span>
+            </div>
+
+            <h4 className="text-lg sm:text-xl font-medium tracking-tight text-white mb-2 max-w-md">
+              {activeFeature.title}
+            </h4>
+
+            <p className="text-xs sm:text-sm text-[#A1A1AA] font-sans max-w-sm mb-5 leading-relaxed">
+              Video demonstration from real terminal execution is currently being recorded. No synthetic or simulated footage.
+            </p>
+
+            <div className="w-full max-w-md bg-[#121318]/90 border border-[#27272A]/70 rounded-xl p-3 sm:p-4 text-left space-y-2">
+              <div className="text-[10px] font-mono text-[#A1A1AA]/60 uppercase tracking-wider mb-1">
+                Upcoming Live Demonstration
+              </div>
+              {activeFeature.bullets.map((bullet, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-xs text-[#E4E4E7]">
+                  <span className="text-amber-400/80 shrink-0 font-bold">›</span>
+                  <span className="truncate">{bullet}</span>
                 </div>
               ))}
             </div>
-
-            {/* Blinking Prompt Cursor */}
-            <div className="flex items-center gap-2 pt-2 text-sm text-white">
-              <span className="text-white select-none font-bold">❯</span>
-              <span className="w-2 h-4 bg-white animate-pulse" />
-            </div>
           </div>
 
-          <div className="pt-4 border-t border-[#27272A]/40 flex items-center justify-between text-xs text-[#A1A1AA]">
+          {/* Footer info bar */}
+          <div className="pt-3 border-t border-[#27272A]/40 flex items-center justify-between text-xs text-[#A1A1AA] w-full">
             <span className="text-[11px] font-mono text-[#A1A1AA]/70 truncate">
               CUBE DEMO · {activeFeature.label.toUpperCase()}
             </span>
-            <span className="text-[11px] font-mono text-[#A1A1AA]/50 shrink-0">
-              Interactive Mode
+            <span className="text-[11px] font-mono text-amber-300/80 shrink-0 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+              <span>Coming Soon</span>
             </span>
           </div>
         </div>
@@ -291,7 +286,7 @@ export function ScrollShowcase() {
   const activeFeature = FEATURES[activeIndex] || FEATURES[0];
   const extIdx = extIndices[activeFeature.id] || 0;
   const currentVideo = `/demos/${activeFeature.id}${VIDEO_EXTENSIONS[extIdx]}`;
-  const isVideoAvailable = !failedFeatures[activeFeature.id];
+  const isVideoAvailable = AVAILABLE_DEMOS.has(activeFeature.id) && !failedFeatures[activeFeature.id];
 
   const handleVideoError = () => {
     const currentIdx = extIndices[activeFeature.id] || 0;
@@ -456,8 +451,15 @@ export function ScrollShowcase() {
                   </span>
                 </div>
 
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-white border border-white/10 shrink-0">
-                  {activeFeature.faceName} FACE
+                <span
+                  className={cn(
+                    "text-[10px] font-mono px-2 py-0.5 rounded border shrink-0",
+                    isVideoAvailable
+                      ? "bg-white/10 text-white border-white/10"
+                      : "bg-amber-400/10 text-amber-300 border-amber-400/20"
+                  )}
+                >
+                  {isVideoAvailable ? `${activeFeature.faceName} FACE` : "DEMO COMING SOON"}
                 </span>
               </div>
 
@@ -535,8 +537,15 @@ export function ScrollShowcase() {
               </span>
             </div>
 
-            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/10 text-white border border-white/10 shrink-0">
-              {activeFeature.faceName}
+            <span
+              className={cn(
+                "text-[9px] font-mono px-1.5 py-0.5 rounded border shrink-0",
+                isVideoAvailable
+                  ? "bg-white/10 text-white border-white/10"
+                  : "bg-amber-400/10 text-amber-300 border-amber-400/20"
+              )}
+            >
+              {isVideoAvailable ? activeFeature.faceName : "COMING SOON"}
             </span>
           </div>
 

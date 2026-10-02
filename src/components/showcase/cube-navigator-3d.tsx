@@ -49,10 +49,13 @@ export function Cube3DNavigator({
   useEffect(() => {
     const target = FACE_ROTATIONS[activeIndex];
     if (target) {
-      setRotation((prev) => ({
-        x: getShortestAngle(prev.x, target.x),
-        y: getShortestAngle(prev.y, target.y),
-      }));
+      const frameId = requestAnimationFrame(() => {
+        setRotation((prev) => ({
+          x: getShortestAngle(prev.x, target.x),
+          y: getShortestAngle(prev.y, target.y),
+        }));
+      });
+      return () => cancelAnimationFrame(frameId);
     }
   }, [activeIndex]);
 

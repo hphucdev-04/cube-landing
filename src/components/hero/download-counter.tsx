@@ -36,11 +36,9 @@ export function DownloadCounterBadge() {
   const [displayCount, setDisplayCount] = useState(0);
 
   useEffect(() => {
-    if (count === 0) {
-      setDisplayCount(0);
-      return;
-    }
+    if (count <= 0) return;
     let startTimestamp: number | null = null;
+    let frameId: number;
     const duration = 1000; // ms
     const startValue = 0;
     const endValue = count;
@@ -53,13 +51,14 @@ export function DownloadCounterBadge() {
       setDisplayCount(current);
 
       if (progress < 1) {
-        requestAnimationFrame(step);
+        frameId = requestAnimationFrame(step);
       } else {
         setDisplayCount(endValue);
       }
     };
 
-    requestAnimationFrame(step);
+    frameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frameId);
   }, [count]);
 
   return (
