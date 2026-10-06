@@ -31,7 +31,7 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 z-0 select-none"
       >
         <Image
-          src="/assets/ascii-magic-5.png"
+          src="/assets/ascii-magic-7.png"
           alt=""
           fill
           priority

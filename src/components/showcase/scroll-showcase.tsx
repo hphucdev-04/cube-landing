@@ -5,8 +5,6 @@ import Image from "next/image";
 import {
   Terminal,
   Check,
-  Play,
-  Code2,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -40,7 +38,7 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     title: "Multi-Gateway Model Matrix",
     tagline: "Your subscriptions. Your keys. Zero lock-in.",
     // ascii-magic-3: the receding arched corridor — perfect for "gateway"
-    bgAsset: "/assets/ascii-magic-3.png",
+    bgAsset: "/assets/ascii-magic-1.png",
     bgFocus: "object-center",
     videoSrc: "/demos/gateway.mp4",
     description:
@@ -93,7 +91,7 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     title: "Human-in-the-Loop Safeguards",
     tagline: "Absolute developer authority.",
     // ascii-magic-1: mechanical trusses, chains — guardrails
-    bgAsset: "/assets/ascii-magic-1.png",
+    bgAsset: "/assets/ascii-magic-3.png",
     bgFocus: "object-center",
     videoSrc: "/demos/hitl.mp4",
     description:
@@ -148,7 +146,7 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     title: "Model Context Protocol Foundation",
     tagline: "Universal tool & data interoperability.",
     // ascii-magic-6: grand colonnade hall — universal connection
-    bgAsset: "/assets/ascii-magic-6.png",
+    bgAsset: "/assets/ascii-magic-5.png",
     bgFocus: "object-center",
     description:
       "Built-in MCP client. Connect external tool servers, database inspectors, browser automation, and enterprise endpoints through open standards.",
@@ -175,7 +173,7 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     title: "Parallel Subagent Delegation",
     tagline: "Orchestrate autonomous worker teams.",
     // ascii-magic-5: concurrent vaults & scaffolding — parallel execution
-    bgAsset: "/assets/ascii-magic-5.png",
+    bgAsset: "/assets/ascii-magic-6.png",
     bgFocus: "object-top",
     description:
       "Decompose massive refactoring goals into isolated parallel workers. Subagents explore, test, and edit concurrently without blocking your main shell.",
@@ -215,7 +213,6 @@ export function ScrollShowcase() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
-  const [displayMode, setDisplayMode] = useState<"video" | "terminal">("video");
 
   // Map scroll progress 0→1 across the 600vh section to feature index 0→5
   const { scrollYProgress } = useScroll({
@@ -237,7 +234,7 @@ export function ScrollShowcase() {
       videoRef.current.currentTime = 0;
       videoRef.current.play().catch(() => {});
     }
-  }, [activeIdx, displayMode]);
+  }, [activeIdx]);
 
   const jumpTo = useFeatureJump(sectionRef);
   const feat = ALL_6_FEATURES[activeIdx];
@@ -308,8 +305,8 @@ export function ScrollShowcase() {
         {/* ── LAYER 2: CONTENT INSCRIBED INTO THE ARCHITECTURAL SPACE ── */}
         <div className="relative z-10 h-full flex flex-col">
 
-          {/* TOP HEADER BAR */}
-          <div className="flex items-center justify-between px-5 sm:px-8 md:px-14 py-3 border-b border-[#2A2622]/60 bg-[#0A0908]/55 backdrop-blur-sm">
+          {/* TOP HEADER BAR — clear of left & right sidebars (w-16 = 64px) */}
+          <div className="flex items-center justify-between px-5 sm:px-8 md:px-20 lg:px-24 py-3 border-b border-[#2A2622]/60 bg-[#0A0908]/55 backdrop-blur-sm">
             <div className="flex items-center gap-3">
               <span className="font-cinzel text-[11px] font-bold text-[#D6D3D1] tracking-wider">
                 LIBER II · {feat.roman}
@@ -349,8 +346,8 @@ export function ScrollShowcase() {
           {/* MAIN BODY — fills remaining height */}
           <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
 
-            {/* LEFT: MONUMENTAL INSCRIPTION ON STONE ──────────────────── */}
-            <div className="lg:w-[52%] flex flex-col justify-center px-5 sm:px-8 md:px-14 py-6 lg:py-10 overflow-y-auto">
+            {/* LEFT: MONUMENTAL INSCRIPTION ON STONE — clear of left sidebar ──── */}
+            <div className="lg:w-[52%] flex flex-col justify-center px-5 sm:px-8 md:pl-20 md:pr-8 lg:pl-24 lg:pr-10 py-6 lg:py-10 overflow-y-auto">
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.div
                   key={feat.id}
@@ -403,8 +400,8 @@ export function ScrollShowcase() {
             {/* VERTICAL DIVIDER (desktop only) */}
             <div className="hidden lg:block w-px bg-[#2A2622]/50 self-stretch" />
 
-            {/* RIGHT: TERMINAL / VIDEO — embedded in the architectural space ── */}
-            <div className="lg:w-[45%] flex flex-col justify-center px-5 sm:px-6 md:px-8 py-5 overflow-y-auto">
+            {/* RIGHT: TERMINAL / VIDEO — clear of right sidebar ── */}
+            <div className="lg:w-[48%] flex flex-col justify-center px-5 sm:px-6 md:pr-20 md:pl-6 lg:pr-24 lg:pl-8 py-5 overflow-y-auto">
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.div
                   key={feat.id + "-terminal"}
@@ -426,37 +423,15 @@ export function ScrollShowcase() {
                       <span className="font-mono text-[11px] text-[#D6D3D1]">cube ~ {feat.id}</span>
                     </div>
 
-                    {/* Video / terminal toggle */}
-                    {hasVideo && (
-                      <div className="flex items-center bg-[#141210] border border-[#2A2622] rounded-sm p-0.5 text-[10px]">
-                        <button
-                          onClick={() => setDisplayMode("video")}
-                          className={cn(
-                            "flex items-center gap-1 px-2 py-0.5 rounded-xs cursor-pointer transition-colors",
-                            displayMode === "video" ? "bg-[#38BDF8] text-[#0A0908] font-bold" : "text-[#78716C] hover:text-[#F5F5F4]"
-                          )}
-                        >
-                          <Play className="w-2.5 h-2.5 fill-current" />
-                          <span className="font-mono">MP4</span>
-                        </button>
-                        <button
-                          onClick={() => setDisplayMode("terminal")}
-                          className={cn(
-                            "flex items-center gap-1 px-2 py-0.5 rounded-xs cursor-pointer transition-colors",
-                            displayMode === "terminal" ? "bg-[#38BDF8] text-[#0A0908] font-bold" : "text-[#78716C] hover:text-[#F5F5F4]"
-                          )}
-                        >
-                          <Code2 className="w-2.5 h-2.5" />
-                          <span className="font-mono">CLI</span>
-                        </button>
-                      </div>
-                    )}
+                    <span className="font-mono text-[10px] text-[#78716C]">
+                      {hasVideo ? "CAPTURE ACTIVE" : "STANDBY"}
+                    </span>
                   </div>
 
-                  {/* Content area */}
+                  {/* Content area: MP4 video if available, otherwise COMING SOON placeholder */}
                   <div className="border border-[#2A2622] bg-[#050403]/90 backdrop-blur-sm overflow-hidden">
-                    {hasVideo && displayMode === "video" ? (
-                      <div className="relative aspect-video w-full">
+                    {hasVideo ? (
+                      <div className="relative aspect-video w-full bg-[#050403]">
                         <video
                           ref={videoRef}
                           key={feat.videoSrc}
@@ -467,45 +442,52 @@ export function ScrollShowcase() {
                           playsInline
                           className="w-full h-full object-cover"
                         />
-                        {/* LIVE badge: #38BDF8 pulse dot = product active indicator per DESIGN.md */}
-                        <div className="absolute bottom-2 left-2 flex items-center gap-1.5 px-2 py-0.5 bg-[#0A0908]/80 border border-[#2A2622] font-mono text-[10px] text-[#78716C] backdrop-blur-sm">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" />
-                          LIVE TERMINAL CAPTURE
-                        </div>
                       </div>
                     ) : (
-                      <div className="p-4 sm:p-5 font-mono text-[12px] sm:text-[13px] space-y-1.5 min-h-[200px] flex flex-col justify-center">
-                        {feat.terminalLines.map((line, i) => {
-                          const colors: Record<string, string> = {
-                            cmd: "text-[#38BDF8] font-bold", // prompt cursor — per DESIGN.md
-                            success: "text-emerald-400",
-                            warn: "text-amber-400 font-semibold",
-                            info: "text-[#A8A29E]",
-                            bullet: "text-[#D6D3D1] pl-2",
-                            output: "text-[#78716C]",
-                          };
-                          return (
-                            <div key={i} className={colors[line.type] ?? "text-[#A8A29E]"}>
-                              {line.type === "cmd" ? `> ${line.text}` : line.text}
-                            </div>
-                          );
-                        })}
+                      <div className="relative aspect-video w-full flex flex-col items-center justify-center p-6 bg-[#050403]/95 text-center">
+                        {/* Subtle corner ticks */}
+                        <div className="absolute top-2.5 left-2.5 font-mono text-[9px] text-[#3E3833]">┌ SEC·{feat.code}</div>
+                        <div className="absolute top-2.5 right-2.5 font-mono text-[9px] text-[#3E3833]">{feat.roman} ┐</div>
+                        <div className="absolute bottom-2.5 left-2.5 font-mono text-[9px] text-[#3E3833]">└ ELEV {feat.elevation}</div>
+                        <div className="absolute bottom-2.5 right-2.5 font-mono text-[9px] text-[#3E3833]">┘</div>
+
+                        <div className="w-10 h-10 border border-[#2A2622] bg-[#0C0B09] flex items-center justify-center mb-3">
+                          <Terminal className="w-4 h-4 text-[#78716C]" />
+                        </div>
+                        <span className="font-serif text-sm tracking-[0.25em] uppercase text-[#D6D3D1]">
+                          COMING SOON
+                        </span>
+                        <p className="mt-1.5 font-mono text-[11px] text-[#78716C] max-w-xs">
+                          Live terminal demonstration for {feat.label} is currently in recording.
+                        </p>
                       </div>
                     )}
                   </div>
 
                   {/* Footer bar */}
-                  <div className="flex items-center justify-between px-3.5 py-2 bg-[#0A0908]/85 border border-t-0 border-[#2A2622] backdrop-blur-sm text-[10px] font-mono text-[#3E3833]">
-                    <span>AST Traversal · Verified Determinism</span>
-                    <span>0% 3D OVERHEAD</span>
+                  <div className="flex items-center justify-between px-3.5 py-2 bg-[#0A0908]/85 border border-t-0 border-[#2A2622] backdrop-blur-sm text-[10px] font-mono">
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className={cn(
+                          "w-1.5 h-1.5 rounded-full",
+                          hasVideo ? "bg-[#38BDF8] animate-pulse" : "bg-[#3E3833]"
+                        )}
+                      />
+                      <span className={hasVideo ? "text-[#D6D3D1] font-semibold" : "text-[#78716C]"}>
+                        LIVE TERMINAL CAPTURE
+                      </span>
+                    </div>
+                    <span className="text-[#3E3833]">
+                      {hasVideo ? "MP4 // 60 FPS" : "PENDING CAPTURE"}
+                    </span>
                   </div>
                 </motion.div>
               </AnimatePresence>
             </div>
           </div>
 
-          {/* BOTTOM ELEVATION CALIPER BAR */}
-          <div className="px-5 sm:px-8 md:px-14 py-3 border-t border-[#2A2622]/60 bg-[#0A0908]/55 backdrop-blur-sm flex items-center gap-4">
+          {/* BOTTOM ELEVATION CALIPER BAR — clear of sidebars (w-16 = 64px) */}
+          <div className="px-5 sm:px-8 md:px-20 lg:px-24 py-3 border-t border-[#2A2622]/60 bg-[#0A0908]/55 backdrop-blur-sm flex items-center gap-4">
             {/* Prev */}
             <button
               onClick={() => jumpTo(Math.max(0, activeIdx - 1))}

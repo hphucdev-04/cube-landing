@@ -36,7 +36,7 @@ const HARNESS_BAYS: HarnessBay[] = [
     archType: "Semicircular Keystoned Vault",
     icon: RotateCw,
     capability: "Autonomous Observe → Plan → Act",
-    bgAsset: "/assets/ascii-magic-1.png",
+    bgAsset: "/assets/ascii-magic-6.png",
     bgFocus: "object-center",
     conceptSummary:
       "The perpetual cycle at the heart of Cube: observe the terminal environment, plan tool calls, act on files and shell, inspect feedback — then recurse until the task collapses into correctness.",
@@ -50,7 +50,7 @@ const HARNESS_BAYS: HarnessBay[] = [
     archType: "Truss & Cantilever Gantry",
     icon: Wrench,
     capability: "Surgical Disk & Shell Operations",
-    bgAsset: "/assets/ascii-magic-2.png",
+    bgAsset: "/assets/ascii-magic-5.png",
     bgFocus: "object-center",
     conceptSummary:
       "Connects model reasoning to real filesystem mutations and shell commands. Line-targeted diffs replace full-file blind overwrites. Process sandboxing enforces timeout gates on every invocation.",
@@ -64,7 +64,7 @@ const HARNESS_BAYS: HarnessBay[] = [
     archType: "Transverse Crypt & Colonnade",
     icon: Layers,
     capability: "Automatic Workspace Guidelines",
-    bgAsset: "/assets/ascii-magic-3.png",
+    bgAsset: "/assets/ascii-magic-4.png",
     bgFocus: "object-center",
     conceptSummary:
       "Crawls parent folders to discover AGENTS.md rules, repository conventions, and custom skill scripts. Token pruning surgically removes noisy logs to preserve attention budget across vast monorepos.",
@@ -78,7 +78,7 @@ const HARNESS_BAYS: HarnessBay[] = [
     archType: "Foundation Plinth & Buttress",
     icon: Brain,
     capability: "Cross-Turn State & Local Continuity",
-    bgAsset: "/assets/ascii-magic-4.png",
+    bgAsset: "/assets/ascii-magic-3.png",
     bgFocus: "object-center",
     conceptSummary:
       "Retains architectural decisions, preferences, and session state locally across turns and restarts. Fork or resume any conversation thread with full AST and file change continuity — no cloud dependency.",
@@ -92,7 +92,7 @@ const HARNESS_BAYS: HarnessBay[] = [
     archType: "Multi-Tier Flying Bridges",
     icon: Activity,
     capability: "Concurrent Subtasks & Workers",
-    bgAsset: "/assets/ascii-magic-5.png",
+    bgAsset: "/assets/ascii-magic-2.png",
     bgFocus: "object-center",
     conceptSummary:
       "Spawns long-running builds, test suites, and subagents in the background so the primary CLI loop remains responsive. Independent sub-problems run concurrently in isolated sandboxes.",
@@ -106,7 +106,7 @@ const HARNESS_BAYS: HarnessBay[] = [
     archType: "Central Reinforced Keystone",
     icon: ShieldCheck,
     capability: "Explicit Confirmation & Reversible Diffs",
-    bgAsset: "/assets/ascii-magic-6.png",
+    bgAsset: "/assets/ascii-magic-1.png",
     bgFocus: "object-top",
     conceptSummary:
       "Prevents destructive actions. Colorized unified diffs show exactly what lines change before any write occurs. Manual confirmation gates guard disk deletions, migrations, and git resets.",
@@ -244,22 +244,22 @@ function PierChamber({ bay, index }: { bay: HarnessBay; index: number }) {
         </div>
       </motion.div>
 
-      {/* ── ELEVATION CALIPER — stone mortar tone ──────────────── */}
+      {/* ── ELEVATION CALIPER — stone mortar tone, clear of left sidebar (w-16 = 64px) ── */}
       <div
         aria-hidden="true"
-        className="absolute bottom-4 left-5 sm:left-10 z-10 font-mono text-[10px] text-[#3E3833] flex items-center gap-2"
+        className="absolute bottom-4 left-6 sm:left-10 md:left-20 lg:left-24 z-10 font-mono text-[10px] text-[#3E3833] flex items-center gap-2"
       >
         <span className="w-4 h-px bg-[#3E3833]/60" />
         <span>ELEV +{(index + 1) * 16}.0m</span>
         <span className="w-4 h-px bg-[#3E3833]/60" />
       </div>
 
-      {/* ── SCROLL CUE — only on non-last chambers ─────────────── */}
+      {/* ── SCROLL CUE — clear of right sidebar (w-16 = 64px) ──── */}
       {index < HARNESS_BAYS.length - 1 && (
         <motion.div
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-5 right-5 sm:right-10 z-10 flex flex-col items-center gap-1 pointer-events-none"
+          className="absolute bottom-5 right-6 sm:right-10 md:right-20 lg:right-24 z-10 flex flex-col items-center gap-1 pointer-events-none"
         >
           <span className="font-cinzel text-[9px] tracking-[0.2em] text-[#3E3833]">NEXT PIER</span>
           <div className="w-px h-5 bg-gradient-to-b from-[#78716C]/40 to-transparent" />
