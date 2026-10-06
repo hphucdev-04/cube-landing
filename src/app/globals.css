@@ -1,12 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --background: #050505;
-  --surface: #18181B;
-  --surface-2: #0D0D0F;
-  --border: #27272A;
-  --text-primary: #FFFFFF;
-  --text-secondary: #A1A1AA;
+  --background: #0A0908;
+  --surface: #141210;
+  --surface-2: #0D0C0A;
+  --border: #2A2622;
+  --border-light: #3E3833;
+  --primary: #38BDF8;
+  --primary-muted: #0284C7;
+  --text-primary: #F5F5F4;
+  --text-secondary: #A8A29E;
+  --text-muted: #78716C;
 }
 
 html {
@@ -14,28 +18,80 @@ html {
 }
 
 body {
-  background-color: #050505;
-  color: #FFFFFF;
+  background-color: #0A0908;
+  color: #F5F5F4;
   overflow-x: hidden;
 }
 
 ::selection {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(56, 189, 248, 0.3);
   color: #FFFFFF;
 }
 
-/* Custom scrollbar */
+.font-cinzel {
+  font-family: var(--font-cinzel), Georgia, serif;
+}
+
+/* Authentic Crosshatch Etching Pattern Texture */
+.etching-bg {
+  background-image: 
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.018) 0px, rgba(255, 255, 255, 0.018) 1px, transparent 1px, transparent 8px),
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.018) 0px, rgba(255, 255, 255, 0.018) 1px, transparent 1px, transparent 8px);
+}
+
+/* Semicircular Architectural Arch Header */
+.arch-vault {
+  border-top: 1px solid #3E3833;
+  border-left: 1px solid #3E3833;
+  border-right: 1px solid #3E3833;
+  border-radius: 120px 120px 0 0;
+}
+@media (min-width: 640px) {
+  .arch-vault {
+    border-radius: 260px 260px 0 0;
+  }
+}
+
+/* Architectural Plate Border with drafting crosshair accents */
+.plate-frame {
+  position: relative;
+  border: 1px solid #2A2622;
+}
+
+.plate-frame::before {
+  content: "+";
+  position: absolute;
+  top: -7px;
+  left: -7px;
+  font-family: monospace;
+  font-size: 11px;
+  color: #78716C;
+  line-height: 1;
+}
+
+.plate-frame::after {
+  content: "+";
+  position: absolute;
+  bottom: -7px;
+  right: -7px;
+  font-family: monospace;
+  font-size: 11px;
+  color: #78716C;
+  line-height: 1;
+}
+
+/* Custom architectural scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #050505;
+  background: #0A0908;
 }
 ::-webkit-scrollbar-thumb {
-  background: #27272A;
-  border-radius: 4px;
+  background: #2A2622;
+  border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #52525B;
+  background: #38BDF8;
 }

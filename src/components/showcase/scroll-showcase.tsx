@@ -1,624 +1,564 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Terminal, ChevronLeft, ChevronRight, Film, Clock } from "lucide-react";
-import { Cube3DNavigator } from "./cube-navigator-3d";
+import { useRef, useState, useCallback, useEffect } from "react";
+import Image from "next/image";
+import {
+  Terminal,
+  Check,
+  Play,
+  Code2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
-
-interface TerminalMockLine {
-  type: "cmd" | "info" | "success" | "warn" | "bullet" | "output";
-  text: string;
-}
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 
 interface ShowcaseFeature {
   id: string;
+  code: string;
   label: string;
-  faceName: string;
-  badge: string;
+  roman: string;
+  elevation: string;
   title: string;
   tagline: string;
+  bgAsset: string;
+  // bgFocus: object-position for this image
+  bgFocus: string;
+  videoSrc?: string;
   description: string;
   bullets: string[];
-  videoSrc: string;
-  terminalLines: TerminalMockLine[];
+  terminalLines: { type: "cmd" | "success" | "warn" | "info" | "bullet" | "output"; text: string }[];
 }
 
-const FEATURES: ShowcaseFeature[] = [
+const ALL_6_FEATURES: ShowcaseFeature[] = [
   {
     id: "gateway",
+    code: "01",
     label: "Gateway",
-    faceName: "FRONT",
-    videoSrc: "/demos/gateway.mp4",
-    badge: "01 · FRONT FACE: GATEWAY",
+    roman: "SECTIO I",
+    elevation: "+12.0m",
     title: "Multi-Gateway Model Matrix",
     tagline: "Your subscriptions. Your keys. Zero lock-in.",
+    // ascii-magic-3: the receding arched corridor — perfect for "gateway"
+    bgAsset: "/assets/ascii-magic-3.png",
+    bgFocus: "object-center",
+    videoSrc: "/demos/gateway.mp4",
     description:
-      "Connect directly to Claude Pro, ChatGPT Plus, or Grok memberships via browser PKCE OAuth 2.0 with zero token markup. Plug in any of 15+ developer API keys, or run 100% offline with local Ollama models.",
+      "Connect directly to Claude Pro, ChatGPT Plus, or Grok via PKCE OAuth 2.0 with zero token markup. 15+ developer API keys, or 100% offline Ollama models.",
     bullets: [
-      "PKCE OAuth for Claude Pro / ChatGPT Plus / Grok",
-      "15+ Developer API providers with unified fallback routing",
-      "100% Air-gapped offline inference via Ollama & LM Studio",
+      "PKCE OAuth: Claude Pro / ChatGPT Plus / Grok",
+      "15+ API providers with unified fallback routing",
+      "100% offline inference via Ollama / LM Studio",
     ],
     terminalLines: [
       { type: "cmd", text: "cube gateway status" },
-      { type: "success", text: "PKCE OAuth: Claude Pro (Quota: Active · 5hr window)" },
-      { type: "info", text: "API Matrix: 15 providers configured (Anthropic, OpenAI, Grok, Gemini)" },
-      { type: "bullet", text: "Local Engine: Ollama / qwen2.5-coder:32b (100% Offline ready)" },
-      { type: "output", text: "Active Model: claude-3-7-sonnet via OAuth · Zero token markup" },
+      { type: "success", text: "✔ PKCE OAuth: Claude Pro (Active · 5hr quota)" },
+      { type: "info", text: "ℹ API Matrix: 15 providers configured" },
+      { type: "bullet", text: "Local Engine: Ollama / qwen2.5-coder:32b" },
+      { type: "output", text: "Active: claude-3-7-sonnet · Zero token markup" },
     ],
   },
   {
     id: "skill",
+    code: "02",
     label: "Skill",
-    faceName: "RIGHT",
-    videoSrc: "/demos/skill.mp4",
-    badge: "02 · RIGHT FACE: SKILL",
+    roman: "SECTIO II",
+    elevation: "+20.0m",
     title: "Workspace Skill & Rule Discovery",
     tagline: "Architectural context right where you code.",
+    // ascii-magic-2: ascending spiral staircase — recursive hierarchy
+    bgAsset: "/assets/ascii-magic-2.png",
+    bgFocus: "object-center",
     description:
-      "Cube crawls project directories and walks up parent folders to automatically discover AGENTS.md rules, repository guidelines, and custom skill scripts. Injected into every turn with zero prompt copy-pasting.",
+      "Cube crawls project directories and walks up parent folders to automatically discover AGENTS.md rules, repository guidelines, and custom skill scripts.",
     bullets: [
-      "Automatic AGENTS.md rule discovery across parent trees",
-      "Dynamic skill loading with isolated execution runtimes",
-      "Zero prompt maintenance across multiple monorepos",
+      "Automatic AGENTS.md discovery across monorepo trees",
+      "Dynamic skill loading with isolated runtimes",
+      "Zero prompt maintenance across multiple repos",
     ],
     terminalLines: [
       { type: "cmd", text: 'cube run "refactor database client"' },
-      { type: "info", text: "[workspace] Scanning directory tree for project guidelines..." },
-      { type: "success", text: "Discovered root AGENTS.md (14 rules injected)" },
-      { type: "info", text: "[skill] Loaded .cube/skills/sql-migration.md" },
-      { type: "output", text: "Architectural context injected into turn context with zero maintenance" },
+      { type: "info", text: "[workspace] Scanning directory tree..." },
+      { type: "success", text: "✔ AGENTS.md: 14 project rules injected" },
+      { type: "info", text: "ℹ Loaded .cube/skills/sql-migration.md" },
+      { type: "output", text: "Context injected. Zero prompt maintenance." },
     ],
   },
   {
     id: "hitl",
+    code: "03",
     label: "HITL",
-    faceName: "TOP",
-    videoSrc: "/demos/hitl.mp4",
-    badge: "03 · TOP FACE: HITL",
+    roman: "SECTIO III",
+    elevation: "+28.0m",
     title: "Human-in-the-Loop Safeguards",
     tagline: "Absolute developer authority.",
+    // ascii-magic-1: mechanical trusses, chains — guardrails
+    bgAsset: "/assets/ascii-magic-1.png",
+    bgFocus: "object-center",
+    videoSrc: "/demos/hitl.mp4",
     description:
-      "No silent overwrites or rogue actions. Before applying atomic disk modifications or running potentially destructive terminal commands, Cube prompts for explicit developer confirmation with full unified diff previews.",
+      "No silent overwrites. Before disk mutations or destructive shell commands, Cube surfaces a colorized unified diff and waits for explicit confirmation.",
     bullets: [
-      "Human confirmation required for sensitive bash commands",
-      "Side-by-side colorized unified diff previews before write",
-      "One-key rollback and atomic disk commit guarantees",
+      "Confirmation required for sensitive bash commands",
+      "Colorized unified diff previews before any write",
+      "One-key rollback and atomic commit guarantees",
     ],
     terminalLines: [
       { type: "cmd", text: 'cube exec "rm -rf ./dist && pnpm migrate:prod"' },
-      { type: "warn", text: "GUARDRAIL TRIGGERED: Potentially destructive disk mutation" },
-      { type: "output", text: "Target: Recursive directory deletion & production database schema change" },
-      { type: "cmd", text: "Approve atomic execution? [y/N]: y" },
-      { type: "success", text: "Action authorized by developer. Executed safely with atomic rollback point." },
+      { type: "warn", text: "! GUARDRAIL: Potentially destructive mutation" },
+      { type: "output", text: "Target: Recursive delete & schema migration" },
+      { type: "cmd", text: "Approve? [y/N]: y" },
+      { type: "success", text: "✔ Authorized. Rollback checkpoint #928a created." },
     ],
   },
   {
     id: "qa",
+    code: "04",
     label: "Q&A",
-    faceName: "LEFT",
-    videoSrc: "/demos/qa.mp4",
-    badge: "04 · LEFT FACE: Q&A",
+    roman: "SECTIO IV",
+    elevation: "+36.0m",
     title: "Interactive Intent Clarification",
     tagline: "Resolve ambiguity before writing code.",
+    // ascii-magic-4: branching stairways & meander frieze — many paths
+    bgAsset: "/assets/ascii-magic-4.png",
+    bgFocus: "object-center",
+    videoSrc: "/demos/qa.mp4",
     description:
-      "When requirements are underspecified or architectural tradeoffs arise, Cube presents keyboard-driven multiple-choice questions right in your shell to lock down exact implementation specs.",
+      "When requirements are ambiguous, Cube renders keyboard-driven multiple-choice questions in your shell — lock down exact specs before a line of code is written.",
     bullets: [
-      "Interactive arrow-key multiple choice in terminal TUI",
-      "Clarify underspecified requirements early in planning",
-      "Instant architectural alignment without endless chat loops",
+      "Arrow-key interactive picker in terminal TUI",
+      "Inline architectural tradeoffs before selection",
+      "Seamless return to autonomous execution",
     ],
     terminalLines: [
       { type: "cmd", text: 'cube plan "migrate authentication subsystem"' },
-      { type: "info", text: "? Multiple architecture patterns detected. Choose approach:" },
-      { type: "bullet", text: "[Recommended] OAuth PKCE flow (Zero storage of credentials)" },
-      { type: "bullet", text: "Static API key rotation with LibSQL encryption" },
-      { type: "bullet", text: "Delegated subagent auth broker" },
-      { type: "success", text: "Selection confirmed via arrow keys. Specs locked down before writing code." },
+      { type: "info", text: "? Multiple approaches detected. Choose one:" },
+      { type: "bullet", text: "❯ [1] OAuth PKCE flow (Recommended)" },
+      { type: "bullet", text: "  [2] Static API key rotation + LibSQL" },
+      { type: "bullet", text: "  [3] Delegated subagent auth broker" },
+      { type: "success", text: "✔ Spec locked. Proceeding with PKCE flow." },
     ],
   },
   {
     id: "mcp",
+    code: "05",
     label: "MCP",
-    faceName: "BOTTOM",
-    videoSrc: "/demos/mcp.mp4",
-    badge: "05 · BOTTOM FACE: MCP",
+    roman: "SECTIO V",
+    elevation: "+44.0m",
     title: "Model Context Protocol Foundation",
     tagline: "Universal tool & data interoperability.",
+    // ascii-magic-6: grand colonnade hall — universal connection
+    bgAsset: "/assets/ascii-magic-6.png",
+    bgFocus: "object-center",
     description:
-      "Built-in Model Context Protocol (MCP) client architecture. Seamlessly connect external tool servers, database inspectors, browser automation runtimes, and proprietary enterprise endpoints through open standards.",
+      "Built-in MCP client. Connect external tool servers, database inspectors, browser automation, and enterprise endpoints through open standards.",
     bullets: [
-      "Universal MCP client supporting stdio and SSE transports",
-      "Connect databases, GitHub, browser automation, and APIs",
-      "Community server ecosystem with zero custom adapter code",
+      "Universal MCP client: stdio & SSE transports",
+      "Connect databases, GitHub, browser automation",
+      "Community server ecosystem, zero adapter code",
     ],
     terminalLines: [
       { type: "cmd", text: "cube mcp list" },
-      { type: "success", text: "Model Context Protocol (MCP) client online" },
-      { type: "bullet", text: "postgres-inspector (stdio transport · 6 tools active)" },
-      { type: "bullet", text: "github-context (stdio transport · 8 tools active)" },
-      { type: "bullet", text: "browser-playwright (sse transport · 12 tools active)" },
-      { type: "output", text: "Connected 3 MCP servers · 26 external tools available" },
+      { type: "success", text: "✔ MCP client online" },
+      { type: "bullet", text: "├─ postgres-inspector  (stdio · 6 tools)" },
+      { type: "bullet", text: "├─ github-context       (stdio · 8 tools)" },
+      { type: "bullet", text: "└─ browser-playwright   (sse  · 12 tools)" },
+      { type: "output", text: "26 external tools available across 3 servers" },
     ],
   },
   {
     id: "subagent",
+    code: "06",
     label: "Subagent",
-    faceName: "BACK",
-    videoSrc: "/demos/subagent.mp4",
-    badge: "06 · BACK FACE: SUBAGENT",
-    title: "Parallel Subagent Task Delegation",
+    roman: "SECTIO VI",
+    elevation: "+52.0m",
+    title: "Parallel Subagent Delegation",
     tagline: "Orchestrate autonomous worker teams.",
+    // ascii-magic-5: concurrent vaults & scaffolding — parallel execution
+    bgAsset: "/assets/ascii-magic-5.png",
+    bgFocus: "object-top",
     description:
-      "Deconstruct massive refactoring projects into isolated parallel subagent workers. Subagents conduct deep codebase exploration, write tests, and apply scoped edits concurrently without blocking your main prompt loop.",
+      "Decompose massive refactoring goals into isolated parallel workers. Subagents explore, test, and edit concurrently without blocking your main shell.",
     bullets: [
-      "Spawn background worker subagents with isolated context",
-      "Parallel codebase exploration, refactoring, and test writing",
-      "Automatic dependency resolution and unified pull review",
+      "Spawn workers with isolated context & workspace",
+      "Parallel exploration, refactoring, and test writing",
+      "Automatic dependency resolution & unified review",
     ],
     terminalLines: [
       { type: "cmd", text: 'cube run --parallel "audit & refactor monorepo"' },
-      { type: "info", text: "[orchestrator] Deconstructing task into 2 isolated subagents:" },
-      { type: "bullet", text: "subagent-1 (Research): Indexing packages & dependency graph" },
-      { type: "bullet", text: "subagent-2 (Tester): Running test suite concurrently" },
-      { type: "success", text: "Workers running in background. Main interactive shell is responsive." },
+      { type: "info", text: "[orchestrator] Spawning 2 isolated subagents:" },
+      { type: "bullet", text: "↳ Worker #1 [PID 4912] — /src/routes/auth" },
+      { type: "bullet", text: "↳ Worker #2 [PID 4913] — /src/routes/billing" },
+      { type: "success", text: "✔ Both complete. Schema merged → /docs/openapi.json" },
     ],
   },
 ];
 
-const VIDEO_EXTENSIONS = [".mp4", ".webm"];
-const AVAILABLE_DEMOS = new Set(["gateway", "hitl", "qa"]);
+// Compute scroll-to position for a given feature index in a 600vh section
+function useFeatureJump(sectionRef: React.RefObject<HTMLDivElement | null>) {
+  return useCallback(
+    (index: number) => {
+      const el = sectionRef.current;
+      if (!el) return;
+      const top = el.getBoundingClientRect().top + window.scrollY;
+      const height = el.offsetHeight; // 600vh
+      // Feature i starts at i/6 of the total scroll range
+      const target = top + (index / ALL_6_FEATURES.length) * height;
+      window.scrollTo({ top: target, behavior: "smooth" });
+    },
+    [sectionRef]
+  );
+}
 
-function TerminalScreen({
-  activeFeature,
-  isVideoAvailable,
-  currentVideo,
-  onVideoError,
-}: {
-  activeFeature: ShowcaseFeature;
-  isVideoAvailable: boolean;
-  currentVideo: string;
-  onVideoError: () => void;
-}) {
+export function ScrollShowcase() {
+  const sectionRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [displayMode, setDisplayMode] = useState<"video" | "terminal">("video");
 
+  // Map scroll progress 0→1 across the 600vh section to feature index 0→5
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    const idx = Math.min(ALL_6_FEATURES.length - 1, Math.floor(v * ALL_6_FEATURES.length));
+    setActiveIdx(idx);
+  });
+
+  // Auto-play video when active feature changes
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
       videoRef.current.play().catch(() => {});
     }
-  }, [activeFeature.id, currentVideo]);
+  }, [activeIdx, displayMode]);
+
+  const jumpTo = useFeatureJump(sectionRef);
+  const feat = ALL_6_FEATURES[activeIdx];
+  const hasVideo = Boolean(feat.videoSrc);
 
   return (
-    <div
-      className={cn(
-        "relative bg-[#090A0E] overflow-hidden",
-        isVideoAvailable
-          ? "w-full"
-          : "min-h-[340px] sm:min-h-[440px] flex flex-col justify-start"
-      )}
+    /**
+     * 600vh tall scroll container — each 100vh = one feature chamber.
+     * The sticky child is pinned to the viewport for the full 600vh scroll travel.
+     */
+    <section
+      ref={sectionRef}
+      id="demo"
+      className="relative"
+      style={{ height: `${ALL_6_FEATURES.length * 100}vh` }}
     >
-      {isVideoAvailable ? (
-        <video
-          ref={videoRef}
-          key={`${activeFeature.id}-${currentVideo}`}
-          src={currentVideo}
-          autoPlay
-          muted
-          playsInline
-          onError={onVideoError}
-          className="w-full h-auto block"
-        />
-      ) : (
-        <div className="p-5 sm:p-8 font-mono text-xs sm:text-[13px] text-white flex flex-col justify-between h-full min-h-[340px] sm:min-h-[440px] bg-gradient-to-b from-[#090A0E] via-[#0D0E13] to-[#08080C]">
-          {/* Header info bar */}
-          <div className="flex items-center gap-2 text-xs text-[#A1A1AA] pb-3 border-b border-[#27272A]/50 overflow-hidden w-full">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
-            <span className="text-white font-medium shrink-0">cube-demo</span>
-            <span className="text-[#27272A] shrink-0">•</span>
-            <span className="shrink-0">{activeFeature.faceName} FACE</span>
-            <span className="text-[#27272A] shrink-0 hidden sm:inline">•</span>
-            <span className="text-amber-300/80 truncate hidden sm:inline">Demo Video Coming Soon</span>
-          </div>
+      {/* ═══════════════════════════════════════════════════════════
+          STICKY PINNED STAGE — occupies exactly one viewport height
+          The Piranesi artwork IS the full-screen environment.
+          Content is inscribed ON TOP of the architectural space.
+      ═══════════════════════════════════════════════════════════ */}
+      <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#0A0908]">
 
-          {/* Centered Coming Soon Presentation */}
-          <div className="flex flex-col items-center justify-center text-center my-auto py-4">
-            <div className="relative mb-3.5">
-              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-white/[0.04] border border-[#27272A] flex items-center justify-center shadow-lg shadow-black/60">
-                <Film className="w-6 h-6 text-[#A1A1AA]" />
-              </div>
-              <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400/20 border-2 border-[#090A0E] flex items-center justify-center">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-              </span>
-            </div>
-
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#18181B] border border-[#27272A] text-xs font-mono text-[#A1A1AA] mb-3">
-              <Clock className="w-3.5 h-3.5 text-amber-300" />
-              <span className="text-white font-medium">Demo Coming Soon</span>
-              <span className="text-[#27272A]">•</span>
-              <span className="text-amber-300">Recording in Progress</span>
-            </div>
-
-            <h4 className="text-lg sm:text-xl font-medium tracking-tight text-white mb-2 max-w-md">
-              {activeFeature.title}
-            </h4>
-
-            <p className="text-xs sm:text-sm text-[#A1A1AA] font-sans max-w-sm mb-5 leading-relaxed">
-              Video demonstration from real terminal execution is currently being recorded. No synthetic or simulated footage.
-            </p>
-
-            <div className="w-full max-w-md bg-[#121318]/90 border border-[#27272A]/70 rounded-xl p-3 sm:p-4 text-left space-y-2">
-              <div className="text-[10px] font-mono text-[#A1A1AA]/60 uppercase tracking-wider mb-1">
-                Upcoming Live Demonstration
-              </div>
-              {activeFeature.bullets.map((bullet, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-xs text-[#E4E4E7]">
-                  <span className="text-amber-400/80 shrink-0 font-bold">›</span>
-                  <span className="truncate">{bullet}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Footer info bar */}
-          <div className="pt-3 border-t border-[#27272A]/40 flex items-center justify-between text-xs text-[#A1A1AA] w-full">
-            <span className="text-[11px] font-mono text-[#A1A1AA]/70 truncate">
-              CUBE DEMO · {activeFeature.label.toUpperCase()}
-            </span>
-            <span className="text-[11px] font-mono text-amber-300/80 shrink-0 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-              <span>Coming Soon</span>
-            </span>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export function ScrollShowcase() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [failedFeatures, setFailedFeatures] = useState<Record<string, boolean>>({});
-  const [extIndices, setExtIndices] = useState<Record<string, number>>({});
-  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  const activeFeature = FEATURES[activeIndex] || FEATURES[0];
-  const extIdx = extIndices[activeFeature.id] || 0;
-  const currentVideo = `/demos/${activeFeature.id}${VIDEO_EXTENSIONS[extIdx]}`;
-  const isVideoAvailable = AVAILABLE_DEMOS.has(activeFeature.id) && !failedFeatures[activeFeature.id];
-
-  const handleVideoError = () => {
-    const currentIdx = extIndices[activeFeature.id] || 0;
-    if (currentIdx < VIDEO_EXTENSIONS.length - 1) {
-      setExtIndices((prev) => ({ ...prev, [activeFeature.id]: currentIdx + 1 }));
-    } else {
-      setFailedFeatures((prev) => ({ ...prev, [activeFeature.id]: true }));
-    }
-  };
-
-  const isProgrammaticScroll = useRef(false);
-  const scrollLockTimeout = useRef<NodeJS.Timeout | null>(null);
-
-  // Set up IntersectionObserver ONLY on desktop (window.innerWidth >= 1024)
-  useEffect(() => {
-    if (typeof window === "undefined" || window.innerWidth < 1024) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (isProgrammaticScroll.current) return;
-
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const index = Number(entry.target.getAttribute("data-index"));
-            if (!isNaN(index)) {
-              setActiveIndex(index);
-              break;
-            }
-          }
-        }
-      },
-      {
-        root: null,
-        threshold: 0.5,
-      }
-    );
-
-    sectionRefs.current.forEach((el) => {
-      if (el) observer.observe(el);
-    });
-
-    return () => {
-      observer.disconnect();
-      if (scrollLockTimeout.current) clearTimeout(scrollLockTimeout.current);
-    };
-  }, []);
-
-  const handleSelectFacet = (index: number) => {
-    setActiveIndex(index);
-
-    // Only scroll left-column cards into view on desktop (lg: >= 1024px)
-    // On mobile (< 1024px), DO NOT scroll away so the demo remains right in front of the user!
-    if (typeof window !== "undefined" && window.innerWidth >= 1024) {
-      isProgrammaticScroll.current = true;
-      if (scrollLockTimeout.current) clearTimeout(scrollLockTimeout.current);
-      scrollLockTimeout.current = setTimeout(() => {
-        isProgrammaticScroll.current = false;
-      }, 850);
-
-      const targetEl = sectionRefs.current[index];
-      if (targetEl) {
-        targetEl.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }
-    }
-  };
-
-  return (
-    <section id="demo" className="relative border-t border-[#27272A] bg-transparent">
-      <span id="showcase" className="sr-only" />
-      {/* Section Eyebrow Header */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-10 sm:pb-12 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-4 shadow-sm">
-          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-          <span>CORE CAPABILITIES</span>
-        </div>
-        <h2 className="text-3xl sm:text-4xl lg:text-[40px] font-medium tracking-tight text-white leading-[1.15]">
-          Terminal intelligence engineered for developer flow
-        </h2>
-        <p className="mt-3 text-base text-[#A1A1AA] max-w-xl mx-auto">
-          Engineered for speed, privacy, and full developer agency. Explore how Cube orchestrates models, workspace context, and safe execution directly inside your shell.
-        </p>
-      </div>
-
-      {/* Desktop Layout (>= lg): Two-Column Scroll-Synced Layout */}
-      <div className="hidden lg:block max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-12 gap-8 items-start relative">
-          {/* Left Column: Stacked feature sections (scroll-synced) */}
-          <div className="col-span-5 space-y-0 pb-44">
-            {FEATURES.map((feature, idx) => (
-              <div
-                key={feature.id}
-                ref={(el) => {
-                  sectionRefs.current[idx] = el;
-                }}
-                data-index={idx}
-                className={cn(
-                  "min-h-[75vh] flex flex-col justify-center py-12 transition-opacity duration-300",
-                  activeIndex === idx ? "opacity-100" : "opacity-35 hover:opacity-60"
-                )}
-              >
-                <div className="space-y-4">
-                  <div className="text-xs font-mono text-white/70 tracking-wider">
-                    {feature.badge}
-                  </div>
-                  <h3 className="text-2xl sm:text-3xl font-medium text-white tracking-tight leading-snug">
-                    {feature.title}
-                  </h3>
-                  <div className="text-sm font-mono text-[#A1A1AA]">
-                    {feature.tagline}
-                  </div>
-                  <p className="text-sm sm:text-base text-[#A1A1AA] leading-relaxed">
-                    {feature.description}
-                  </p>
-
-                  {/* Bullet points */}
-                  <ul className="space-y-2 pt-2">
-                    {feature.bullets.map((b, bIdx) => (
-                      <li key={bIdx} className="text-xs font-mono text-white/90 flex items-start gap-2">
-                        <span className="text-white select-none">›</span>
-                        <span>{b}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="pt-2 flex items-center gap-2 text-xs font-mono text-[#A1A1AA]/60">
-                    <span>Facet {idx + 1} of 6</span>
-                    <span className="text-[#27272A]">•</span>
-                    <span>Cube Face: {feature.faceName}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Right Column: Sticky 3D Cube Navigator + macOS Terminal Panel */}
-          <div className="col-span-7 sticky top-20 pb-16">
-            <Cube3DNavigator
-              activeIndex={activeIndex}
-              onSelectIndex={handleSelectFacet}
-              features={FEATURES.map((f) => ({
-                id: f.id,
-                label: f.label,
-                faceName: f.faceName,
-              }))}
-            />
-
-            <div className="rounded-[10px] border border-[#27272A] bg-[#0D0D0F] shadow-[0_25px_60px_rgba(0,0,0,0.9)] overflow-hidden">
-              <div className="px-4 py-3 bg-[#18181B] border-b border-[#27272A] flex items-center justify-between select-none">
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/50" />
-                  <span className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]/50" />
-                  <span className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/50" />
-                </div>
-
-                <div className="flex items-center gap-2 text-xs font-mono text-[#A1A1AA] truncate px-2">
-                  <Terminal className="w-3.5 h-3.5 text-white shrink-0" />
-                  <span className="text-white font-medium truncate">
-                    D:\your-project 
-                  </span>
-                </div>
-
-                <span
-                  className={cn(
-                    "text-[10px] font-mono px-2 py-0.5 rounded border shrink-0",
-                    isVideoAvailable
-                      ? "bg-white/10 text-white border-white/10"
-                      : "bg-amber-400/10 text-amber-300 border-amber-400/20"
-                  )}
-                >
-                  {isVideoAvailable ? `${activeFeature.faceName} FACE` : "DEMO COMING SOON"}
-                </span>
-              </div>
-
-              <TerminalScreen
-                activeFeature={activeFeature}
-                isVideoAvailable={isVideoAvailable}
-                currentVideo={currentVideo}
-                onVideoError={handleVideoError}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Layout (< lg): Interactive Tabbed Showcase (Terminal Demo + Synced Detail Card) */}
-      <div className="block lg:hidden max-w-xl mx-auto px-4 pb-20 space-y-4">
-        {/* 3D Cube Interactive Rotating Model */}
-        <Cube3DNavigator
-          activeIndex={activeIndex}
-          onSelectIndex={handleSelectFacet}
-          features={FEATURES.map((f) => ({
-            id: f.id,
-            label: f.label,
-            faceName: f.faceName,
-          }))}
-        />
-
-        {/* 6-Facet Scrollable Tab Bar */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none select-none">
-          {FEATURES.map((feat, idx) => {
-            const isSelected = activeIndex === idx;
-            return (
-              <button
-                key={feat.id}
-                onClick={() => handleSelectFacet(idx)}
-                className={cn(
-                  "relative px-3 py-1.5 rounded-lg text-xs font-mono whitespace-nowrap transition-colors cursor-pointer shrink-0 border",
-                  isSelected
-                    ? "text-black font-semibold border-white"
-                    : "text-[#A1A1AA] hover:text-white border-[#27272A] bg-[#0D0D0F]"
-                )}
-              >
-                {isSelected && (
-                  <motion.span
-                    layoutId="mobileActiveFacetPill"
-                    className="absolute inset-0 rounded-lg bg-white z-0"
-                    transition={{ type: "spring", stiffness: 480, damping: 35 }}
-                  />
-                )}
-                <span className="relative z-10 flex items-center gap-1.5">
-                  <span className={cn("text-[10px]", isSelected ? "text-black/70" : "text-[#A1A1AA]/60")}>
-                    0{idx + 1}
-                  </span>
-                  <span>{feat.label}</span>
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* macOS Terminal Window Container */}
-        <div className="rounded-[10px] border border-[#27272A] bg-[#0D0D0F] shadow-[0_25px_60px_rgba(0,0,0,0.9)] overflow-hidden">
-          {/* macOS Window Chrome */}
-          <div className="px-3.5 py-2.5 bg-[#18181B] border-b border-[#27272A] flex items-center justify-between select-none">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
-              <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
-              <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
-            </div>
-
-            <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#A1A1AA] truncate px-1">
-              <Terminal className="w-3 h-3 text-white shrink-0" />
-              <span className="text-white font-medium truncate">
-                D:\your-project 
-              </span>
-            </div>
-
-            <span
-              className={cn(
-                "text-[9px] font-mono px-1.5 py-0.5 rounded border shrink-0",
-                isVideoAvailable
-                  ? "bg-white/10 text-white border-white/10"
-                  : "bg-amber-400/10 text-amber-300 border-amber-400/20"
-              )}
+        {/* ── LAYER 0: FULL-SCREEN PIRANESI BACKDROP ────────────────
+            This is NOT an image inside a box.
+            The artwork IS the entire stage — no borders, no frames.
+        ──────────────────────────────────────────────────────────── */}
+        <div className="absolute inset-0 z-0">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={feat.bgAsset}
+              className="absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.55, ease: "easeInOut" }}
             >
-              {isVideoAvailable ? activeFeature.faceName : "COMING SOON"}
-            </span>
-          </div>
-
-          {/* Terminal Screen */}
-          <TerminalScreen
-            activeFeature={activeFeature}
-            isVideoAvailable={isVideoAvailable}
-            currentVideo={currentVideo}
-            onVideoError={handleVideoError}
-          />
+              <Image
+                src={feat.bgAsset}
+                alt=""
+                fill
+                priority
+                sizes="100vw"
+                className={cn(
+                  "object-cover contrast-[1.18] brightness-[0.68]",
+                  feat.bgFocus
+                )}
+              />
+              {/*
+                Chiaroscuro gradient system:
+                - Strong shadow from LEFT → keeps left content readable
+                - Bottom blackout → grounds the elevation bar
+                - Subtle top shadow → keeps header legible
+                - Centre spotlight stays largely transparent → shows the art
+              */}
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0A0908]/92 via-[#0A0908]/45 to-[#0A0908]/55" />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#0A0908]/80 via-transparent to-[#0A0908]/90" />
+            </motion.div>
+          </AnimatePresence>
         </div>
 
-        {/* Active Feature Detail Card (Placed directly under the terminal) */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeFeature.id}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.18 }}
-            className="rounded-[10px] border border-[#27272A] bg-[#0D0D0F] p-4 sm:p-5 space-y-3.5"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono text-white/70 tracking-wider">
-                {activeFeature.badge}
+        {/* ── LAYER 1: ARCHITECTURAL DATUM GRID (very subtle) ───────── */}
+        <div aria-hidden="true" className="absolute inset-0 z-[1] pointer-events-none">
+          <div className="absolute top-[4.5rem] left-0 right-0 h-px bg-[#3E3833]/25" />
+          <div className="absolute bottom-[3.5rem] left-0 right-0 h-px bg-[#3E3833]/25" />
+          {/* Vertical divider at ~55% only on large screens */}
+          <div className="absolute inset-y-0 hidden lg:block" style={{ left: "55%" }}>
+            <div className="h-full w-px bg-[#2A2622]/40" />
+          </div>
+        </div>
+
+        {/* ── LAYER 2: CONTENT INSCRIBED INTO THE ARCHITECTURAL SPACE ── */}
+        <div className="relative z-10 h-full flex flex-col">
+
+          {/* TOP HEADER BAR */}
+          <div className="flex items-center justify-between px-5 sm:px-8 md:px-14 py-3 border-b border-[#2A2622]/60 bg-[#0A0908]/55 backdrop-blur-sm">
+            <div className="flex items-center gap-3">
+              <span className="font-cinzel text-[11px] font-bold text-[#D6D3D1] tracking-wider">
+                LIBER II · {feat.roman}
               </span>
-              <span className="text-[10px] font-mono text-[#A1A1AA]/60">
-                Facet {activeIndex + 1} of 6
-              </span>
+              <span className="font-mono text-[11px] text-[#3E3833]">ELEV. {feat.elevation}</span>
             </div>
 
-            <h3 className="text-lg sm:text-xl font-medium text-white tracking-tight leading-snug">
-              {activeFeature.title}
-            </h3>
-
-            <div className="text-xs font-mono text-[#A1A1AA]">
-              {activeFeature.tagline}
-            </div>
-
-            <p className="text-xs sm:text-sm text-[#A1A1AA] leading-relaxed">
-              {activeFeature.description}
-            </p>
-
-            {/* Bullet points */}
-            <ul className="space-y-1.5 pt-2 border-t border-[#27272A]/50">
-              {activeFeature.bullets.map((b, bIdx) => (
-                <li key={bIdx} className="text-xs font-mono text-white/90 flex items-start gap-2">
-                  <span className="text-white select-none">›</span>
-                  <span>{b}</span>
-                </li>
+            {/* 6-dot feature navigator */}
+            <div className="flex items-center gap-2" role="tablist" aria-label="Showcase chambers">
+              {ALL_6_FEATURES.map((f, i) => (
+                <button
+                  key={f.id}
+                  role="tab"
+                  aria-selected={i === activeIdx}
+                  onClick={() => jumpTo(i)}
+                  title={`${f.code} — ${f.label}`}
+                  className="group flex flex-col items-center gap-0.5 cursor-pointer"
+                >
+                  <span
+                    className={cn(
+                      "block transition-all duration-200",
+                      i === activeIdx
+                        ? "w-4 h-1 bg-[#38BDF8] rounded-full"
+                        : "w-1.5 h-1.5 bg-[#3E3833] rounded-full group-hover:bg-[#78716C]"
+                    )}
+                  />
+                   <span className={cn("font-mono text-[9px] hidden sm:block", i === activeIdx ? "text-[#A8A29E]" : "text-[#3E3833] group-hover:text-[#78716C]")}>
+                    {f.code}
+                  </span>
+                </button>
               ))}
-            </ul>
-
-            {/* Previous / Next navigation buttons for thumb-friendly navigation */}
-            <div className="pt-2.5 border-t border-[#27272A]/50 flex items-center justify-between">
-              <button
-                onClick={() => handleSelectFacet((activeIndex - 1 + FEATURES.length) % FEATURES.length)}
-                className="px-3 py-1.5 rounded-md text-xs font-mono text-[#A1A1AA] hover:text-white bg-[#18181B] border border-[#27272A] transition-colors cursor-pointer flex items-center gap-1"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-                <span>{FEATURES[(activeIndex - 1 + FEATURES.length) % FEATURES.length].label}</span>
-              </button>
-
-              <button
-                onClick={() => handleSelectFacet((activeIndex + 1) % FEATURES.length)}
-                className="px-3 py-1.5 rounded-md text-xs font-mono text-black font-semibold bg-white hover:bg-zinc-200 transition-colors cursor-pointer flex items-center gap-1"
-              >
-                <span>{FEATURES[(activeIndex + 1) % FEATURES.length].label}</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
             </div>
-          </motion.div>
-        </AnimatePresence>
+
+            <span className="font-mono text-[10px] text-[#3E3833] hidden sm:block">{feat.code} // {feat.label.toUpperCase()}</span>
+          </div>
+
+          {/* MAIN BODY — fills remaining height */}
+          <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
+
+            {/* LEFT: MONUMENTAL INSCRIPTION ON STONE ──────────────────── */}
+            <div className="lg:w-[52%] flex flex-col justify-center px-5 sm:px-8 md:px-14 py-6 lg:py-10 overflow-y-auto">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={feat.id}
+                  initial={{ opacity: 0, x: -24 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 24 }}
+                  transition={{ duration: 0.38, ease: "easeOut" }}
+                  className="max-w-xl"
+                >
+                  {/* Giant dim ordinal watermark — limestone stone tone, Piranesi scale */}
+                  <div
+                    aria-hidden="true"
+                    className="font-cinzel font-bold text-[#F5F5F4]/[0.05] leading-none select-none -ml-1 mb-1"
+                    style={{ fontSize: "clamp(5rem,14vw,11rem)" }}
+                  >
+                    {feat.code}
+                  </div>
+
+                  {/* Feature title — offset over the giant numeral */}
+                  <div className="-mt-6 sm:-mt-10 lg:-mt-14 relative z-10">
+                    {/* Surveyor's notation — muted stone, NOT cyan */}
+                    <div className="font-mono text-[11px] text-[#78716C] mb-2 tracking-wider">
+                      ├── {feat.tagline}
+                    </div>
+
+                    <h2
+                      className="font-sans font-semibold text-[#F5F5F4] leading-[1.1] mb-3"
+                      style={{ fontSize: "clamp(1.5rem,3.5vw,2.6rem)" }}
+                    >
+                      {feat.title}
+                    </h2>
+
+                    <p className="text-[#A8A29E] font-serif leading-relaxed mb-5 text-sm sm:text-base">
+                      {feat.description}
+                    </p>
+
+                    <div className="space-y-2 pt-3 border-t border-[#3E3833]/40">
+                      {feat.bullets.map((b, i) => (
+                        <div key={i} className="flex items-start gap-2.5 text-xs text-[#D6D3D1] font-mono">
+                          <Check className="w-3.5 h-3.5 text-[#A8A29E] shrink-0 mt-0.5" />
+                          <span>{b}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* VERTICAL DIVIDER (desktop only) */}
+            <div className="hidden lg:block w-px bg-[#2A2622]/50 self-stretch" />
+
+            {/* RIGHT: TERMINAL / VIDEO — embedded in the architectural space ── */}
+            <div className="lg:w-[45%] flex flex-col justify-center px-5 sm:px-6 md:px-8 py-5 overflow-y-auto">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={feat.id + "-terminal"}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.35, delay: 0.05 }}
+                  className="w-full"
+                >
+                  {/* Terminal chrome bar */}
+                  <div className="flex items-center justify-between px-3.5 py-2 bg-[#0A0908]/85 border border-[#2A2622] border-b-0 backdrop-blur-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#2A2622]" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#2A2622]" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#2A2622]" />
+                      </div>
+                      <Terminal className="w-3 h-3 text-[#A8A29E]" />
+                      <span className="font-mono text-[11px] text-[#D6D3D1]">cube ~ {feat.id}</span>
+                    </div>
+
+                    {/* Video / terminal toggle */}
+                    {hasVideo && (
+                      <div className="flex items-center bg-[#141210] border border-[#2A2622] rounded-sm p-0.5 text-[10px]">
+                        <button
+                          onClick={() => setDisplayMode("video")}
+                          className={cn(
+                            "flex items-center gap-1 px-2 py-0.5 rounded-xs cursor-pointer transition-colors",
+                            displayMode === "video" ? "bg-[#38BDF8] text-[#0A0908] font-bold" : "text-[#78716C] hover:text-[#F5F5F4]"
+                          )}
+                        >
+                          <Play className="w-2.5 h-2.5 fill-current" />
+                          <span className="font-mono">MP4</span>
+                        </button>
+                        <button
+                          onClick={() => setDisplayMode("terminal")}
+                          className={cn(
+                            "flex items-center gap-1 px-2 py-0.5 rounded-xs cursor-pointer transition-colors",
+                            displayMode === "terminal" ? "bg-[#38BDF8] text-[#0A0908] font-bold" : "text-[#78716C] hover:text-[#F5F5F4]"
+                          )}
+                        >
+                          <Code2 className="w-2.5 h-2.5" />
+                          <span className="font-mono">CLI</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content area */}
+                  <div className="border border-[#2A2622] bg-[#050403]/90 backdrop-blur-sm overflow-hidden">
+                    {hasVideo && displayMode === "video" ? (
+                      <div className="relative aspect-video w-full">
+                        <video
+                          ref={videoRef}
+                          key={feat.videoSrc}
+                          src={feat.videoSrc}
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          className="w-full h-full object-cover"
+                        />
+                        {/* LIVE badge: #38BDF8 pulse dot = product active indicator per DESIGN.md */}
+                        <div className="absolute bottom-2 left-2 flex items-center gap-1.5 px-2 py-0.5 bg-[#0A0908]/80 border border-[#2A2622] font-mono text-[10px] text-[#78716C] backdrop-blur-sm">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" />
+                          LIVE TERMINAL CAPTURE
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="p-4 sm:p-5 font-mono text-[12px] sm:text-[13px] space-y-1.5 min-h-[200px] flex flex-col justify-center">
+                        {feat.terminalLines.map((line, i) => {
+                          const colors: Record<string, string> = {
+                            cmd: "text-[#38BDF8] font-bold", // prompt cursor — per DESIGN.md
+                            success: "text-emerald-400",
+                            warn: "text-amber-400 font-semibold",
+                            info: "text-[#A8A29E]",
+                            bullet: "text-[#D6D3D1] pl-2",
+                            output: "text-[#78716C]",
+                          };
+                          return (
+                            <div key={i} className={colors[line.type] ?? "text-[#A8A29E]"}>
+                              {line.type === "cmd" ? `> ${line.text}` : line.text}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Footer bar */}
+                  <div className="flex items-center justify-between px-3.5 py-2 bg-[#0A0908]/85 border border-t-0 border-[#2A2622] backdrop-blur-sm text-[10px] font-mono text-[#3E3833]">
+                    <span>AST Traversal · Verified Determinism</span>
+                    <span>0% 3D OVERHEAD</span>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* BOTTOM ELEVATION CALIPER BAR */}
+          <div className="px-5 sm:px-8 md:px-14 py-3 border-t border-[#2A2622]/60 bg-[#0A0908]/55 backdrop-blur-sm flex items-center gap-4">
+            {/* Prev */}
+            <button
+              onClick={() => jumpTo(Math.max(0, activeIdx - 1))}
+              disabled={activeIdx === 0}
+              className="text-[#78716C] hover:text-[#F5F5F4] disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer transition-colors"
+              title="Previous chamber"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+
+            {/* Elevation progress ruler */}
+            <div className="flex-1 flex items-center gap-3 min-w-0">
+              <span className="font-mono text-[10px] text-[#78716C] shrink-0">+12.0m</span>
+              <div className="relative flex-1 h-[3px] bg-[#1A1816] overflow-visible">
+                {/* Filled progress */}
+                <motion.div
+                  className="absolute left-0 top-0 h-full bg-[#38BDF8]"
+                  animate={{ width: `${((activeIdx + 1) / ALL_6_FEATURES.length) * 100}%` }}
+                  transition={{ duration: 0.3 }}
+                />
+                {/* Tick marks at each chamber */}
+                {ALL_6_FEATURES.map((f, i) => (
+                  <button
+                    key={f.id}
+                    onClick={() => jumpTo(i)}
+                    className="absolute top-[-4px] w-[3px] h-[11px] cursor-pointer transition-colors"
+                    style={{ left: `${(i / (ALL_6_FEATURES.length - 1)) * 100}%` }}
+                    title={`${f.code} ${f.label}`}
+                  >
+                    <div className={cn("w-full h-full", i <= activeIdx ? "bg-[#38BDF8]" : "bg-[#2A2622]")} />
+                  </button>
+                ))}
+              </div>
+              <span className="font-mono text-[10px] text-[#78716C] shrink-0">+52.0m</span>
+            </div>
+
+            {/* Next */}
+            <button
+              onClick={() => jumpTo(Math.min(ALL_6_FEATURES.length - 1, activeIdx + 1))}
+              disabled={activeIdx === ALL_6_FEATURES.length - 1}
+              className="text-[#78716C] hover:text-[#F5F5F4] disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer transition-colors"
+              title="Next chamber"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+
+            {/* Current elevation readout */}
+            <div className="font-mono text-[11px] text-[#F5F5F4] font-bold shrink-0">
+              ELEV. {feat.elevation}
+            </div>
+          </div>
+        </div>
+        {/* ─────────────────────────────────────────────────────────── */}
       </div>
     </section>
   );

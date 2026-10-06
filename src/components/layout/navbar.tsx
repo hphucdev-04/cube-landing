@@ -9,25 +9,24 @@ import { motion, AnimatePresence } from "framer-motion";
 export interface NavSection {
   id: string;
   label: string;
+  roman: string;
 }
 
 const NAV_SECTIONS: NavSection[] = [
-  { id: "hero", label: "Get Started" },
-  { id: "harness", label: "Harness" },
-  { id: "demo", label: "Demo" },
-  { id: "commands", label: "Commands" },
-  { id: "faq", label: "FAQ" },
+  { id: "hero", label: "Architectura", roman: "ORD. 0" },
+  { id: "harness", label: "Harness", roman: "LIB. I" },
+  { id: "demo", label: "Showcase", roman: "LIB. II" },
+  { id: "commands", label: "Commands", roman: "LIB. III" },
+  { id: "faq", label: "FAQ", roman: "LIB. IV" },
 ];
 
 export function Navbar() {
   const [activeSection, setActiveSection] = useState<string>("hero");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Lock scroll spy while smoothly scrolling from click
   const isClickScrolling = useRef(false);
   const clickTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  // Smooth scroll handler with offset for sticky navbar
   const scrollToSection = (id: string) => {
     isClickScrolling.current = true;
     setActiveSection(id);
@@ -46,17 +45,15 @@ export function Navbar() {
 
     const el = document.getElementById(id);
     if (el) {
-      // Scroll flush to section boundary so the dividing line and section above are completely out of view
       const elementPosition = Math.ceil(el.getBoundingClientRect().top + window.scrollY);
       window.scrollTo({
-        top: Math.max(0, elementPosition),
+        top: Math.max(0, elementPosition - 30),
         behavior: "smooth",
       });
       window.history.pushState(null, "", `#${id}`);
     }
   };
 
-  // RAF-throttled scroll spy to update active nav section without layout thrashing
   useEffect(() => {
     let ticking = false;
 
@@ -69,21 +66,18 @@ export function Navbar() {
           const windowHeight = window.innerHeight;
           const fullHeight = document.documentElement.scrollHeight;
 
-          // Bottom threshold -> activate FAQ
           if (scrollY + windowHeight >= fullHeight - 100) {
             setActiveSection("faq");
             ticking = false;
             return;
           }
 
-          // Top of page -> activate hero
           if (scrollY < 180) {
             setActiveSection("hero");
             ticking = false;
             return;
           }
 
-          // Check section positions relative to activation line (38% of viewport)
           const activationLine = windowHeight * 0.38;
           let currentId = "hero";
 
@@ -115,26 +109,29 @@ export function Navbar() {
   }, []);
 
   return (
-    <header className="sticky top-5 z-50 w-full px-4 sm:px-6 pointer-events-none">
-      <div className="max-w-4xl mx-auto flex items-center justify-between sm:justify-center">
-        {/* Floating Centered Pill Navbar */}
-        <div className="w-full sm:w-auto pointer-events-auto flex items-center justify-between gap-1.5 sm:gap-3 px-2 sm:px-3 py-1.5 rounded-full bg-[#18181B]/90 backdrop-blur-xl border border-[#27272A] shadow-[0_8px_32px_rgba(0,0,0,0.55)]">
-          {/* Brand Logo (Scrolls to top) */}
+    <header className="sticky top-3 z-50 w-full px-4 sm:px-6 pointer-events-none">
+      <div className="max-w-5xl mx-auto flex items-center justify-between sm:justify-center">
+        {/* Architectural Frieze / Entablature Nav */}
+        <div className="w-full sm:w-auto pointer-events-auto flex items-center justify-between gap-1 sm:gap-2 px-3 py-1.5 rounded-sm bg-[#141210]/95 backdrop-blur-md border border-[#2A2622] shadow-[0_8px_30px_rgba(0,0,0,0.8)] relative">
+          {/* Brand Logo & Roman Inscription */}
           <button
             onClick={() => scrollToSection("hero")}
-            className="flex items-center gap-2 group px-2 sm:px-2.5 py-1 rounded-full hover:bg-white/5 cursor-pointer select-none text-left transition-colors"
+            className="flex items-center gap-2 group px-2 py-1 hover:bg-white/[0.04] cursor-pointer select-none text-left transition-colors"
           >
-            <div className="w-5 h-5 flex items-center justify-center transition-transform group-hover:scale-110 duration-200">
+            <div className="w-5 h-5 flex items-center justify-center">
               <CubeLogoIcon className="w-5 h-5" />
             </div>
-            <span className="font-semibold text-sm tracking-tight text-white font-sans">
-              Cube
+            <span className="font-cinzel font-bold text-sm tracking-widest text-[#F5F5F4]">
+              CUBE
+            </span>
+            <span className="text-[10px] font-mono text-[#3E3833] px-1.5 py-0.2 bg-[#0A0908] border border-[#2A2622] hidden sm:inline-block">
+              CARCERI
             </span>
           </button>
 
-          <span className="hidden sm:inline-block text-[#27272A] select-none text-xs">|</span>
+          <span className="hidden sm:inline-block text-[#3E3833] select-none text-xs">|</span>
 
-          {/* Desktop Navigation Links */}
+          {/* Desktop Navigation Links with Roman Numerals */}
           <nav className="hidden sm:flex items-center gap-1">
             {NAV_SECTIONS.map((sec) => {
               const isActive = activeSection === sec.id;
@@ -142,54 +139,57 @@ export function Navbar() {
                 <button
                   key={sec.id}
                   onClick={() => scrollToSection(sec.id)}
-                  className="relative px-3.5 py-1.5 rounded-full text-xs transition-colors cursor-pointer select-none font-medium"
+                  className="relative px-3 py-1 rounded-sm text-xs transition-colors cursor-pointer select-none font-mono"
                 >
                   {isActive && (
                     <motion.span
-                      layoutId="navbarActivePill"
-                      className="absolute inset-0 rounded-full bg-white shadow-sm"
+                      layoutId="navbarActivePlate"
+                      className="absolute inset-0 rounded-sm bg-[#38BDF8]"
                       transition={{ type: "spring", stiffness: 480, damping: 35 }}
                     />
                   )}
                   <span
                     className={cn(
-                      "relative z-10 transition-colors duration-150",
+                      "relative z-10 transition-colors duration-150 flex items-center gap-1.5",
                       isActive
-                        ? "text-black font-semibold"
-                        : "text-[#A1A1AA] hover:text-white"
+                        ? "text-[#0A0908] font-bold"
+                        : "text-[#A8A29E] hover:text-[#F5F5F4]"
                     )}
                   >
-                    {sec.label}
+                    <span className={cn("text-[9px] opacity-70", isActive && "text-[#0A0908]")}>
+                      {sec.roman}
+                    </span>
+                    <span>{sec.label}</span>
                   </span>
                 </button>
               );
             })}
           </nav>
 
-          <span className="hidden sm:inline-block text-[#27272A] select-none text-xs">|</span>
+          <span className="hidden sm:inline-block text-[#3E3833] select-none text-xs">|</span>
 
-          {/* Desktop Actions */}
-          <div className="hidden sm:flex items-center pr-1">
+          {/* Desktop GitHub Link */}
+          <div className="hidden sm:flex items-center pr-1 gap-2">
             <a
               href="https://github.com/hphucdev-04"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 rounded-full text-[#A1A1AA] hover:text-white hover:bg-white/10 transition-colors flex items-center justify-center"
+              className="p-1.5 rounded-sm text-[#A8A29E] hover:text-[#F5F5F4] hover:bg-white/[0.04] transition-colors flex items-center justify-center border border-transparent hover:border-[#2A2622]"
               title="View on GitHub"
             >
               <GithubIcon className="w-4 h-4" />
             </a>
           </div>
 
-          {/* Mobile Right Bar: Active white pill indicator + Hamburger toggle */}
+          {/* Mobile Right Bar */}
           <div className="flex items-center gap-2 sm:hidden pr-1">
-            <span className="text-[11px] font-mono text-black font-semibold px-2.5 py-0.5 rounded-full bg-white shadow-sm">
+            <span className="text-[11px] font-mono text-[#0A0908] font-bold px-2 py-0.5 rounded-sm bg-[#38BDF8]">
               {NAV_SECTIONS.find((s) => s.id === activeSection)?.label || "Get Started"}
             </span>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-1.5 text-[#A1A1AA] hover:text-white transition-colors cursor-pointer"
+              className="p-1.5 text-[#A8A29E] hover:text-[#F5F5F4] transition-colors cursor-pointer"
               aria-label="Toggle navigation"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -202,11 +202,11 @@ export function Navbar() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -8, scale: 0.97 }}
+            initial={{ opacity: 0, y: -8, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.97 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
             transition={{ duration: 0.16, ease: "easeOut" }}
-            className="sm:hidden mt-2 max-w-sm mx-auto pointer-events-auto rounded-2xl bg-[#18181B]/95 backdrop-blur-xl border border-[#27272A] p-2.5 flex flex-col gap-1 text-sm shadow-2xl"
+            className="sm:hidden mt-2 max-w-sm mx-auto pointer-events-auto rounded-sm bg-[#141210]/95 backdrop-blur-md border border-[#2A2622] p-2.5 flex flex-col gap-1 text-sm shadow-2xl"
           >
             {NAV_SECTIONS.map((sec) => {
               const isActive = activeSection === sec.id;
@@ -215,29 +215,32 @@ export function Navbar() {
                   key={sec.id}
                   onClick={() => scrollToSection(sec.id)}
                   className={cn(
-                    "w-full text-left px-3.5 py-2 rounded-xl text-xs flex items-center justify-between transition-colors cursor-pointer font-medium",
+                    "w-full text-left px-3.5 py-2 rounded-sm text-xs flex items-center justify-between transition-colors cursor-pointer font-mono",
                     isActive
-                      ? "bg-white text-black font-semibold shadow-sm"
-                      : "text-[#A1A1AA] hover:text-white hover:bg-white/5"
+                      ? "bg-[#38BDF8] text-[#0A0908] font-bold shadow-sm"
+                      : "text-[#A8A29E] hover:text-[#F5F5F4] hover:bg-white/[0.04]"
                   )}
                 >
-                  <span>{sec.label}</span>
-                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-black" />}
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-[#78716C]">{sec.roman}</span>
+                    <span>{sec.label}</span>
+                  </div>
+                  {isActive && <span className="w-1.5 h-1.5 bg-[#0A0908]" />}
                 </button>
               );
             })}
 
-            <div className="pt-2 mt-1 border-t border-[#27272A] flex items-center justify-between px-2">
+            <div className="pt-2 mt-1 border-t border-[#2A2622] flex items-center justify-between px-2">
               <a
                 href="https://github.com/hphucdev-04"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-[#A1A1AA] hover:text-white flex items-center gap-1.5 py-1"
+                className="text-xs text-[#A8A29E] hover:text-[#F5F5F4] flex items-center gap-1.5 py-1"
               >
                 <GithubIcon className="w-4 h-4" />
                 <span>GitHub</span>
               </a>
-              <span className="text-[10px] font-mono text-[#71717A]">Cube v1.0.0</span>
+              <span className="text-[10px] font-mono text-[#78716C]">Cube v1.0.0</span>
             </div>
           </motion.div>
         )}

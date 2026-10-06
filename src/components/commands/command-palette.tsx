@@ -219,41 +219,58 @@ export function CommandPalette() {
   };
 
   return (
-    <section id="commands" className="relative py-20 px-4 sm:px-6 lg:px-8 border-t border-[#27272A]">
-      <div className="relative max-w-6xl mx-auto">
+    <section
+      id="commands"
+      className="relative border-t border-[#2A2622] bg-[#0A0908] w-full overflow-hidden"
+    >
+      {/* Etching texture */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-50"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(45deg,rgba(255,255,255,0.015) 0px,rgba(255,255,255,0.015) 1px,transparent 1px,transparent 9px),repeating-linear-gradient(-45deg,rgba(255,255,255,0.015) 0px,rgba(255,255,255,0.015) 1px,transparent 1px,transparent 9px)",
+        }}
+      />
+
+      <div className="relative w-full max-w-7xl mx-auto px-6 sm:px-12 md:px-20 py-20 sm:py-24">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-4 shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            <span>COMMAND INTERFACE</span>
+        <div className="mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1 border border-[#2A2622] bg-[#141210] text-xs font-mono mb-4">
+            {/* Product accent dot */}
+            <span className="w-1.5 h-1.5 bg-[#38BDF8]" />
+            <span className="font-cinzel text-[#F5F5F4] tracking-wider">LIBER III · THE SCRIPTORIUM</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-white mb-4 font-sans">
-            Command-line precision built for flow
+          <h2
+            className="font-sans font-semibold tracking-tight text-[#F5F5F4] leading-[1.06] mb-3"
+            style={{ fontSize: "clamp(1.8rem,4vw,3rem)" }}
+          >
+            Architectural Precision Built for Flow
           </h2>
-          <p className="text-base text-[#A1A1AA] leading-relaxed">
-            Keep your fingers on home row. Instant slash commands give you total control over models,
-            memory compression, and thread branches without interrupting your work.
+          <p className="text-sm text-[#A8A29E] leading-relaxed font-serif max-w-2xl">
+            Keep your fingers on the home row. Instant slash commands give you total authority over models,
+            memory compression, and thread branches without interrupting your structural focus.
           </p>
         </div>
 
-        {/* Command Explorer Interactive Grid */}
+        {/* Command Explorer */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left: Command List */}
-          <div className="lg:col-span-5 space-y-3">
-            {/* Filter Search */}
+          <div className="lg:col-span-5 space-y-2.5">
+            {/* Filter Search — stone palette */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A1A1AA]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#3E3833]" />
               <input
                 type="text"
                 value={searchFilter}
                 onChange={(e) => setSearchFilter(e.target.value)}
                 placeholder="Filter commands (/model, /init, /gateway...)"
-                className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#27272A] bg-[#18181B] text-xs text-white placeholder:text-[#A1A1AA]/60 focus:outline-none focus:border-white/30 transition-colors font-mono"
+                className="w-full pl-9 pr-3 py-2 border border-[#2A2622] bg-[#0D0C0A] text-xs text-[#F5F5F4] placeholder:text-[#3E3833] focus:outline-none focus:border-[#78716C] transition-colors font-mono"
               />
             </div>
 
-            {/* Scrollable Command List: shows 6 items by default, scroll for more */}
-            <div className="space-y-1.5 max-h-[408px] overflow-y-auto pr-1">
+            {/* Scrollable Command List */}
+            <div className="space-y-1 max-h-[420px] overflow-y-auto pr-1">
               {filteredCommands.map((item) => {
                 const isSelected = selectedCommand.command === item.command;
                 return (
@@ -261,42 +278,44 @@ export function CommandPalette() {
                     key={item.command}
                     onClick={() => setSelectedCommand(item)}
                     className={cn(
-                      "w-full text-left p-3 rounded-lg border transition-colors flex items-center justify-between group cursor-pointer",
+                      "w-full text-left px-3 py-2.5 border transition-colors flex items-center justify-between group cursor-pointer",
                       isSelected
-                        ? "border-[#27272A] bg-[#18181B] text-white shadow-sm"
-                        : "border-[#27272A]/50 bg-[#18181B]/50 hover:bg-[#18181B] hover:border-[#27272A]"
+                        ? "border-[#78716C] bg-[#141210] text-[#F5F5F4]"
+                        : "border-[#2A2622] bg-[#0D0C0A] hover:bg-[#141210] hover:border-[#3E3833]"
                     )}
                   >
                     <div className="space-y-0.5 min-w-0 pr-3">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span
                           className={cn(
                             "font-mono text-xs font-semibold",
-                            isSelected ? "text-white" : "text-white group-hover:text-white"
+                            isSelected
+                              ? "text-[#38BDF8]"  // active item command text — indicator
+                              : "text-[#D6D3D1] group-hover:text-[#38BDF8]"
                           )}
                         >
                           {item.command}
                         </span>
                         {item.alias && (
-                          <span className="px-1.5 py-0.2 rounded text-[10px] font-mono border border-[#27272A] bg-[#050505] text-[#A1A1AA]">
+                          <span className="px-1.5 text-[10px] font-mono border border-[#2A2622] text-[#3E3833]">
                             {item.alias}
                           </span>
                         )}
                         {item.args && (
-                          <span className="font-mono text-[11px] text-[#A1A1AA] truncate hidden sm:inline">
+                          <span className="font-mono text-[10px] text-[#3E3833] truncate hidden sm:inline">
                             {item.args}
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-[#A1A1AA] line-clamp-1">{item.description}</p>
+                      <p className="text-[11px] text-[#78716C] line-clamp-1 font-mono">{item.description}</p>
                     </div>
 
                     <ChevronRight
                       className={cn(
                         "w-4 h-4 shrink-0 transition-transform",
                         isSelected
-                          ? "text-white translate-x-0.5"
-                          : "text-[#A1A1AA]/40 group-hover:text-white"
+                          ? "text-[#38BDF8] translate-x-0.5"  // active indicator
+                          : "text-[#3E3833] group-hover:text-[#78716C]"
                       )}
                     />
                   </button>
@@ -305,74 +324,72 @@ export function CommandPalette() {
             </div>
           </div>
 
-          {/* Right: Interactive Command Preview Terminal */}
+          {/* Right: Command Preview Terminal — stone palette */}
           <div className="lg:col-span-7">
-            <div className="rounded-lg border border-[#27272A] bg-[#050505] overflow-hidden shadow-xl">
-              {/* macOS window chrome */}
-              <div className="flex items-center justify-between px-3.5 py-2.5 bg-[#18181B] border-b border-[#27272A]">
+            <div className="border border-[#2A2622] bg-[#0D0C0A] overflow-hidden">
+              {/* Terminal chrome bar */}
+              <div className="flex items-center justify-between px-4 py-2.5 bg-[#141210] border-b border-[#2A2622]">
                 <div className="flex items-center gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
+                  <span className="w-2 h-2 bg-[#2A2622]" />
+                  <span className="w-2 h-2 bg-[#2A2622]" />
+                  <span className="w-2 h-2 bg-[#2A2622]" />
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono text-[#A1A1AA]">
-                    cube ~ {selectedCommand.command}
-                  </span>
-                </div>
+                <span className="font-mono text-[11px] text-[#3E3833]">
+                  cube ~ {selectedCommand.command}
+                </span>
                 <button
                   onClick={() => copyCommand(selectedCommand.example)}
                   title="Copy command"
-                  className="flex items-center gap-1 text-xs text-[#A1A1AA] hover:text-white px-2 py-1 rounded bg-[#050505] border border-[#27272A] hover:border-white/30 transition-colors cursor-pointer"
+                  className="flex items-center gap-1 text-[11px] text-[#78716C] hover:text-[#F5F5F4] px-2 py-1 border border-[#2A2622] hover:border-[#3E3833] transition-colors cursor-pointer font-mono"
                 >
                   {copied ? (
                     <>
-                      <Check className="w-3 h-3 text-white" />
-                      <span className="text-white text-[11px]">Copied</span>
+                      <Check className="w-3 h-3 text-[#38BDF8]" />
+                      <span className="text-[#38BDF8]">Copied</span>
                     </>
                   ) : (
                     <>
                       <Copy className="w-3 h-3" />
-                      <span className="text-[11px]">Copy</span>
+                      <span>Copy</span>
                     </>
                   )}
                 </button>
               </div>
 
               {/* Terminal View */}
-              <div className="p-5 font-mono text-xs sm:text-[13px] space-y-3.5">
+              <div className="p-5 font-mono text-xs space-y-4">
                 {/* Meta details */}
-                <div className="flex flex-wrap items-center gap-3 text-xs pb-3 border-b border-[#27272A]">
-                  <span className="px-2 py-0.5 rounded bg-[#18181B] text-white border border-[#27272A]">
+                <div className="flex flex-wrap items-center gap-2.5 pb-3 border-b border-[#2A2622]">
+                  <span className="px-2 py-0.5 border border-[#3E3833] text-[#A8A29E] text-[11px] font-cinzel tracking-wide">
                     {selectedCommand.category}
                   </span>
-                  <span className="text-[#A1A1AA]">
+                  <span className="text-[#78716C] text-[11px]">
                     Syntax:{" "}
-                    <code className="text-white">
+                    <code className="text-[#D6D3D1]">
                       {selectedCommand.command} {selectedCommand.args || ""}
                     </code>
                   </span>
                 </div>
 
                 {/* Explanation */}
-                <p className="text-neutral-300 text-xs sm:text-sm font-sans leading-relaxed">
+                <p className="text-[#A8A29E] text-xs font-sans leading-relaxed">
                   {selectedCommand.description}
                 </p>
 
-                {/* Command Input Simulated */}
-                <div className="p-2.5 rounded bg-[#18181B] border border-[#27272A]">
-                  <div className="flex items-center gap-2 text-[#A1A1AA]">
-                    <span className="text-white font-bold">❯</span>
-                    <span className="text-white">{selectedCommand.example}</span>
+                {/* Command Input — prompt cursor = #38BDF8 per DESIGN.md */}
+                <div className="p-3 border border-[#2A2622] bg-[#0A0908]">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#38BDF8] font-bold">❯</span>
+                    <span className="text-[#F5F5F4]">{selectedCommand.example}</span>
                   </div>
                 </div>
 
-                {/* Command Output Simulated */}
-                <div className="space-y-1 text-[#A1A1AA] pt-1">
-                  <div className="text-[10px] uppercase tracking-wider text-[#A1A1AA]/60 font-semibold mb-1">
-                    Terminal Output:
+                {/* Command Output */}
+                <div className="space-y-1.5">
+                  <div className="text-[9px] uppercase tracking-[0.2em] text-[#3E3833] font-cinzel">
+                    Terminal Output
                   </div>
-                  <pre className="text-neutral-300 whitespace-pre-wrap leading-relaxed text-xs pl-2 border-l-2 border-[#27272A]">
+                  <pre className="text-[#C8C5C2] whitespace-pre-wrap leading-relaxed text-[11px] pl-3 border-l border-[#38BDF8]/30">
                     {selectedCommand.output}
                   </pre>
                 </div>

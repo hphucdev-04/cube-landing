@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Cinzel } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -12,6 +12,12 @@ const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+});
+
+const cinzel = Cinzel({
+  variable: "--font-cinzel",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -163,7 +169,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased dark scroll-smooth`}
+      className={`${inter.variable} ${jetbrainsMono.variable} ${cinzel.variable} h-full antialiased dark scroll-smooth`}
     >
       <head>
         <script
@@ -173,7 +179,7 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className="min-h-full flex flex-col bg-[#050505] text-[#FFFFFF] font-sans selection:bg-white/20 selection:text-white"
+        className="min-h-full flex flex-col bg-[#0A0908] text-[#F5F5F4] font-sans selection:bg-[#38BDF8]/30 selection:text-white"
       >
         {children}
       </body>

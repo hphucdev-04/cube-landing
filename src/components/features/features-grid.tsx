@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useRef } from "react";
+import Image from "next/image";
 import {
   RotateCw,
   Wrench,
@@ -8,585 +9,337 @@ import {
   Brain,
   Activity,
   ShieldCheck,
-  ChevronLeft,
-  ChevronRight,
+  ArrowUpRight,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
-export interface HarnessComponent {
+interface HarnessBay {
   id: string;
-  code: string;       // LOOP, TOOL, CONTEXT, MEMORY, BACKGROUND, GUARDRAIL
-  name: string;       // Loop, Tool, Context, Memory, Background, Guardrail
+  roman: string;
+  code: string;
+  name: string;
+  archType: string;
   icon: typeof RotateCw;
   capability: string;
+  bgAsset: string;
+  bgFocus: string;
   conceptSummary: string;
-  highlights: {
-    title: string;
-    description: string;
-  }[];
   specs: string[];
 }
 
-export const HARNESS_COMPONENTS: HarnessComponent[] = [
+const HARNESS_BAYS: HarnessBay[] = [
   {
     id: "loop",
-    code: "LOOP",
-    name: "Loop",
+    roman: "PIER I",
+    code: "01",
+    name: "Iterative Decision Loop",
+    archType: "Semicircular Keystoned Vault",
     icon: RotateCw,
-    capability: "Iterative Decision Cycle",
+    capability: "Autonomous Observe → Plan → Act",
+    bgAsset: "/assets/ascii-magic-1.png",
+    bgFocus: "object-center",
     conceptSummary:
-      "The central execution runtime. An agent harness runs a continuous loop that observes the environment, plans an action, executes it, and evaluates the result — repeating until the task is done.",
-    highlights: [
-      {
-        title: "Feedback-Driven Self-Correction",
-        description: "Reads back errors, test failures, and diagnostics from the environment and adjusts course automatically, instead of guessing blind.",
-      },
-      {
-        title: "Bounded Execution",
-        description: "Enforces turn limits and cycle detection so the agent can't loop forever or burn through resources on a stuck task.",
-      },
-      {
-        title: "Live Progress Streaming",
-        description: "Surfaces reasoning and actions as they happen, so you can follow along in real time instead of waiting on a black box.",
-      },
-    ],
-    specs: ["Observe-Plan-Act-Evaluate", "Self-Correction", "Cycle Guardrails", "Real-Time Streaming"],
+      "The perpetual cycle at the heart of Cube: observe the terminal environment, plan tool calls, act on files and shell, inspect feedback — then recurse until the task collapses into correctness.",
+    specs: ["Observe-Plan-Act", "AST Feedback", "Cycle Detection", "Live Reasoning"],
   },
   {
     id: "tool",
-    code: "TOOL",
-    name: "Tool",
+    roman: "PIER II",
+    code: "02",
+    name: "Environment Grounding",
+    archType: "Truss & Cantilever Gantry",
     icon: Wrench,
-    capability: "Environment Grounding",
+    capability: "Surgical Disk & Shell Operations",
+    bgAsset: "/assets/ascii-magic-2.png",
+    bgFocus: "object-center",
     conceptSummary:
-      "Connects model reasoning to the real system it's working in. A harness gives the agent controlled ways to read and change files, run commands, and reach external services.",
-    highlights: [
-      {
-        title: "Precise File Operations",
-        description: "Makes targeted, structured edits to files rather than blind rewrites, so changes stay predictable and reviewable.",
-      },
-      {
-        title: "Command Execution",
-        description: "Runs shell commands and captures their output, so the agent can build, test, and verify its own work.",
-      },
-      {
-        title: "External Integrations",
-        description: "Connects to outside tools and services through standard protocols, extending what the agent can do beyond the local machine.",
-      },
-    ],
-    specs: ["File Editing", "Command Execution", "Protocol Integrations", "Sandboxing"],
+      "Connects model reasoning to real filesystem mutations and shell commands. Line-targeted diffs replace full-file blind overwrites. Process sandboxing enforces timeout gates on every invocation.",
+    specs: ["Line Diffs", "Process Sandboxing", "Mastra SDK", "Timeout Gates"],
   },
   {
     id: "context",
-    code: "CONTEXT",
-    name: "Context",
+    roman: "PIER III",
+    code: "03",
+    name: "Attention & Rule Discovery",
+    archType: "Transverse Crypt & Colonnade",
     icon: Layers,
-    capability: "Attention Management",
+    capability: "Automatic Workspace Guidelines",
+    bgAsset: "/assets/ascii-magic-3.png",
+    bgFocus: "object-center",
     conceptSummary:
-      "Curates what the model actually sees. A harness discovers relevant project conventions, pulls in the right guidance for the task at hand, and trims anything that would just waste attention.",
-    highlights: [
-      {
-        title: "Project Convention Discovery",
-        description: "Finds and applies house rules and conventions already defined in the project, so output matches how the codebase actually works.",
-      },
-      {
-        title: "Noise Reduction",
-        description: "Compresses long logs and repetitive history so the model's attention stays on what matters, not what already happened.",
-      },
-      {
-        title: "Task-Relevant Guidance",
-        description: "Brings in the right knowledge for the current file or framework, rather than relying on one-size-fits-all instructions.",
-      },
-    ],
-    specs: ["Convention Discovery", "Context Compression", "Relevant Guidance", "Overflow Prevention"],
+      "Crawls parent folders to discover AGENTS.md rules, repository conventions, and custom skill scripts. Token pruning surgically removes noisy logs to preserve attention budget across vast monorepos.",
+    specs: ["AGENTS.md Discovery", "Tree Traversal", "Token Pruning", "Monorepo Scoping"],
   },
   {
     id: "memory",
-    code: "MEMORY",
-    name: "Memory",
+    roman: "PIER IV",
+    code: "04",
+    name: "Persistent Workspace Memory",
+    archType: "Foundation Plinth & Buttress",
     icon: Brain,
-    capability: "Persistent State & Continuity",
+    capability: "Cross-Turn State & Local Continuity",
+    bgAsset: "/assets/ascii-magic-4.png",
+    bgFocus: "object-center",
     conceptSummary:
-      "Gives the agent a memory that survives beyond a single session. A harness retains project context, preferences, and history so you don't start from zero every time.",
-    highlights: [
-      {
-        title: "Durable State",
-        description: "Keeps track of what's been done and decided across sessions, not just within one conversation.",
-      },
-      {
-        title: "Session Branching & Resumption",
-        description: "Lets you pause, resume, or fork a line of work to try a different approach without losing the original.",
-      },
-      {
-        title: "Local-First Storage",
-        description: "Stores session and project state on your own machine by default, keeping history under your control.",
-      },
-    ],
-    specs: ["Durable State", "Session Branching", "Local-First Storage", "Cross-Session Continuity"],
+      "Retains architectural decisions, preferences, and session state locally across turns and restarts. Fork or resume any conversation thread with full AST and file change continuity — no cloud dependency.",
+    specs: ["Local SQLite State", "Session Forking", "Zero Cloud Storage", "Continuity"],
   },
   {
     id: "background",
-    code: "BACKGROUND",
-    name: "Background",
+    roman: "PIER V",
+    code: "05",
+    name: "Non-Blocking Delegation",
+    archType: "Multi-Tier Flying Bridges",
     icon: Activity,
-    capability: "Non-Blocking Task Execution",
+    capability: "Concurrent Subtasks & Workers",
+    bgAsset: "/assets/ascii-magic-5.png",
+    bgFocus: "object-center",
     conceptSummary:
-      "Runs slow, heavy work off to the side. A harness offloads builds, test suites, and other long tasks into the background so the main conversation never freezes waiting on them.",
-    highlights: [
-      {
-        title: "Detached Long-Running Tasks",
-        description: "Kicks off builds, tests, or servers in the background while you keep working or chatting.",
-      },
-      {
-        title: "Automatic Wakeup",
-        description: "Picks the conversation back up automatically once a background task finishes or fails, with the full result in hand.",
-      },
-      {
-        title: "Parallel Delegation",
-        description: "Splits complex work across multiple sub-tasks running at once, instead of doing everything one step at a time.",
-      },
-    ],
-    specs: ["Non-Blocking Execution", "Task Detachment", "Automatic Wakeup", "Parallel Delegation"],
+      "Spawns long-running builds, test suites, and subagents in the background so the primary CLI loop remains responsive. Independent sub-problems run concurrently in isolated sandboxes.",
+    specs: ["Subagent Orchestration", "Async Workers", "Non-Blocking TUI", "Status Signals"],
   },
   {
     id: "guardrail",
-    code: "GUARDRAIL",
-    name: "Guardrail",
+    roman: "PIER VI",
+    code: "06",
+    name: "Human Safeguards & Diffs",
+    archType: "Central Reinforced Keystone",
     icon: ShieldCheck,
-    capability: "Safety & Human-in-the-Loop",
+    capability: "Explicit Confirmation & Reversible Diffs",
+    bgAsset: "/assets/ascii-magic-6.png",
+    bgFocus: "object-top",
     conceptSummary:
-      "A safety layer that keeps a human in control. A harness flags risky actions, shows exactly what will change, and waits for explicit approval before anything destructive happens.",
-    highlights: [
-      {
-        title: "Approval Before Risk",
-        description: "Pauses and asks for confirmation before running commands or changes that could cause real damage.",
-      },
-      {
-        title: "Transparent Diffs",
-        description: "Shows exactly what will change, line by line, before any edit is committed.",
-      },
-      {
-        title: "Hazard Detection",
-        description: "Watches for dangerous patterns — like exposing secrets or irreversible commands — and steps in before they run.",
-      },
-    ],
-    specs: ["Human Confirmation", "Diff Previews", "Hazard Detection", "Safe Rollback"],
+      "Prevents destructive actions. Colorized unified diffs show exactly what lines change before any write occurs. Manual confirmation gates guard disk deletions, migrations, and git resets.",
+    specs: ["Unified Color Diff", "Human Confirmation", "Atomic Commit", "Rollback Snapshots"],
   },
 ];
 
-// Target 3D rotation angles for each face
-const FACE_ROTATIONS = [
-  { x: -18, y: 25 },   // 0: Front  (Loop)
-  { x: -18, y: -65 },  // 1: Right  (Tool)
-  { x: -80, y: 25 },   // 2: Top    (Context)
-  { x: -18, y: 115 },  // 3: Left   (Memory)
-  { x: 75, y: 25 },    // 4: Bottom (Background)
-  { x: -18, y: 205 },  // 5: Back   (Guardrail)
-];
+/** A single full-screen pier chamber — Piranesi artwork IS the environment */
+function PierChamber({ bay, index }: { bay: HarnessBay; index: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const Icon = bay.icon;
 
-function getShortestAngle(current: number, target: number): number {
-  const diff = ((target - current + 180) % 360 + 360) % 360 - 180;
-  return current + diff;
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  // Parallax: image drifts slightly as chamber scrolls through viewport
+  const imgY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
+  // Content fades in when chamber enters, fades out as it leaves
+  const contentOpacity = useTransform(scrollYProgress, [0.1, 0.28, 0.72, 0.9], [0, 1, 1, 0]);
+  const contentY = useTransform(scrollYProgress, [0.1, 0.32], ["2rem", "0rem"]);
+
+  const isEven = index % 2 === 0;
+
+  return (
+    <div
+      ref={ref}
+      className="relative h-screen w-full overflow-hidden flex items-center"
+      aria-label={`${bay.roman}: ${bay.name}`}
+    >
+      {/* ── FULL-BLEED PIRANESI BACKDROP ────────────────────────────
+          The artwork IS the architectural space. Not an image in a box.
+          ──────────────────────────────────────────────────────────── */}
+      <motion.div
+        style={{ y: imgY }}
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 select-none will-change-transform"
+      >
+        <Image
+          src={bay.bgAsset}
+          alt=""
+          fill
+          sizes="100vw"
+          className={`object-cover contrast-[1.15] brightness-[0.6] ${bay.bgFocus}`}
+        />
+        {/* Chiaroscuro: heavy stone shadow on inscription side, open view on the far side */}
+        {isEven ? (
+          <>
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0A0908]/96 via-[#0A0908]/55 to-[#0A0908]/15" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0A0908]/65 via-transparent to-[#0A0908]/80" />
+          </>
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-gradient-to-l from-[#0A0908]/96 via-[#0A0908]/55 to-[#0A0908]/15" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0A0908]/65 via-transparent to-[#0A0908]/80" />
+          </>
+        )}
+      </motion.div>
+
+      {/* ── DATUM LINES — stone mortar hairlines, no cyan ──────── */}
+      <div aria-hidden="true" className="absolute inset-0 z-[1] pointer-events-none">
+        <div className="absolute left-0 right-0 h-px bg-[#3E3833]/25" style={{ top: "33%" }} />
+        <div className="absolute left-0 right-0 h-px bg-[#2A2622]/30" style={{ top: "66%" }} />
+        <div
+          className="absolute top-0 bottom-0 w-px bg-[#3E3833]/20"
+          style={{ left: isEven ? "55%" : "45%" }}
+        />
+      </div>
+
+      {/* ── CONTENT: INSCRIPTION ON STONE ───────────────────────── */}
+      <motion.div
+        style={{ opacity: contentOpacity, y: contentY }}
+        className={`relative z-10 w-full flex ${isEven ? "justify-start" : "justify-end"} px-6 sm:px-12 md:px-20 lg:px-28`}
+      >
+        <div className={`max-w-[min(42rem,52vw)] w-full ${isEven ? "" : "text-right"}`}>
+
+          {/* Giant dim stone ordinal — Piranesi scale, limestone tone */}
+          <div
+            aria-hidden="true"
+            className="font-cinzel font-bold text-[#F5F5F4]/[0.05] leading-none select-none mb-0 -mt-4"
+            style={{ fontSize: "clamp(7rem,18vw,14rem)" }}
+          >
+            {bay.code}
+          </div>
+
+          {/* Pier label — carved above the numeral */}
+          <div className={`-mt-[3rem] sm:-mt-[4rem] lg:-mt-[5.5rem] relative z-10 ${isEven ? "" : "flex flex-col items-end"}`}>
+
+            {/* Roman label + arch type */}
+            <div className={`flex items-center gap-3 mb-3 ${isEven ? "" : "flex-row-reverse"}`}>
+              <div className="flex items-center justify-center w-7 h-7 border border-[#3E3833] bg-[#0A0908]/70 backdrop-blur-sm">
+                <Icon className="w-3.5 h-3.5 text-[#A8A29E]" />
+              </div>
+              <div>
+                <span className="font-cinzel text-[11px] font-bold text-[#D6D3D1] tracking-[0.2em]">
+                  {bay.roman}
+                </span>
+                <span className="font-mono text-[10px] text-[#3E3833] ml-2">
+                  {bay.archType}
+                </span>
+              </div>
+            </div>
+
+            {/* Name — monumental limestone inscription */}
+            <h3
+              className="font-sans font-semibold text-[#F5F5F4] leading-[1.05] mb-3"
+              style={{ fontSize: "clamp(1.6rem,3.8vw,3rem)" }}
+            >
+              {bay.name}
+            </h3>
+
+            {/* Capability — surveyor's note in mono, muted stone */}
+            <div className={`font-mono text-[11px] text-[#78716C] mb-4 tracking-wide ${isEven ? "" : "text-right"}`}>
+              ├── {bay.capability}
+            </div>
+
+            {/* Summary — etched parchment text */}
+            <p className={`text-[#A8A29E] font-serif leading-relaxed mb-5 text-sm sm:text-[0.95rem] ${isEven ? "" : "text-right"}`}>
+              {bay.conceptSummary}
+            </p>
+
+            {/* Spec tags — stone-tone mortar borders, no cyan */}
+            <div className={`flex flex-wrap gap-1.5 ${isEven ? "" : "justify-end"}`}>
+              {bay.specs.map((s) => (
+                <span
+                  key={s}
+                  className="text-[10px] font-mono px-2 py-0.5 border border-[#3E3833]/60 text-[#78716C] bg-[#0A0908]/60 backdrop-blur-sm"
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ── ELEVATION CALIPER — stone mortar tone ──────────────── */}
+      <div
+        aria-hidden="true"
+        className="absolute bottom-4 left-5 sm:left-10 z-10 font-mono text-[10px] text-[#3E3833] flex items-center gap-2"
+      >
+        <span className="w-4 h-px bg-[#3E3833]/60" />
+        <span>ELEV +{(index + 1) * 16}.0m</span>
+        <span className="w-4 h-px bg-[#3E3833]/60" />
+      </div>
+
+      {/* ── SCROLL CUE — only on non-last chambers ─────────────── */}
+      {index < HARNESS_BAYS.length - 1 && (
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-5 right-5 sm:right-10 z-10 flex flex-col items-center gap-1 pointer-events-none"
+        >
+          <span className="font-cinzel text-[9px] tracking-[0.2em] text-[#3E3833]">NEXT PIER</span>
+          <div className="w-px h-5 bg-gradient-to-b from-[#78716C]/40 to-transparent" />
+        </motion.div>
+      )}
+    </div>
+  );
 }
 
 export function FeaturesGrid() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [direction, setDirection] = useState<number>(0);
-  const [rotation, setRotation] = useState({ x: -18, y: 25 });
-  const [isDragging, setIsDragging] = useState(false);
-
-  const dragStart = useRef({ x: 0, y: 0 });
-  const dragDistance = useRef(0);
-  const baseRotation = useRef({ x: -18, y: 25 });
-
-  const activeComponent = HARNESS_COMPONENTS[activeIndex];
-  const ActiveIcon = activeComponent.icon;
-
-  const cubeSize = 170; // px
-  const half = cubeSize / 2; // 85px
-
-  const rotateToFace = (index: number) => {
-    const target = FACE_ROTATIONS[index];
-    setRotation((prev) => ({
-      x: getShortestAngle(prev.x, target.x),
-      y: getShortestAngle(prev.y, target.y),
-    }));
-  };
-
-  const handleFaceClick = (index: number) => {
-    if (dragDistance.current > 6) return;
-    setDirection(index > activeIndex ? 1 : -1);
-    setActiveIndex(index);
-    rotateToFace(index);
-  };
-
-  const handlePrev = () => {
-    setDirection(-1);
-    const prevIndex = (activeIndex - 1 + HARNESS_COMPONENTS.length) % HARNESS_COMPONENTS.length;
-    setActiveIndex(prevIndex);
-    rotateToFace(prevIndex);
-  };
-
-  const handleNext = () => {
-    setDirection(1);
-    const nextIndex = (activeIndex + 1) % HARNESS_COMPONENTS.length;
-    setActiveIndex(nextIndex);
-    rotateToFace(nextIndex);
-  };
-
-  // Mouse drag handlers for free 3D rotation
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    dragStart.current = { x: e.clientX, y: e.clientY };
-    dragDistance.current = 0;
-    baseRotation.current = { ...rotation };
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    const dx = e.clientX - dragStart.current.x;
-    const dy = e.clientY - dragStart.current.y;
-    dragDistance.current = Math.sqrt(dx * dx + dy * dy);
-
-    setRotation({
-      x: Math.max(-85, Math.min(85, baseRotation.current.x - dy * 0.45)),
-      y: baseRotation.current.y + dx * 0.45,
-    });
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  // Touch drag handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (e.touches.length !== 1) return;
-    setIsDragging(true);
-    dragStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    dragDistance.current = 0;
-    baseRotation.current = { ...rotation };
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || e.touches.length !== 1) return;
-    const dx = e.touches[0].clientX - dragStart.current.x;
-    const dy = e.touches[0].clientY - dragStart.current.y;
-    dragDistance.current = Math.sqrt(dx * dx + dy * dy);
-
-    setRotation({
-      x: Math.max(-85, Math.min(85, baseRotation.current.x - dy * 0.45)),
-      y: baseRotation.current.y + dx * 0.45,
-    });
-  };
-
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-  };
-
-  const faces = [
-    {
-      idx: 0,
-      name: "LOOP",
-      component: HARNESS_COMPONENTS[0],
-      transform: `translateZ(${half}px)`,
-    },
-    {
-      idx: 1,
-      name: "TOOL",
-      component: HARNESS_COMPONENTS[1],
-      transform: `rotateY(90deg) translateZ(${half}px)`,
-    },
-    {
-      idx: 2,
-      name: "CONTEXT",
-      component: HARNESS_COMPONENTS[2],
-      transform: `rotateX(90deg) translateZ(${half}px)`,
-    },
-    {
-      idx: 3,
-      name: "MEMORY",
-      component: HARNESS_COMPONENTS[3],
-      transform: `rotateY(-90deg) translateZ(${half}px)`,
-    },
-    {
-      idx: 4,
-      name: "BACKGROUND",
-      component: HARNESS_COMPONENTS[4],
-      transform: `rotateX(-90deg) translateZ(${half}px)`,
-    },
-    {
-      idx: 5,
-      name: "GUARDRAIL",
-      component: HARNESS_COMPONENTS[5],
-      transform: `rotateY(180deg) translateZ(${half}px)`,
-    },
-  ];
-
   return (
-    <section
-      id="harness"
-      className="relative py-20 sm:py-24 px-4 sm:px-6 lg:px-8 border-t border-[#27272A] bg-transparent overflow-hidden"
-    >
-      <span id="agent" className="sr-only" />
-      <div className="relative max-w-6xl mx-auto w-full">
-        {/* Section Header */}
-        <div className="text-center max-w-5xl mx-auto mb-6 lg:mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-3 shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            <span>STANDARDIZED AGENT HARNESS SPECIFICATION</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium tracking-tight text-white mb-2 font-sans sm:whitespace-nowrap">
-            The 6 Pillars of the Agent Harness
-          </h2>
-          <p className="text-xs sm:text-sm text-[#A1A1AA] max-w-2xl mx-auto font-normal leading-relaxed">
-            The operational runtime scaffolding that elevates raw intelligence into an autonomous software engineer.
-          </p>
-        </div>
+    <section id="harness" className="relative w-full bg-[#0A0908]">
 
-        {/* 2-Column Interactive Harness Showcase: Free-Floating 3D Cube (Left) + Detail Card (Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
-          {/* Left Column: Direct Clickable Free-Floating 3D Cube (No Card Wrapper, No Chevrons) */}
-          <div
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            className={cn(
-              "lg:col-span-5 relative w-full h-[280px] sm:h-[320px] flex items-center justify-center select-none",
-              isDragging ? "cursor-grabbing" : "cursor-grab"
-            )}
-          >
-            {/* Luminous ambient radial gradient behind the floating cube */}
-            <div
-              className="absolute inset-0 pointer-events-none m-auto"
-              style={{
-                width: "250px",
-                height: "250px",
-                background: "radial-gradient(circle at center, rgba(255,255,255,0.06) 0%, transparent 65%)",
-              }}
-            />
+      {/* ── SECTION HEADER — entablature frieze ─────────────────── */}
+      <div className="relative w-full border-t border-b border-[#2A2622] bg-[#0A0908] px-6 sm:px-12 md:px-20 py-10 overflow-hidden">
+        {/* Etching crosshatch */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-40"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(45deg,rgba(255,255,255,0.015) 0px,rgba(255,255,255,0.015) 1px,transparent 1px,transparent 9px),repeating-linear-gradient(-45deg,rgba(255,255,255,0.015) 0px,rgba(255,255,255,0.015) 1px,transparent 1px,transparent 9px)",
+          }}
+        />
 
-            {/* 3D Cube Container */}
-            <div
-              className="relative flex items-center justify-center"
-              style={{ perspective: "1000px" }}
+        <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-6 max-w-7xl">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#141210] border border-[#2A2622] text-xs font-mono mb-4">
+              {/* #38BDF8 only for the active-indicator dot — product accent */}
+              <span className="w-1.5 h-1.5 bg-[#38BDF8]" />
+              <span className="font-cinzel tracking-wider text-[#F5F5F4]">
+                LIBER I · THE SIX ARCHITECTURAL PIERS
+              </span>
+            </div>
+            <h2
+              className="font-sans font-semibold tracking-tight text-[#F5F5F4] leading-[1.06]"
+              style={{ fontSize: "clamp(1.8rem,4.5vw,3.5rem)" }}
             >
-              <div
-                className="relative"
-                style={{
-                  width: `${cubeSize}px`,
-                  height: `${cubeSize}px`,
-                  transformStyle: "preserve-3d",
-                  transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
-                  transition: isDragging ? "none" : "transform 0.65s cubic-bezier(0.16, 1, 0.3, 1)",
-                  willChange: "transform",
-                }}
-              >
-                  {/* 6 Clickable Faces of the Cube */}
-                  {faces.map((face) => {
-                    const isSelected = activeIndex === face.idx;
-                    const Icon = face.component.icon;
-
-                    return (
-                      <div
-                        key={face.idx}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleFaceClick(face.idx);
-                        }}
-                        className={cn(
-                          "absolute inset-0 rounded-2xl flex flex-col items-center justify-between p-4 select-none cursor-pointer transition-all duration-300",
-                          isSelected
-                            ? "border-2 border-white shadow-[0_0_28px_rgba(255,255,255,0.45),inset_0_0_15px_rgba(255,255,255,0.06)] bg-[#18181B] text-white z-20"
-                            : "border border-[#27272A] bg-[#101012]/95 text-[#A1A1AA] hover:border-white/50 hover:text-white hover:bg-[#18181B] z-10"
-                        )}
-                        style={{
-                          transform: face.transform,
-                          transformStyle: "preserve-3d",
-                          backfaceVisibility: "hidden",
-                          WebkitBackfaceVisibility: "hidden",
-                        }}
-                      >
-                        <div className="w-full flex items-center justify-between">
-                          <div
-                            className={cn(
-                              "w-7 h-7 rounded-lg flex items-center justify-center border transition-colors",
-                              isSelected
-                                ? "bg-white text-black border-white shadow-sm"
-                                : "bg-[#09090B] border-[#27272A] text-white"
-                            )}
-                          >
-                            <Icon className="w-4 h-4" />
-                          </div>
-                          <span
-                            className={cn(
-                              "text-[9px] font-mono px-1.5 py-0.5 rounded border transition-colors",
-                              isSelected
-                                ? "border-white/40 bg-white/10 text-white font-semibold"
-                                : "border-white/10 bg-white/5 text-[#A1A1AA]"
-                            )}
-                          >
-                            0{face.idx + 1}
-                          </span>
-                        </div>
-
-                        <div className="text-center my-auto">
-                          <div className={cn(
-                            "text-sm font-bold font-mono tracking-wider transition-colors",
-                            isSelected ? "text-white" : "text-[#D4D4D8]"
-                          )}>
-                            {face.name}
-                          </div>
-                          <div
-                            className={cn(
-                              "text-[10px] font-mono mt-0.5 line-clamp-1 transition-colors",
-                              isSelected ? "text-[#D4D4D8]" : "text-[#71717A]"
-                            )}
-                          >
-                            {face.component.name}
-                          </div>
-                        </div>
-
-                        <div
-                          className={cn(
-                            "w-full pt-1.5 border-t text-[9px] font-mono flex items-center justify-between transition-colors",
-                            isSelected
-                              ? "border-white/20 text-[#A1A1AA]"
-                              : "border-[#27272A]/70 text-[#71717A]"
-                          )}
-                        >
-                          <span>COMPONENT</span>
-                          <span className={isSelected ? "font-bold text-white" : "text-[#71717A]"}>
-                            {isSelected ? "ACTIVE" : "STANDBY"}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-          {/* Right Column: Dynamic Detail Card (Fits 100vh screen perfectly) */}
-          <div className="lg:col-span-7 rounded-2xl border border-[#27272A] bg-[#18181B] p-5 sm:p-6 shadow-2xl relative overflow-hidden">
-            {/* Card Top Bar */}
-            <div className="flex items-center justify-between border-b border-[#27272A] pb-3.5 mb-3.5">
-              <div className="flex-1 overflow-hidden pr-2">
-                <AnimatePresence mode="wait" custom={direction} initial={false}>
-                  <motion.div
-                    key={activeIndex}
-                    custom={direction}
-                    initial={{ opacity: 0, x: direction * 12 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -direction * 12 }}
-                    transition={{ duration: 0.22, ease: "easeOut" }}
-                    className="flex items-center gap-3"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center shadow-md shrink-0">
-                      <ActiveIcon className="w-5 h-5" />
-                    </div>
-                    <div className="min-w-0">
-                      <span className="text-xs font-mono font-semibold tracking-wider text-white block">
-                        {`Pillar 0${activeIndex + 1} · ${activeComponent.code}`}
-                      </span>
-                      <div className="text-[11px] font-mono text-[#A1A1AA] truncate">
-                        {activeComponent.capability}
-                      </div>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-
-              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                <button
-                  type="button"
-                  onClick={handlePrev}
-                  aria-label="Previous component"
-                  className="w-7 h-7 rounded-lg border border-[#27272A] bg-[#09090B] text-[#A1A1AA] hover:text-white hover:border-[#3F3F46] hover:bg-[#18181B] active:scale-95 transition-all flex items-center justify-center cursor-pointer"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <div className="text-xs font-mono text-[#A1A1AA] min-w-[48px] h-6 flex items-center justify-center overflow-hidden select-none font-medium">
-                  <AnimatePresence mode="wait" custom={direction} initial={false}>
-                    <motion.span
-                      key={activeIndex}
-                      custom={direction}
-                      initial={{ opacity: 0, y: direction * 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -direction * 6 }}
-                      transition={{ duration: 0.16, ease: "easeOut" }}
-                    >
-                      {`0${activeIndex + 1} / 06`}
-                    </motion.span>
-                  </AnimatePresence>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  aria-label="Next component"
-                  className="w-7 h-7 rounded-lg border border-[#27272A] bg-[#09090B] text-[#A1A1AA] hover:text-white hover:border-[#3F3F46] hover:bg-[#18181B] active:scale-95 transition-all flex items-center justify-center cursor-pointer"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Title, Concept & Technical Highlights with Smooth Slide Animation */}
-            <div className="relative min-h-[250px] sm:min-h-[240px]">
-              <AnimatePresence mode="wait" custom={direction} initial={false}>
-                <motion.div
-                  key={activeIndex}
-                  custom={direction}
-                  initial={{ opacity: 0, x: direction * 16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -direction * 16 }}
-                  transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  {/* Title & Concept */}
-                  <div className="mb-3">
-                    <h3 className="text-xl font-semibold text-white tracking-tight font-sans mb-1">
-                      {activeComponent.name}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-[#D4D4D8] leading-relaxed">
-                      {activeComponent.conceptSummary}
-                    </p>
-                  </div>
-
-                  {/* 3 Technical Highlights */}
-                  <div className="space-y-2 mb-3.5">
-                    {activeComponent.highlights.map((h) => (
-                      <div
-                        key={h.title}
-                        className="p-2.5 rounded-xl border border-[#27272A]/80 bg-[#101012]/70 flex items-start gap-2.5"
-                      >
-                        <div className="w-1.5 h-1.5 rounded-full bg-white mt-1.5 shrink-0" />
-                        <div className="text-xs leading-relaxed">
-                          <span className="font-semibold text-white mr-1.5">{h.title}:</span>
-                          <span className="text-[#A1A1AA]">{h.description}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Technical Specification Badges */}
-                  <div className="flex flex-wrap gap-1.5 pt-2 border-t border-[#27272A]/70">
-                    {activeComponent.specs.map((spec) => (
-                      <span
-                        key={spec}
-                        className="text-[11px] font-mono px-2.5 py-0.5 rounded-md border border-[#27272A] bg-[#09090B] text-[#D4D4D8]"
-                      >
-                        {spec}
-                      </span>
-                    ))}
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+              The Engineering Harness
+            </h2>
+            <p className="mt-2 text-sm text-[#A8A29E] max-w-2xl font-serif">
+              Six structural piers that carry the agent&apos;s weight across vast, labyrinthine codebases.
+            </p>
           </div>
+
+          <div className="shrink-0 flex flex-col items-end gap-1">
+            <div className="text-xs font-mono text-[#A8A29E]">6 // STRUCTURAL BAYS</div>
+            <div className="text-[10px] font-mono text-[#3E3833]">PIRANESI CARCERI ARCHITECTURE</div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── 6 FULL-SCREEN PIER CHAMBERS ─────────────────────────── */}
+      {HARNESS_BAYS.map((bay, index) => (
+        <PierChamber key={bay.id} bay={bay} index={index} />
+      ))}
+
+      {/* ── SECTION FOOTER — epigraph ────────────────────────────── */}
+      <div className="relative border-t border-[#2A2622] bg-[#0A0908] px-6 sm:px-12 md:px-20 py-10 overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-40"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(45deg,rgba(255,255,255,0.015) 0px,rgba(255,255,255,0.015) 1px,transparent 1px,transparent 9px),repeating-linear-gradient(-45deg,rgba(255,255,255,0.015) 0px,rgba(255,255,255,0.015) 1px,transparent 1px,transparent 9px)",
+          }}
+        />
+        <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-5 max-w-7xl">
+          <p className="text-sm text-[#A8A29E] font-serif leading-relaxed max-w-2xl">
+            Like Piranesi&apos;s imaginary prisons, production codebases are vast labyrinths of
+            interdependent walkways, vaults, and machinery. Cube applies architectural rigor to
+            navigate and mutate systems with zero collateral regression.
+          </p>
+          <a
+            href="#demo"
+            className="shrink-0 inline-flex items-center gap-2 px-4 py-2 border border-[#3E3833] hover:border-[#78716C] text-xs font-mono text-[#A8A29E] hover:text-[#F5F5F4] transition-colors"
+          >
+            <span>Descent into the Showcase</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
+          </a>
         </div>
       </div>
     </section>

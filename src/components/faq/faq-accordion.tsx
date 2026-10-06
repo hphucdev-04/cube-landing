@@ -51,52 +51,66 @@ export function FaqAccordion() {
   };
 
   return (
-    <section id="faq" className="relative min-h-[88vh] flex flex-col justify-center py-16 sm:py-20 px-4 sm:px-6 lg:px-8 border-t border-[#27272A]">
-      <div className="relative max-w-3xl mx-auto w-full">
+    <section
+      id="faq"
+      className="relative border-t border-[#2A2622] bg-[#0A0908] w-full overflow-hidden"
+    >
+      {/* Etching texture */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-50"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(45deg,rgba(255,255,255,0.015) 0px,rgba(255,255,255,0.015) 1px,transparent 1px,transparent 9px),repeating-linear-gradient(-45deg,rgba(255,255,255,0.015) 0px,rgba(255,255,255,0.015) 1px,transparent 1px,transparent 9px)",
+        }}
+      />
+
+      <div className="relative max-w-4xl mx-auto w-full px-6 sm:px-10 py-20 sm:py-24">
         {/* Section Header */}
-        <div className="text-center mb-6 sm:mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium border border-[#27272A] bg-[#18181B] text-[#A1A1AA] mb-2.5 shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            <span>KNOWLEDGE BASE</span>
+        <div className="text-center mb-10 sm:mb-14">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 text-xs font-mono border border-[#2A2622] bg-[#141210] mb-4">
+            {/* Product accent dot — per DESIGN.md */}
+            <span className="w-1.5 h-1.5 bg-[#38BDF8]" />
+            <span className="font-cinzel text-[#F5F5F4] tracking-wider">LIBER IV · THE CODICES &amp; FAQ</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-medium tracking-tight text-white mb-1.5 font-sans">
+          <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight text-[#F5F5F4] mb-2 font-sans">
             Frequently Asked Questions
           </h2>
-          <p className="text-xs sm:text-sm text-[#A1A1AA]">
-            Architecture, data privacy, subscriptions, and getting started.
+          <p className="text-xs sm:text-sm text-[#A8A29E] font-serif">
+            Architecture, local privacy, subscriptions, and getting started.
           </p>
         </div>
 
-        {/* Accordion List (radius 8px / card token) */}
-        <div className="space-y-2">
+        {/* Accordion List */}
+        <div className="space-y-2.5">
           {FAQS.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
               <div
                 key={index}
                 className={cn(
-                  "rounded-lg border transition-colors overflow-hidden",
+                  "border transition-colors overflow-hidden",
                   isOpen
-                    ? "border-white/20 bg-[#18181B]"
-                    : "border-[#27272A] bg-[#18181B]/50 hover:border-[#27272A] hover:bg-[#18181B]"
+                    ? "border-[#3E3833] bg-[#0D0C0A]"
+                    : "border-[#2A2622] bg-[#0A0908] hover:border-[#3E3833]"
                 )}
               >
                 <button
                   onClick={() => toggle(index)}
-                  className="w-full px-4 sm:px-5 py-3 sm:py-3.5 flex items-center justify-between text-left gap-4 cursor-pointer"
+                  className="w-full px-5 py-4 flex items-center justify-between text-left gap-4 cursor-pointer"
                 >
-                  <span className="text-xs sm:text-sm font-medium text-white">
+                  <span className="text-xs sm:text-sm font-medium text-[#F5F5F4]">
                     {faq.question}
                   </span>
                   <div
                     className={cn(
-                      "w-5 h-5 rounded-md flex items-center justify-center border transition-transform shrink-0",
+                      "w-5 h-5 flex items-center justify-center border transition-all shrink-0",
                       isOpen
-                        ? "border-white/20 bg-[#050505] text-white rotate-180"
-                        : "border-[#27272A] bg-[#050505] text-[#A1A1AA]"
+                        ? "border-[#78716C] bg-[#141210] text-[#A8A29E] rotate-180"
+                        : "border-[#2A2622] bg-[#0A0908] text-[#3E3833]"
                     )}
                   >
-                    <ChevronDown className="w-3 h-3" />
+                    <ChevronDown className="w-3.5 h-3.5" />
                   </div>
                 </button>
 
@@ -123,7 +137,7 @@ export function FaqAccordion() {
                       }}
                       className="overflow-hidden"
                     >
-                      <div className="px-4 sm:px-5 pb-4 text-xs sm:text-sm text-[#A1A1AA] leading-relaxed border-t border-[#27272A]/60 pt-2.5">
+                      <div className="px-5 pb-5 text-xs sm:text-sm text-[#A8A29E] leading-relaxed border-t border-[#2A2622] pt-3 font-serif">
                         {faq.answer}
                       </div>
                     </motion.div>

@@ -2,59 +2,16 @@
 
 import { useEffect, useRef } from "react";
 
-interface CubeParticle {
+interface AsciiGlyph {
   x: number;
   y: number;
-  originX: number;
-  originY: number;
-  distFactor: number;
+  char: string;
+  opacity: number;
+  isCyan: boolean;
   size: number;
-  baseAlpha: number;
-  alpha: number;
-  vx: number;
-  vy: number;
-  shade: number; // Grayscale lightness [0.4 .. 1.0]
-  phase: number;
-  floatSpeed: number;
-  rotSpeed: number;
 }
 
-// Lightweight 2D Perlin-like noise generator
-function createNoise2D() {
-  const perm = new Uint8Array(512);
-  for (let i = 0; i < 256; i++) perm[i] = i;
-  for (let i = 255; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [perm[i], perm[j]] = [perm[j], perm[i]];
-  }
-  for (let i = 0; i < 256; i++) perm[i + 256] = perm[i];
-
-  function grad(hash: number, x: number, y: number) {
-    const h = hash & 3;
-    const u = h < 2 ? x : y;
-    const v = h < 2 ? y : x;
-    return ((h & 1) === 0 ? u : -u) + ((h & 2) === 0 ? v : -v);
-  }
-
-  return function (x: number, y: number) {
-    const X = Math.floor(x) & 255;
-    const Y = Math.floor(y) & 255;
-    const xf = x - Math.floor(x);
-    const yf = y - Math.floor(y);
-
-    const u = xf * xf * xf * (xf * (xf * 6 - 15) + 10);
-    const v = yf * yf * yf * (yf * (yf * 6 - 15) + 10);
-
-    const g00 = grad(perm[X + perm[Y]], xf, yf);
-    const g10 = grad(perm[X + 1 + perm[Y]], xf - 1, yf);
-    const g01 = grad(perm[X + perm[Y + 1]], xf, yf - 1);
-    const g11 = grad(perm[X + 1 + perm[Y + 1]], xf - 1, yf - 1);
-
-    const x1 = g00 + u * (g10 - g00);
-    const x2 = g01 + u * (g11 - g01);
-    return (x1 + v * (x2 - x1) + 1) * 0.5;
-  };
-}
+const GLYPH_CHARS = ["·", "+", "▫", "::", "—", ".", "~", "×", "▪", "•"];
 
 export function CubeVoxelField() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -62,302 +19,127 @@ export function CubeVoxelField() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
-    let animationFrameId: number;
     let width = 0;
     let height = 0;
-    let particles: CubeParticle[] = [];
-    const noise2D = createNoise2D();
+    let animationFrameId = 0;
+    let isVisible = true;
 
-    // Mouse coordinates for gentle interactive reaction
-    let mouseX = -9999;
-    let mouseY = -9999;
-    let targetMouseX = -9999;
-    let targetMouseY = -9999;
+    let glyphs: AsciiGlyph[] = [];
 
-    const onMouseMove = (e: MouseEvent) => {
-      targetMouseX = e.clientX;
-      targetMouseY = e.clientY;
-    };
+    const initGlyphs = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
 
-    const onMouseLeave = () => {
-      targetMouseX = -9999;
-      targetMouseY = -9999;
-    };
+      glyphs = [];
+      // Density: delicate artisanal dither texture across viewport
+      const cellStep = Math.max(36, Math.floor(width / 38));
+      const cols = Math.ceil(width / cellStep);
+      const rows = Math.ceil(height / cellStep);
 
-    window.addEventListener("mousemove", onMouseMove, { passive: true });
-    document.addEventListener("mouseleave", onMouseLeave, { passive: true });
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          // Semi-random scatter with dither feel
+          if (Math.random() > 0.45) continue;
 
-    const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-      ctx.scale(dpr, dpr);
-      initParticles();
-    };
+          const x = c * cellStep + (Math.random() * 14 - 7);
+          const y = r * cellStep + (Math.random() * 14 - 7);
 
-    const initParticles = () => {
-      particles = [];
-      // High density: 2200 - 3200 tiny cubes across viewport
-      const targetCount = Math.floor(Math.min(3000, (width * height) / 420));
+          // Distance from center to soften behind main text
+          const dx = (x - width / 2) / (width / 2);
+          const dy = (y - height / 2.2) / (height / 2.2);
+          const distFromCenter = Math.sqrt(dx * dx + dy * dy);
 
-      const cx = width / 2;
-      const cy = height * 0.38;
-      const maxDist = Math.hypot(width * 0.5, height * 0.5) || 1;
+          // Clearer reading zone in center
+          if (distFromCenter < 0.35 && Math.random() > 0.15) continue;
 
-      let attempts = 0;
-      while (particles.length < targetCount && attempts < targetCount * 5) {
-        attempts++;
-        const x = Math.random() * width;
-        const y = Math.random() * height;
+          const isCyan = Math.random() < 0.08; // Rare cold steel cyan accent
+          const opacity = isCyan
+            ? 0.15 + Math.random() * 0.15
+            : 0.04 + Math.random() * 0.12;
 
-        // Radial distance from hero center
-        const dx = (x - cx) / (width * 0.48);
-        const dy = (y - cy) / (height * 0.42);
-        const distFromCenter = Math.sqrt(dx * dx + dy * dy);
+          const char = GLYPH_CHARS[Math.floor(Math.random() * GLYPH_CHARS.length)];
+          const size = isCyan ? 11 : 9 + Math.floor(Math.random() * 3);
 
-        // Noise clustering
-        const n = noise2D(x * 0.0022, y * 0.0022);
-        const centerSuppression = Math.min(1, Math.max(0, (distFromCenter - 0.28) * 1.8));
-        const spawnProb = centerSuppression * (n > 0.4 ? 0.85 : 0.1);
-
-        if (Math.random() < spawnProb) {
-          const size = 2.5 + Math.random() * 3.5;
-          const shade = 0.45 + Math.random() * 0.55; // [0.45, 1.0]
-          const baseAlpha = 0.18 + Math.random() * 0.65;
-
-          const dist = Math.hypot(x - cx, y - cy);
-          const distFactor = Math.min(1, dist / maxDist);
-
-          particles.push({
+          glyphs.push({
             x,
             y,
-            originX: x,
-            originY: y,
-            distFactor,
+            char,
+            opacity,
+            isCyan,
             size,
-            shade,
-            baseAlpha,
-            alpha: baseAlpha,
-            // Visibly smooth upward & drifting velocity
-            vx: (Math.random() - 0.5) * 0.35,
-            vy: -0.15 - Math.random() * 0.35, // Slow rising voxel flow
-            phase: Math.random() * Math.PI * 2,
-            floatSpeed: 0.001 + Math.random() * 0.002,
-            rotSpeed: 0.0015 + Math.random() * 0.003,
           });
         }
       }
     };
 
-    // Draw an isometric cube at (x, y) with strictly grayscale shading
-    const drawIsometricCube = (
-      x: number,
-      y: number,
-      s: number,
-      alpha: number,
-      shade: number,
-      lightMod: number
-    ) => {
-      const cos30 = 0.8660254;
-      const sin30 = 0.5;
-      const dx = s * cos30;
-      const dy = s * sin30;
-
-      // 1. TOP FACE (Crisp near-white / lightest face)
-      const topVal = Math.min(255, Math.floor(255 * shade * lightMod));
-      ctx.fillStyle = `rgba(${topVal}, ${topVal}, ${topVal}, ${alpha})`;
-      ctx.beginPath();
-      ctx.moveTo(x, y - s);
-      ctx.lineTo(x + dx, y - s + dy);
-      ctx.lineTo(x, y);
-      ctx.lineTo(x - dx, y - s + dy);
-      ctx.closePath();
-      ctx.fill();
-
-      // 2. LEFT SIDE FACE (Medium gray)
-      const leftVal = Math.min(255, Math.floor(180 * shade * lightMod));
-      ctx.fillStyle = `rgba(${leftVal}, ${leftVal}, ${leftVal}, ${alpha * 0.85})`;
-      ctx.beginPath();
-      ctx.moveTo(x - dx, y - s + dy);
-      ctx.lineTo(x, y);
-      ctx.lineTo(x, y + s);
-      ctx.lineTo(x - dx, y + dy);
-      ctx.closePath();
-      ctx.fill();
-
-      // 3. RIGHT SIDE FACE (Darker gray)
-      const rightVal = Math.min(255, Math.floor(110 * shade * lightMod));
-      ctx.fillStyle = `rgba(${rightVal}, ${rightVal}, ${rightVal}, ${alpha * 0.65})`;
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + dx, y - s + dy);
-      ctx.lineTo(x + dx, y + dy);
-      ctx.lineTo(x, y + s);
-      ctx.closePath();
-      ctx.fill();
-    };
-
-    let isHidden = false;
-    const onVisibilityChange = () => {
-      isHidden = document.hidden;
-    };
-    document.addEventListener("visibilitychange", onVisibilityChange);
-
-    let isIntroActive = true;
-    let introProgress = 0;
-    let animReady = false;
-    let lastTime = 0;
-
-    // Stagger start by 2 rAF frames so Next.js hydration completes first
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        animReady = true;
-      });
-    });
-
-    const render = (now: number) => {
-      if (isHidden) {
-        lastTime = now;
-        animationFrameId = requestAnimationFrame(render);
-        return;
-      }
-
-      if (lastTime === 0) lastTime = now;
-      const rawDt = now - lastTime;
-      lastTime = now;
-      const dt = Math.max(8, Math.min(32, rawDt));
-      const timeFactor = dt / 16.67;
+    const draw = () => {
+      if (!ctx || !isVisible) return;
 
       ctx.clearRect(0, 0, width, height);
 
-      const cx = width / 2;
-      const cy = height * 0.38;
+      // Draw subtle organic dither field
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
 
-      // Smooth mouse interpolation
-      mouseX += (targetMouseX - mouseX) * 0.1 * timeFactor;
-      mouseY += (targetMouseY - mouseY) * 0.1 * timeFactor;
+      for (let i = 0; i < glyphs.length; i++) {
+        const g = glyphs[i];
+        ctx.font = `${g.size}px "JetBrains Mono", monospace`;
 
-      let ease = 1;
-      if (isIntroActive) {
-        if (animReady) {
-          introProgress += 0.009 * timeFactor; // ~1.8s smooth duration
-          if (introProgress >= 1) {
-            introProgress = 1;
-            isIntroActive = false;
-          }
+        if (g.isCyan) {
+          ctx.fillStyle = `rgba(56, 189, 248, ${g.opacity})`;
+        } else {
+          ctx.fillStyle = `rgba(214, 211, 209, ${g.opacity})`;
         }
-        // Smooth quartic deceleration curve computed ONCE outside particle loop
-        const inv = 1 - introProgress;
-        ease = 1 - inv * inv * inv * inv;
+
+        ctx.fillText(g.char, g.x, g.y);
       }
-
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-
-        // 1. Organic Sinusoidal Motion + Vertical Drift
-        p.phase += p.floatSpeed * 15 * timeFactor;
-        p.x += (p.vx + Math.sin(p.phase) * 0.35) * timeFactor;
-        p.y += (p.vy + Math.cos(p.phase * 0.8) * 0.2) * timeFactor;
-
-        // Wrap around viewport edges seamlessly
-        if (p.y < -20) {
-          p.y = height + 20;
-          p.x = Math.random() * width;
-        }
-        if (p.x < -20) p.x = width + 20;
-        if (p.x > width + 20) p.x = -20;
-
-        let renderX = p.x;
-        let renderY = p.y;
-        let renderSize = p.size;
-        let explosionLight = 0;
-
-        if (isIntroActive) {
-          // Radial wave: center moves first, shockwave expands outward
-          const pProgress = Math.max(0, Math.min(1, (ease - p.distFactor * 0.28) / 0.72));
-
-          // Critical performance optimization: skip particles that haven't launched yet
-          // (prevents 3000 cubes stacking inside center causing overdraw thrash)
-          if (pProgress < 0.015) continue;
-
-          // Pure linear interpolation from center (cx, cy) to floating target
-          renderX = cx + (p.x - cx) * pProgress;
-          renderY = cy + (p.y - cy) * pProgress;
-          renderSize = p.size * (0.5 + 0.5 * pProgress);
-          explosionLight = (1 - pProgress) * 0.75;
-        }
-
-        // 2. Interactive mouse repulsion & lighting
-        let mouseBoost = 0;
-        let repelX = 0;
-        let repelY = 0;
-
-        if (mouseX > 0 && mouseY > 0) {
-          const mdx = renderX - mouseX;
-          const mdy = renderY - mouseY;
-          const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
-          const maxDist = 240; // Bán kính hút mở rộng (240px)
-
-          if (mDist < maxDist) {
-            const factor = 1 - mDist / maxDist;
-            mouseBoost = factor * 0.65;
-            const angle = Math.atan2(mdy, mdx);
-            // Lực hút mạnh hơn, gom chụm rõ rệt về phía con trỏ chuột
-            const pullForce = Math.pow(factor, 0.75) * 55;
-            repelX = -Math.cos(angle) * pullForce;
-            repelY = -Math.sin(angle) * pullForce;
-          }
-        }
-
-        // 3. Fading around hero headline text
-        const dx = (renderX - cx) / (width * 0.45);
-        const dy = (renderY - cy) / (height * 0.4);
-        const centerDist = Math.sqrt(dx * dx + dy * dy);
-        const centerMask = Math.min(1, Math.max(0.06, centerDist - 0.22));
-
-        // 4. Subtle living shimmer/pulse
-        const shimmer = 0.85 + 0.25 * Math.sin(now * 0.0018 + p.phase);
-        const effectiveAlpha = Math.min(1, (p.baseAlpha * shimmer + mouseBoost) * centerMask);
-        const lightMod = 1.0 + mouseBoost * 0.6 + explosionLight;
-
-        drawIsometricCube(
-          renderX + repelX,
-          renderY + repelY,
-          renderSize,
-          effectiveAlpha,
-          p.shade,
-          lightMod
-        );
-      }
-
-      animationFrameId = requestAnimationFrame(render);
     };
 
-    window.addEventListener("resize", resize);
-    resize();
-    animationFrameId = requestAnimationFrame(render);
+    initGlyphs();
+    draw();
+
+    // Redraw on resize
+    const handleResize = () => {
+      initGlyphs();
+      draw();
+    };
+
+    // Tab visibility handling
+    const handleVisibilityChange = () => {
+      isVisible = !document.hidden;
+      if (isVisible) draw();
+    };
+
+    window.addEventListener("resize", handleResize);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseleave", onMouseLeave);
-      document.removeEventListener("visibilitychange", onVisibilityChange);
-      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("resize", handleResize);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0 opacity-90 transition-opacity"
+    <div
       aria-hidden="true"
-    />
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none"
+    >
+      {/* Deep atmospheric stone radial gradient */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(56,189,248,0.05),transparent_70%)]" />
+
+      {/* Artisanal ASCII Dither Canvas */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 block w-full h-full opacity-70"
+      />
+
+      {/* Soft stone vignette */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_40%,#0A0908_100%)] pointer-events-none" />
+    </div>
   );
 }

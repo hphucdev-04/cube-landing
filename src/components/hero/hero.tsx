@@ -1,155 +1,136 @@
 "use client";
 
-import { useState } from "react";
-import { FileText, Terminal, Monitor } from "lucide-react";
+import { useRef } from "react";
+import Image from "next/image";
+import { FileText, ChevronDown } from "lucide-react";
 import { InstallBox } from "./install-box";
 import { GithubIcon } from "@/components/ui/icons";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export function Hero() {
-  const [screenMode, setScreenMode] = useState<"cli" | "desktop">("cli");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.06]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
 
   return (
-    <section id="hero" className="relative min-h-screen lg:h-screen flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 pt-16 pb-6">
-      <div className="relative max-w-4xl mx-auto text-center flex flex-col items-center w-full">
-        {/* Release / Status Pill Badge */}
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#18181B] border border-[#27272A] mb-4 sm:mb-5 shadow-sm">
-          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-          <span className="text-xs font-mono font-medium text-white">
-            Cube v1.0.0
+    <section
+      ref={containerRef}
+      id="hero"
+      className="relative h-screen w-full flex flex-col justify-center items-center overflow-hidden bg-[#0A0908]"
+    >
+      {/* FULL-BLEED PARALLAX BACKDROP — artwork IS the space */}
+      <motion.div
+        style={{ y: bgY, scale: bgScale }}
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 select-none"
+      >
+        <Image
+          src="/assets/ascii-magic-5.png"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center contrast-[1.15] brightness-[0.82]"
+        />
+        {/* Chiaroscuro — preserves etching detail, darkens edges */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0A0908]/75 via-transparent to-[#0A0908]/90" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_70%_at_50%_50%,transparent_20%,#0A0908_90%)]" />
+      </motion.div>
+
+      {/* Architectural arch wireframe overlay */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-center select-none">
+        <div className="w-[90vw] h-[80vh] arch-vault border border-[#3E3833]/35 absolute top-10" />
+      </div>
+
+      {/* INSCRIPTION PANEL — centred, fits full viewport */}
+      <motion.div
+        style={{ y: contentY }}
+        className="relative z-10 w-full px-5 sm:px-10 md:px-20 max-w-5xl mx-auto text-center flex flex-col items-center"
+      >
+        {/* Eyebrow badge */}
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-[#0D0C0A]/90 border border-[#2A2622] mb-5 backdrop-blur-sm"
+        >
+          <span className="w-1.5 h-1.5 bg-[#38BDF8] animate-pulse rounded-full" />
+          <span className="font-cinzel text-[11px] tracking-[0.2em] text-[#F5F5F4] font-bold uppercase">
+            Piranesi Carceri · Geometric Architectural Agent
           </span>
-          <span className="text-[#27272A]">•</span>
-          <span className="text-xs font-mono text-[#A1A1AA]">
-            Engineered in the Terminal
-          </span>
-        </div>
+          <span className="text-[#3E3833]">|</span>
+          <span className="font-mono text-[11px] text-[#78716C]">v1.0.0</span>
+        </motion.div>
 
-        {/* Headline: display-lg (Inter 500, lineHeight 1.04) */}
-        <h1 className="text-3xl sm:text-5xl lg:text-[54px] font-medium tracking-tight text-white leading-[1.06] max-w-3xl mb-3.5">
-          A coding agent that lives where you already work
-        </h1>
+        {/* Monumental headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, delay: 0.1 }}
+          className="font-sans font-semibold tracking-tight text-[#F5F5F4] leading-[1.06] mb-4
+            text-[clamp(2.2rem,6vw,4.5rem)]"
+        >
+          Navigate the labyrinth of<br className="hidden sm:block" /> software architecture
+        </motion.h1>
 
-        {/* Subhead: body-md (Inter 400, lineHeight 1.5) */}
-        <p className="text-sm sm:text-base text-[#A1A1AA] max-w-2xl font-normal leading-[1.5] mb-5 sm:mb-6">
-          Differential-rendering TUI, multi-mode authentication (Claude Pro, ChatGPT Plus, 15+ API keys, or offline Ollama), workspace memory, and atomic code mutations.
-        </p>
+        {/* Sub-headline */}
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.18 }}
+          className="text-[#C8C5C2] font-serif leading-[1.65] mb-7 max-w-2xl
+            text-[clamp(0.875rem,1.4vw,1.1rem)]"
+        >
+          Autonomous TypeScript coding agent with multi-mode authentication — Claude Pro, ChatGPT Plus,
+          15+ API keys or 100% offline Ollama — AST traversal and atomic verified commits.
+        </motion.p>
 
-        {/* Two-Button CTA Row */}
-        <div className="flex flex-wrap items-center justify-center gap-3 mb-5 sm:mb-6">
+        {/* CTA row */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.24 }}
+          className="flex flex-wrap justify-center gap-3 mb-7"
+        >
           <a
             href="https://github.com/hphucdev-04"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#18181B] border border-[#27272A] hover:border-white/30 text-white font-medium text-xs sm:text-sm transition-colors"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-sm bg-[#0D0C0A]/90 border border-[#2A2622] hover:border-[#38BDF8]/60 text-[#F5F5F4] text-xs sm:text-sm font-medium transition-all backdrop-blur-sm"
           >
-            <GithubIcon className="w-3.5 h-3.5 text-[#A1A1AA]" />
+            <GithubIcon className="w-4 h-4 text-[#A8A29E]" />
             <span>View on GitHub</span>
           </a>
-
           <a
-            href="#docs"
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#18181B] border border-[#27272A] hover:border-white/30 text-[#A1A1AA] hover:text-white font-medium text-xs sm:text-sm transition-colors"
+            href="#demo"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#0D0C0A]/90 border border-[#2A2622] hover:border-[#3E3833] text-[#D6D3D1] hover:text-[#F5F5F4] text-xs sm:text-sm font-medium transition-all backdrop-blur-sm"
           >
-            <FileText className="w-3.5 h-3.5" />
-            <span>Explore Docs</span>
+            <FileText className="w-4 h-4 text-[#A8A29E]" />
+            <span>Descent into the Labyrinth</span>
           </a>
-        </div>
+        </motion.div>
 
-        {/* 2-Screen Switcher: CLI vs Desktop */}
-        <div className="relative z-20 flex items-center justify-center p-1 rounded-full bg-[#18181B] border border-[#27272A] mb-4 shadow-sm">
-          <button
-            type="button"
-            onClick={() => setScreenMode("cli")}
-            className={cn(
-              "relative flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-mono font-medium transition-colors select-none cursor-pointer",
-              screenMode === "cli"
-                ? "text-black font-semibold"
-                : "text-[#A1A1AA] hover:text-white"
-            )}
-          >
-            {screenMode === "cli" && (
-              <motion.span
-                layoutId="heroScreenSelector"
-                className="absolute inset-0 rounded-full bg-white shadow-sm z-0"
-                transition={{ type: "spring", stiffness: 450, damping: 35 }}
-              />
-            )}
-            <Terminal className="w-3.5 h-3.5 relative z-10" />
-            <span className="relative z-10">CLI</span>
-          </button>
+        {/* Install box */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="w-full max-w-xl mx-auto"
+        >
+          <InstallBox idPrefix="hero" />
+        </motion.div>
+      </motion.div>
 
-          <button
-            type="button"
-            onClick={() => setScreenMode("desktop")}
-            className={cn(
-              "relative flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-mono font-medium transition-colors select-none cursor-pointer",
-              screenMode === "desktop"
-                ? "text-black font-semibold"
-                : "text-[#A1A1AA] hover:text-white"
-            )}
-          >
-            {screenMode === "desktop" && (
-              <motion.span
-                layoutId="heroScreenSelector"
-                className="absolute inset-0 rounded-full bg-white shadow-sm z-0"
-                transition={{ type: "spring", stiffness: 450, damping: 35 }}
-              />
-            )}
-            <Monitor className="w-3.5 h-3.5 relative z-10" />
-            <span className="relative z-10">Desktop</span>
-            <span
-              className={cn(
-                "relative z-10 px-1.5 py-0.2 rounded text-[10px] font-mono uppercase tracking-wider font-semibold transition-colors",
-                screenMode === "desktop"
-                  ? "bg-black/15 text-black"
-                  : "bg-white/10 text-white/90 border border-white/15"
-              )}
-            >
-              Coming Soon
-            </span>
-          </button>
-        </div>
-
-        {/* Active Screen Display (CLI or Desktop) */}
-        <div className="w-full">
-          <AnimatePresence mode="wait">
-            {screenMode === "cli" ? (
-              <motion.div
-                key="cli-screen"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                className="w-full"
-              >
-                {/* Instant Install Command Box (CLI as currently) */}
-                <InstallBox idPrefix="hero" />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="desktop-screen"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                className="w-full"
-              >
-                {/* Desktop Screen: Compact Coming Soon Box (No fake frame) */}
-                <div className="w-full max-w-[550px] mx-auto py-7 px-6 rounded-xl bg-[#0D0D0F] border border-[#27272A] flex flex-col items-center justify-center text-center">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-amber-300 mb-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                    <span>Coming Soon</span>
-                  </div>
-                  <h3 className="text-base font-medium text-white mb-1">Cube Desktop</h3>
-                  <p className="text-xs font-mono text-[#A1A1AA]">
-                    Native desktop application is currently in development.
-                  </p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+      {/* Scroll cue */}
+      <div className="absolute bottom-5 left-0 right-0 flex flex-col items-center gap-1 z-10 pointer-events-none">
+        <span className="font-cinzel text-[9px] tracking-[0.25em] text-[#3E3833]">SCROLL TO ENTER LIBER I</span>
+        <ChevronDown className="w-3.5 h-3.5 text-[#78716C] animate-bounce" />
       </div>
     </section>
   );
