@@ -114,7 +114,7 @@ export default function Image() {
               color: "#A1A1AA",
             }}
           >
-            v1.0.0
+          0.1.4
           </span>
         </div>
 

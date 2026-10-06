@@ -38,7 +38,7 @@ export function Footer() {
               CUBE
             </span>
             <span className="text-[10px] font-mono px-1.5 py-0.5 bg-[#141210] text-[#78716C] border border-[#2A2622]">
-              v1.0.0 · CARCERI
+              0.1.4
             </span>
           </div>
 

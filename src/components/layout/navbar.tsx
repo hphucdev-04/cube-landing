@@ -13,7 +13,7 @@ export interface NavSection {
 }
 
 const NAV_SECTIONS: NavSection[] = [
-  { id: "hero", label: "Architectura", roman: "ORD. 0" },
+  { id: "hero", label: "Overview", roman: "00" },
   { id: "harness", label: "Harness", roman: "LIB. I" },
   { id: "demo", label: "Showcase", roman: "LIB. II" },
   { id: "commands", label: "Commands", roman: "LIB. III" },
@@ -240,7 +240,7 @@ export function Navbar() {
                 <GithubIcon className="w-4 h-4" />
                 <span>GitHub</span>
               </a>
-              <span className="text-[10px] font-mono text-[#78716C]">Cube v1.0.0</span>
+              <span className="text-[10px] font-mono text-[#78716C]">Cube 0.1.4</span>
             </div>
           </motion.div>
         )}

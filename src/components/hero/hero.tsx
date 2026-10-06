@@ -62,10 +62,10 @@ export function Hero() {
         >
           <span className="w-1.5 h-1.5 bg-[#38BDF8] animate-pulse rounded-full" />
           <span className="font-cinzel text-[11px] tracking-[0.2em] text-[#F5F5F4] font-bold uppercase">
-            Piranesi Carceri · Geometric Architectural Agent
+            Autonomous Coding Agent · Terminal CLI
           </span>
           <span className="text-[#3E3833]">|</span>
-          <span className="font-mono text-[11px] text-[#78716C]">v1.0.0</span>
+          <span className="font-mono text-[11px] text-[#78716C]">0.1.4</span>
         </motion.div>
 
         {/* Monumental headline */}
@@ -112,7 +112,7 @@ export function Hero() {
             className="flex items-center gap-2 px-5 py-2.5 bg-[#0D0C0A]/90 border border-[#2A2622] hover:border-[#3E3833] text-[#D6D3D1] hover:text-[#F5F5F4] text-xs sm:text-sm font-medium transition-all backdrop-blur-sm"
           >
             <FileText className="w-4 h-4 text-[#A8A29E]" />
-            <span>Descent into the Labyrinth</span>
+            <span>Explore Live Demos</span>
           </a>
         </motion.div>
 
@@ -129,7 +129,7 @@ export function Hero() {
 
       {/* Scroll cue */}
       <div className="absolute bottom-5 left-0 right-0 flex flex-col items-center gap-1 z-10 pointer-events-none">
-        <span className="font-cinzel text-[9px] tracking-[0.25em] text-[#3E3833]">SCROLL TO ENTER LIBER I</span>
+        <span className="font-mono text-[9px] tracking-[0.25em] text-[#57534E]">SCROLL TO EXPLORE THE HARNESS</span>
         <ChevronDown className="w-3.5 h-3.5 text-[#78716C] animate-bounce" />
       </div>
     </section>

@@ -179,7 +179,6 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
           </motion.span>
         </AnimatePresence>
         <span className="text-[#2A2622] select-none shrink-0">·</span>
-        <span className="text-[#3E3833]">Zero Dependencies</span>
       </div>
 
       {/* Live Download / Install Counter Badge */}

@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   ArrowUpRight,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 interface HarnessBay {
@@ -114,157 +115,193 @@ const HARNESS_BAYS: HarnessBay[] = [
   },
 ];
 
-/** A single full-screen pier chamber — Piranesi artwork IS the environment */
-function PierChamber({ bay, index }: { bay: HarnessBay; index: number }) {
+/** A single full-screen pier chamber — Piranesi artwork IS the environment.
+ *  Uses sticky stacking cards: each card pins at top-0, and subsequent cards
+ *  slide up from below and overlay over the previous card, while the card underneath
+ *  recedes subtly in scale and darkness.
+ */
+function PierChamber({
+  bay,
+  index,
+  total,
+}: {
+  bay: HarnessBay;
+  index: number;
+  total: number;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const Icon = bay.icon;
+  const isEven = index % 2 === 0;
+  const isLast = index === total - 1;
 
+  // Track scroll while this chamber is active at top of viewport
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start end", "end start"],
+    offset: ["start start", "end start"],
   });
 
-  // Parallax: image drifts slightly as chamber scrolls through viewport
-  const imgY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
-  // Content fades in when chamber enters, fades out as it leaves
-  const contentOpacity = useTransform(scrollYProgress, [0.1, 0.28, 0.72, 0.9], [0, 1, 1, 0]);
-  const contentY = useTransform(scrollYProgress, [0.1, 0.32], ["2rem", "0rem"]);
-
-  const isEven = index % 2 === 0;
+  // When next chamber slides over:
+  // scale down subtly (1 -> 0.94) and fade in dark shadow veil (0 -> 0.55)
+  const scale = useTransform(scrollYProgress, [0, 1], [1, isLast ? 1 : 0.94]);
+  const veilOpacity = useTransform(scrollYProgress, [0, 1], [0, isLast ? 0 : 0.55]);
 
   return (
     <div
       ref={ref}
-      className="relative h-screen w-full overflow-hidden flex items-center"
+      style={{ zIndex: 10 + index }}
+      className={cn(
+        "sticky top-0 h-screen w-full overflow-hidden flex items-center bg-[#0A0908]",
+        index > 0 && "border-t border-[#3E3833]/80 shadow-[0_-30px_70px_rgba(0,0,0,0.98),0_-10px_25px_rgba(0,0,0,0.85)]"
+      )}
       aria-label={`${bay.roman}: ${bay.name}`}
     >
-      {/* ── FULL-BLEED PIRANESI BACKDROP ────────────────────────────
-          The artwork IS the architectural space. Not an image in a box.
-          ──────────────────────────────────────────────────────────── */}
-      <motion.div
-        style={{ y: imgY }}
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 select-none will-change-transform"
-      >
-        <Image
-          src={bay.bgAsset}
-          alt=""
-          fill
-          sizes="100vw"
-          className={`object-cover contrast-[1.15] brightness-[0.6] ${bay.bgFocus}`}
-        />
-        {/* Chiaroscuro: heavy stone shadow on inscription side, open view on the far side */}
-        {isEven ? (
-          <>
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0A0908]/96 via-[#0A0908]/55 to-[#0A0908]/15" />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0A0908]/65 via-transparent to-[#0A0908]/80" />
-          </>
-        ) : (
-          <>
-            <div className="absolute inset-0 bg-gradient-to-l from-[#0A0908]/96 via-[#0A0908]/55 to-[#0A0908]/15" />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0A0908]/65 via-transparent to-[#0A0908]/80" />
-          </>
-        )}
-      </motion.div>
-
-      {/* ── DATUM LINES — stone mortar hairlines, no cyan ──────── */}
-      <div aria-hidden="true" className="absolute inset-0 z-[1] pointer-events-none">
-        <div className="absolute left-0 right-0 h-px bg-[#3E3833]/25" style={{ top: "33%" }} />
-        <div className="absolute left-0 right-0 h-px bg-[#2A2622]/30" style={{ top: "66%" }} />
+      {/* Top hairline highlight for incoming architectural card */}
+      {index > 0 && (
         <div
-          className="absolute top-0 bottom-0 w-px bg-[#3E3833]/20"
-          style={{ left: isEven ? "55%" : "45%" }}
+          aria-hidden="true"
+          className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#78716C]/60 to-transparent z-20"
         />
-      </div>
+      )}
 
-      {/* ── CONTENT: INSCRIPTION ON STONE ───────────────────────── */}
+      {/* Receding depth wrapper (scales down as card underneath) */}
       <motion.div
-        style={{ opacity: contentOpacity, y: contentY }}
-        className={`relative z-10 w-full flex ${isEven ? "justify-start" : "justify-end"} px-6 sm:px-12 md:px-20 lg:px-28`}
+        style={{ scale }}
+        className="relative w-full h-full flex items-center origin-top will-change-transform"
       >
-        <div className={`max-w-[min(42rem,52vw)] w-full ${isEven ? "" : "text-right"}`}>
+        {/* ── FULL-BLEED PIRANESI BACKDROP ────────────────────────────
+            The artwork IS the architectural space. Not an image in a box.
+            ──────────────────────────────────────────────────────────── */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 select-none"
+        >
+          <Image
+            src={bay.bgAsset}
+            alt=""
+            fill
+            sizes="100vw"
+            priority={index === 0}
+            className={`object-cover contrast-[1.15] brightness-[0.6] ${bay.bgFocus}`}
+          />
+          {/* Chiaroscuro: heavy stone shadow on inscription side, open view on the far side */}
+          {isEven ? (
+            <>
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0A0908]/96 via-[#0A0908]/55 to-[#0A0908]/15" />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#0A0908]/65 via-transparent to-[#0A0908]/80" />
+            </>
+          ) : (
+            <>
+              <div className="absolute inset-0 bg-gradient-to-l from-[#0A0908]/96 via-[#0A0908]/55 to-[#0A0908]/15" />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#0A0908]/65 via-transparent to-[#0A0908]/80" />
+            </>
+          )}
+        </div>
 
-          {/* Giant dim stone ordinal — Piranesi scale, limestone tone */}
+        {/* ── DATUM LINES — stone mortar hairlines, no cyan ──────── */}
+        <div aria-hidden="true" className="absolute inset-0 z-[1] pointer-events-none">
+          <div className="absolute left-0 right-0 h-px bg-[#3E3833]/25" style={{ top: "33%" }} />
+          <div className="absolute left-0 right-0 h-px bg-[#2A2622]/30" style={{ top: "66%" }} />
           <div
-            aria-hidden="true"
-            className="font-cinzel font-bold text-[#F5F5F4]/[0.05] leading-none select-none mb-0 -mt-4"
-            style={{ fontSize: "clamp(7rem,18vw,14rem)" }}
-          >
-            {bay.code}
-          </div>
+            className="absolute top-0 bottom-0 w-px bg-[#3E3833]/20"
+            style={{ left: isEven ? "55%" : "45%" }}
+          />
+        </div>
 
-          {/* Pier label — carved above the numeral */}
-          <div className={`-mt-[3rem] sm:-mt-[4rem] lg:-mt-[5.5rem] relative z-10 ${isEven ? "" : "flex flex-col items-end"}`}>
+        {/* ── CONTENT: INSCRIPTION ON STONE ───────────────────────── */}
+        <div
+          className={`relative z-10 w-full flex ${isEven ? "justify-start" : "justify-end"} px-6 sm:px-12 md:px-20 lg:px-28`}
+        >
+          <div className={`max-w-[min(42rem,52vw)] w-full ${isEven ? "" : "text-right"}`}>
 
-            {/* Roman label + arch type */}
-            <div className={`flex items-center gap-3 mb-3 ${isEven ? "" : "flex-row-reverse"}`}>
-              <div className="flex items-center justify-center w-7 h-7 border border-[#3E3833] bg-[#0A0908]/70 backdrop-blur-sm">
-                <Icon className="w-3.5 h-3.5 text-[#A8A29E]" />
-              </div>
-              <div>
-                <span className="font-cinzel text-[11px] font-bold text-[#D6D3D1] tracking-[0.2em]">
-                  {bay.roman}
-                </span>
-                <span className="font-mono text-[10px] text-[#3E3833] ml-2">
-                  {bay.archType}
-                </span>
-              </div>
-            </div>
-
-            {/* Name — monumental limestone inscription */}
-            <h3
-              className="font-sans font-semibold text-[#F5F5F4] leading-[1.05] mb-3"
-              style={{ fontSize: "clamp(1.6rem,3.8vw,3rem)" }}
+            {/* Giant dim stone ordinal — Piranesi scale, limestone tone */}
+            <div
+              aria-hidden="true"
+              className="font-cinzel font-bold text-[#F5F5F4]/[0.05] leading-none select-none mb-0 -mt-4"
+              style={{ fontSize: "clamp(7rem,18vw,14rem)" }}
             >
-              {bay.name}
-            </h3>
-
-            {/* Capability — surveyor's note in mono, muted stone */}
-            <div className={`font-mono text-[11px] text-[#78716C] mb-4 tracking-wide ${isEven ? "" : "text-right"}`}>
-              ├── {bay.capability}
+              {bay.code}
             </div>
 
-            {/* Summary — etched parchment text */}
-            <p className={`text-[#A8A29E] font-serif leading-relaxed mb-5 text-sm sm:text-[0.95rem] ${isEven ? "" : "text-right"}`}>
-              {bay.conceptSummary}
-            </p>
+            {/* Pier label — carved above the numeral */}
+            <div className={`-mt-[3rem] sm:-mt-[4rem] lg:-mt-[5.5rem] relative z-10 ${isEven ? "" : "flex flex-col items-end"}`}>
 
-            {/* Spec tags — stone-tone mortar borders, no cyan */}
-            <div className={`flex flex-wrap gap-1.5 ${isEven ? "" : "justify-end"}`}>
-              {bay.specs.map((s) => (
-                <span
-                  key={s}
-                  className="text-[10px] font-mono px-2 py-0.5 border border-[#3E3833]/60 text-[#78716C] bg-[#0A0908]/60 backdrop-blur-sm"
-                >
-                  {s}
-                </span>
-              ))}
+              {/* Roman label + arch type */}
+              <div className={`flex items-center gap-3 mb-3 ${isEven ? "" : "flex-row-reverse"}`}>
+                <div className="flex items-center justify-center w-7 h-7 border border-[#3E3833] bg-[#0A0908]/70 backdrop-blur-sm">
+                  <Icon className="w-3.5 h-3.5 text-[#A8A29E]" />
+                </div>
+                <div>
+                  <span className="font-cinzel text-[11px] font-bold text-[#D6D3D1] tracking-[0.2em]">
+                    {bay.roman}
+                  </span>
+                  <span className="font-mono text-[10px] text-[#3E3833] ml-2">
+                    {bay.archType}
+                  </span>
+                </div>
+              </div>
+
+              {/* Name — monumental limestone inscription */}
+              <h3
+                className="font-sans font-semibold text-[#F5F5F4] leading-[1.05] mb-3"
+                style={{ fontSize: "clamp(1.6rem,3.8vw,3rem)" }}
+              >
+                {bay.name}
+              </h3>
+
+              {/* Capability — surveyor's note in mono, muted stone */}
+              <div className={`font-mono text-[11px] text-[#78716C] mb-4 tracking-wide ${isEven ? "" : "text-right"}`}>
+                ├── {bay.capability}
+              </div>
+
+              {/* Summary — etched parchment text */}
+              <p className={`text-[#A8A29E] font-serif leading-relaxed mb-5 text-sm sm:text-[0.95rem] ${isEven ? "" : "text-right"}`}>
+                {bay.conceptSummary}
+              </p>
+
+              {/* Spec tags — stone-tone mortar borders, no cyan */}
+              <div className={`flex flex-wrap gap-1.5 ${isEven ? "" : "justify-end"}`}>
+                {bay.specs.map((s) => (
+                  <span
+                    key={s}
+                    className="text-[10px] font-mono px-2 py-0.5 border border-[#3E3833]/60 text-[#78716C] bg-[#0A0908]/60 backdrop-blur-sm"
+                  >
+                    {s}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </motion.div>
 
-      {/* ── ELEVATION CALIPER — stone mortar tone, clear of left sidebar (w-16 = 64px) ── */}
-      <div
-        aria-hidden="true"
-        className="absolute bottom-4 left-6 sm:left-10 md:left-20 lg:left-24 z-10 font-mono text-[10px] text-[#3E3833] flex items-center gap-2"
-      >
-        <span className="w-4 h-px bg-[#3E3833]/60" />
-        <span>ELEV +{(index + 1) * 16}.0m</span>
-        <span className="w-4 h-px bg-[#3E3833]/60" />
-      </div>
-
-      {/* ── SCROLL CUE — clear of right sidebar (w-16 = 64px) ──── */}
-      {index < HARNESS_BAYS.length - 1 && (
-        <motion.div
-          animate={{ y: [0, 6, 0] }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-5 right-6 sm:right-10 md:right-20 lg:right-24 z-10 flex flex-col items-center gap-1 pointer-events-none"
+        {/* ── ELEVATION CALIPER — stone mortar tone, clear of left sidebar (w-16 = 64px) ── */}
+        <div
+          aria-hidden="true"
+          className="absolute bottom-4 left-6 sm:left-10 md:left-20 lg:left-24 z-10 font-mono text-[10px] text-[#3E3833] flex items-center gap-2"
         >
-          <span className="font-cinzel text-[9px] tracking-[0.2em] text-[#3E3833]">NEXT PIER</span>
-          <div className="w-px h-5 bg-gradient-to-b from-[#78716C]/40 to-transparent" />
-        </motion.div>
-      )}
+          <span className="w-4 h-px bg-[#3E3833]/60" />
+          <span>ELEV +{(index + 1) * 16}.0m</span>
+          <span className="w-4 h-px bg-[#3E3833]/60" />
+        </div>
+
+        {/* ── SCROLL CUE — clear of right sidebar (w-16 = 64px) ──── */}
+        {index < total - 1 && (
+          <motion.div
+            animate={{ y: [0, 6, 0] }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute bottom-5 right-6 sm:right-10 md:right-20 lg:right-24 z-10 flex flex-col items-center gap-1 pointer-events-none"
+          >
+            <span className="font-cinzel text-[9px] tracking-[0.2em] text-[#3E3833]">NEXT PIER</span>
+            <div className="w-px h-5 bg-gradient-to-b from-[#78716C]/40 to-transparent" />
+          </motion.div>
+        )}
+
+        {/* Subterranean darkness veil: recedes into shadow as next card slides on top */}
+        <motion.div
+          style={{ opacity: veilOpacity }}
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-30 bg-[#0A0908]"
+        />
+      </motion.div>
     </div>
   );
 }
@@ -312,13 +349,20 @@ export function FeaturesGrid() {
         </div>
       </div>
 
-      {/* ── 6 FULL-SCREEN PIER CHAMBERS ─────────────────────────── */}
-      {HARNESS_BAYS.map((bay, index) => (
-        <PierChamber key={bay.id} bay={bay} index={index} />
-      ))}
+      {/* ── 6 FULL-SCREEN PIER CHAMBERS (STACKING DECK) ─────────── */}
+      <div className="relative">
+        {HARNESS_BAYS.map((bay, index) => (
+          <PierChamber
+            key={bay.id}
+            bay={bay}
+            index={index}
+            total={HARNESS_BAYS.length}
+          />
+        ))}
+      </div>
 
       {/* ── SECTION FOOTER — epigraph ────────────────────────────── */}
-      <div className="relative border-t border-[#2A2622] bg-[#0A0908] px-6 sm:px-12 md:px-20 py-10 overflow-hidden">
+      <div className="relative z-20 border-t border-[#2A2622] bg-[#0A0908] px-6 sm:px-12 md:px-20 py-10 overflow-hidden">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 opacity-40"

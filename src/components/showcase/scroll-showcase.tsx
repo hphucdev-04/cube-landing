@@ -213,6 +213,7 @@ export function ScrollShowcase() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
 
   // Map scroll progress 0→1 across the 600vh section to feature index 0→5
   const { scrollYProgress } = useScroll({
@@ -220,12 +221,22 @@ export function ScrollShowcase() {
     offset: ["start start", "end end"],
   });
 
+  const updateActiveIdx = useCallback((nextIdx: number) => {
+    setActiveIdx((prev) => {
+      if (nextIdx !== prev) {
+        setDirection(nextIdx >= prev ? 1 : -1);
+        return nextIdx;
+      }
+      return prev;
+    });
+  }, []);
+
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     const idx = Math.max(
       0,
       Math.min(ALL_6_FEATURES.length - 1, Math.floor(v * ALL_6_FEATURES.length))
     );
-    setActiveIdx(idx);
+    updateActiveIdx(idx);
   });
 
   // Auto-play video when active feature changes
@@ -236,9 +247,33 @@ export function ScrollShowcase() {
     }
   }, [activeIdx]);
 
-  const jumpTo = useFeatureJump(sectionRef);
+  const rawJumpTo = useFeatureJump(sectionRef);
+  const jumpTo = useCallback(
+    (index: number) => {
+      updateActiveIdx(index);
+      rawJumpTo(index);
+    },
+    [rawJumpTo, updateActiveIdx]
+  );
+
   const feat = ALL_6_FEATURES[activeIdx];
   const hasVideo = Boolean(feat.videoSrc);
+
+  // Transition variants moving horizontally matching the progress bar flow
+  const horizontalSlideVariants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? -40 : 40,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (dir: number) => ({
+      x: dir > 0 ? 40 : -40,
+      opacity: 0,
+    }),
+  };
 
   return (
     /**
@@ -348,13 +383,15 @@ export function ScrollShowcase() {
 
             {/* LEFT: MONUMENTAL INSCRIPTION ON STONE — clear of left sidebar ──── */}
             <div className="lg:w-[52%] flex flex-col justify-center px-5 sm:px-8 md:pl-20 md:pr-8 lg:pl-24 lg:pr-10 py-6 lg:py-10 overflow-y-auto">
-              <AnimatePresence mode="popLayout" initial={false}>
+              <AnimatePresence mode="popLayout" initial={false} custom={direction}>
                 <motion.div
                   key={feat.id}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ duration: 0.24, ease: "easeOut" }}
+                  custom={direction}
+                  variants={horizontalSlideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                   className="max-w-xl"
                 >
                   {/* Giant dim ordinal watermark — limestone stone tone, Piranesi scale */}
@@ -402,13 +439,15 @@ export function ScrollShowcase() {
 
             {/* RIGHT: TERMINAL / VIDEO — clear of right sidebar ── */}
             <div className="lg:w-[48%] flex flex-col justify-center px-5 sm:px-6 md:pr-20 md:pl-6 lg:pr-24 lg:pl-8 py-5 overflow-y-auto">
-              <AnimatePresence mode="popLayout" initial={false}>
+              <AnimatePresence mode="popLayout" initial={false} custom={direction}>
                 <motion.div
                   key={feat.id + "-terminal"}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.22, ease: "easeOut" }}
+                  custom={direction}
+                  variants={horizontalSlideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                   className="w-full"
                 >
                   {/* Terminal chrome bar */}
@@ -477,9 +516,6 @@ export function ScrollShowcase() {
                         LIVE TERMINAL CAPTURE
                       </span>
                     </div>
-                    <span className="text-[#3E3833]">
-                      {hasVideo ? "MP4 // 60 FPS" : "PENDING CAPTURE"}
-                    </span>
                   </div>
                 </motion.div>
               </AnimatePresence>
