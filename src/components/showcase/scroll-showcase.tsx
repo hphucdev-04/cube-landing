@@ -201,9 +201,10 @@ function useFeatureJump(sectionRef: React.RefObject<HTMLDivElement | null>) {
       const el = sectionRef.current;
       if (!el) return;
       const top = el.getBoundingClientRect().top + window.scrollY;
-      const height = el.offsetHeight; // 600vh
-      // Feature i starts at i/6 of the total scroll range
-      const target = top + (index / ALL_6_FEATURES.length) * height;
+      const height = el.offsetHeight;
+      const scrollableDistance = Math.max(0, height - window.innerHeight);
+      // Place target comfortably inside the feature's scroll zone
+      const target = top + ((index + 0.15) / ALL_6_FEATURES.length) * scrollableDistance;
       window.scrollTo({ top: target, behavior: "smooth" });
     },
     [sectionRef]
@@ -223,7 +224,10 @@ export function ScrollShowcase() {
   });
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    const idx = Math.min(ALL_6_FEATURES.length - 1, Math.floor(v * ALL_6_FEATURES.length));
+    const idx = Math.max(
+      0,
+      Math.min(ALL_6_FEATURES.length - 1, Math.floor(v * ALL_6_FEATURES.length))
+    );
     setActiveIdx(idx);
   });
 
@@ -262,37 +266,33 @@ export function ScrollShowcase() {
             The artwork IS the entire stage — no borders, no frames.
         ──────────────────────────────────────────────────────────── */}
         <div className="absolute inset-0 z-0">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={feat.bgAsset}
-              className="absolute inset-0"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.55, ease: "easeInOut" }}
-            >
-              <Image
-                src={feat.bgAsset}
-                alt=""
-                fill
-                priority
-                sizes="100vw"
+          {ALL_6_FEATURES.map((f, i) => {
+            const isActive = i === activeIdx;
+            return (
+              <div
+                key={f.id}
                 className={cn(
-                  "object-cover contrast-[1.18] brightness-[0.68]",
-                  feat.bgFocus
+                  "absolute inset-0 transition-opacity duration-700 ease-in-out pointer-events-none will-change-[opacity]",
+                  isActive ? "opacity-100 z-10" : "opacity-0 z-0"
                 )}
-              />
-              {/*
-                Chiaroscuro gradient system:
-                - Strong shadow from LEFT → keeps left content readable
-                - Bottom blackout → grounds the elevation bar
-                - Subtle top shadow → keeps header legible
-                - Centre spotlight stays largely transparent → shows the art
-              */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0A0908]/92 via-[#0A0908]/45 to-[#0A0908]/55" />
-              <div className="absolute inset-0 bg-gradient-to-b from-[#0A0908]/80 via-transparent to-[#0A0908]/90" />
-            </motion.div>
-          </AnimatePresence>
+              >
+                <Image
+                  src={f.bgAsset}
+                  alt=""
+                  fill
+                  priority={i === 0 || i === 1}
+                  sizes="100vw"
+                  className={cn(
+                    "object-cover contrast-[1.12] brightness-[0.80]",
+                    f.bgFocus
+                  )}
+                />
+                {/* Chiaroscuro: clear Piranesi etching artwork with text shadow on left */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0A0908]/90 via-[#0A0908]/35 to-[#0A0908]/40" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#0A0908]/70 via-transparent to-[#0A0908]/85" />
+              </div>
+            );
+          })}
         </div>
 
         {/* ── LAYER 1: ARCHITECTURAL DATUM GRID (very subtle) ───────── */}
@@ -351,13 +351,13 @@ export function ScrollShowcase() {
 
             {/* LEFT: MONUMENTAL INSCRIPTION ON STONE ──────────────────── */}
             <div className="lg:w-[52%] flex flex-col justify-center px-5 sm:px-8 md:px-14 py-6 lg:py-10 overflow-y-auto">
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="popLayout" initial={false}>
                 <motion.div
                   key={feat.id}
-                  initial={{ opacity: 0, x: -24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 24 }}
-                  transition={{ duration: 0.38, ease: "easeOut" }}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.24, ease: "easeOut" }}
                   className="max-w-xl"
                 >
                   {/* Giant dim ordinal watermark — limestone stone tone, Piranesi scale */}
@@ -405,13 +405,13 @@ export function ScrollShowcase() {
 
             {/* RIGHT: TERMINAL / VIDEO — embedded in the architectural space ── */}
             <div className="lg:w-[45%] flex flex-col justify-center px-5 sm:px-6 md:px-8 py-5 overflow-y-auto">
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="popLayout" initial={false}>
                 <motion.div
                   key={feat.id + "-terminal"}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.35, delay: 0.05 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.22, ease: "easeOut" }}
                   className="w-full"
                 >
                   {/* Terminal chrome bar */}

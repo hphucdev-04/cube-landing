@@ -27,7 +27,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative min-h-screen w-full bg-[#0A0908] text-[#F5F5F4] flex flex-col selection:bg-[#38BDF8]/30 selection:text-white overflow-x-hidden">
+    <div className="relative min-h-screen w-full bg-[#0A0908] text-[#F5F5F4] flex flex-col selection:bg-[#38BDF8]/30 selection:text-white overflow-x-clip">
       {/* Background Architectural Etching & Particles */}
       <CubeVoxelField />
 

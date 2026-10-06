@@ -72,7 +72,7 @@ export function Footer() {
 
           {/* Copyright */}
           <div className="text-xs text-[#78716C] font-mono">
-            <span>MIT Licensed · Inscriptio Architectura</span>
+            <span>phuc.ph24012004@gmail.com</span>
           </div>
         </div>
       </div>

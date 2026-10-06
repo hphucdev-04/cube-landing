@@ -20,7 +20,7 @@ html {
 body {
   background-color: #0A0908;
   color: #F5F5F4;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 ::selection {
