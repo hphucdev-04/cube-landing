@@ -36,17 +36,17 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     roman: "FEATURE I",
     featureNum: "I // VI",
     title: "Multi-Gateway Model Matrix",
-    tagline: "Your subscriptions. Your keys. Zero lock-in.",
+    tagline: "Choose your account, API provider, or local model.",
     // ascii-magic-3: the receding arched corridor — perfect for "gateway"
     bgAsset: "/assets/ascii-magic-1.png",
     bgFocus: "object-center",
     videoSrc: "/demos/gateway.mp4",
     description:
-      "Connect directly to Claude Pro, ChatGPT Plus, or Grok via PKCE OAuth 2.0 with zero token markup. 15+ developer API keys, or 100% offline Ollama models.",
+      "Choose OAuth for Anthropic, OpenAI, xAI, or Google, API keys from 15 supported providers, or a local Ollama/LM Studio server. Switch gateways and models from the terminal.",
     bullets: [
-      "PKCE OAuth: Claude Pro / ChatGPT Plus / Grok",
-      "15+ API providers with unified fallback routing",
-      "100% offline inference via Ollama / LM Studio",
+      "OAuth sign-in for four providers",
+      "15 API key providers, including OpenRouter",
+      "Local inference via Ollama / LM Studio",
     ],
   },
   {
@@ -62,11 +62,11 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     bgFocus: "object-center",
     videoSrc: "/demos/skill.mp4",
     description:
-      "Cube crawls project directories and walks up parent folders to automatically discover AGENTS.md rules, repository guidelines, and custom skill scripts.",
+      "Cube loads workspace and global AGENTS.md instructions, then discovers scoped rules as tools explore files. Project and global SKILL.md files add reusable guidance to the agent.",
     bullets: [
-      "Automatic AGENTS.md discovery across monorepo trees",
-      "Dynamic skill loading with isolated runtimes",
-      "Zero prompt maintenance across multiple repos",
+      "Scoped AGENTS.md discovery inside the workspace",
+      "Enable or disable project and global skills with /skills",
+      "Refresh project instructions with /reload",
     ],
   },
   {
@@ -76,17 +76,17 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     roman: "FEATURE III",
     featureNum: "III // VI",
     title: "Human-in-the-Loop Safeguards",
-    tagline: "Absolute developer authority.",
+    tagline: "Configure which tools need your approval.",
     // ascii-magic-1: mechanical trusses, chains — guardrails
     bgAsset: "/assets/ascii-magic-3.png",
     bgFocus: "object-center",
     videoSrc: "/demos/hitl.mp4",
     description:
-      "No silent overwrites. Before disk mutations or destructive shell commands, Cube surfaces a colorized unified diff and waits for explicit confirmation.",
+      "File edits, writes, patches, and shell commands require approval by default. Review pending file changes in the terminal and configure workspace boundaries and tool policies with /permissions.",
     bullets: [
-      "Confirmation required for sensitive bash commands",
-      "Colorized unified diff previews before any write",
-      "One-key rollback and atomic commit guarantees",
+      "Approval for host shell commands by default",
+      "Diff previews for pending file changes",
+      "Allow, ask, or deny policies for file and MCP tools",
     ],
   },
   {
@@ -102,11 +102,11 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     bgFocus: "object-center",
     videoSrc: "/demos/qa.mp4",
     description:
-      "When facing critical technical forks, Cube pauses autonomous execution to ask questions with an interactive option picker — letting you choose the exact answer before writing code.",
+      "The agent can ask for clarification through the ask_user tool. Choose a suggested answer or enter your own response in the terminal, then continue the task with that context.",
     bullets: [
       "Arrow-key option selection directly inside the terminal",
-      "Pauses to ask at decision points to eliminate wrong assumptions",
-      "Seamlessly resumes autonomous execution once answered",
+      "Suggested choices and free-text answers",
+      "Continue the conversation after answering",
     ],
   },
   {
@@ -116,17 +116,17 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     roman: "FEATURE V",
     featureNum: "V // VI",
     title: "Model Context Protocol Foundation",
-    tagline: "Universal tool & data interoperability.",
+    tagline: "Bring external tools into your coding workflow.",
     // ascii-magic-6: grand colonnade hall — universal connection
     bgAsset: "/assets/ascii-magic-5.png",
     bgFocus: "object-center",
     videoSrc: "/demos/mcp.mp4",
     description:
-      "Built-in MCP client. Connect external tool servers, database inspectors, browser automation, and enterprise endpoints through open standards.",
+      "Configure MCP servers in mcp.json and manage their connections, tools, and supported authentication flows with /mcp. Connected tools join the agent's toolset and follow your permission policies.",
     bullets: [
-      "Universal MCP client: stdio & SSE transports",
-      "Connect databases, GitHub, browser automation",
-      "Community server ecosystem, zero adapter code",
+      "Local stdio and remote HTTP server connections",
+      "Inspect server status and available tools with /mcp",
+      "MCP OAuth support and per-tool permissions",
     ],
   },
   {
@@ -136,16 +136,16 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     roman: "FEATURE VI",
     featureNum: "VI // VI",
     title: "Parallel Subagent Delegation",
-    tagline: "Orchestrate autonomous worker teams.",
+    tagline: "Delegate focused tasks to subagents.",
     // ascii-magic-5: concurrent vaults & scaffolding — parallel execution
     bgAsset: "/assets/ascii-magic-6.png",
     bgFocus: "object-top",
     description:
-      "Decompose massive refactoring goals into isolated parallel workers. Subagents explore, test, and edit concurrently without blocking your main shell.",
+      "Break a larger coding task into focused assignments for subagents. Delegate independent exploration and implementation work, then bring their findings back into the main conversation.",
     bullets: [
-      "Spawn workers with isolated context & workspace",
-      "Parallel exploration, refactoring, and test writing",
-      "Automatic dependency resolution & unified review",
+      "Focused assignments for each subagent",
+      "Parallel work on independent subtasks",
+      "Findings returned to the main conversation",
     ],
   },
 ];
@@ -520,7 +520,7 @@ export function ScrollShowcase() {
                           COMING SOON
                         </span>
                         <p className="mt-1.5 font-mono text-[11px] text-[#78716C] max-w-xs">
-                          Live terminal demonstration for {feat.label} is currently in recording.
+                          A terminal recording for {feat.label} is not available yet.
                         </p>
                       </div>
                     )}

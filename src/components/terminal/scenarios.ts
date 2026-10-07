@@ -20,8 +20,8 @@ export interface Scenario {
 export const SCENARIOS: Scenario[] = [
   {
     id: "fix-bug",
-    label: "Autonomous Bug Fix",
-    model: "grok-4.7",
+    label: "Example Bug Fix",
+    model: "Selected model",
     steps: [
       {
         type: "user-input",
@@ -62,13 +62,13 @@ export const SCENARIOS: Scenario[] = [
       {
         type: "tool-result",
         toolName: "edit_file",
-        content: "Successfully modified oauth.gateway.ts (atomic write committed)",
+        content: "Modified oauth.gateway.ts after tool approval",
         delayMs: 900,
       },
       {
         type: "assistant-text",
         content:
-          "✔ Fixed upstream gateway timeout by increasing the deadline to 30s and adding jittered exponential backoff for failed network calls.",
+          "✔ Fixed upstream gateway timeout by increasing the deadline to 30s and adding exponential backoff for failed network calls.",
         delayMs: 1000,
       },
     ],
@@ -76,7 +76,7 @@ export const SCENARIOS: Scenario[] = [
   {
     id: "multi-gateway",
     label: "Switching Gateways & Models",
-    model: "claude-3-7-sonnet",
+    model: "Selected model",
     steps: [
       {
         type: "user-input",
@@ -85,17 +85,17 @@ export const SCENARIOS: Scenario[] = [
       },
       {
         type: "status",
-        content: "Loading gateway choices: [OAuth: Anthropic, xAI, OpenAI, Google] [API Key: 15+ providers] [Local: Ollama]",
+        content: "Choose a gateway: [OAuth: Anthropic, xAI, OpenAI, Google] [API Key: 15 providers] [Local: Ollama, LM Studio]",
         delayMs: 1200,
       },
       {
         type: "user-input",
-        content: "/model anthropic/claude-3-7-sonnet --effort high",
+        content: "/model",
         delayMs: 1200,
       },
       {
         type: "assistant-text",
-        content: "✔ Model switched to 'anthropic/claude-3-7-sonnet' with high reasoning effort (thinking budget: 24,576 tokens).",
+        content: "Choose a model from the active gateway. Reasoning effort options depend on the selected model.",
         delayMs: 1000,
       },
     ],
@@ -103,7 +103,7 @@ export const SCENARIOS: Scenario[] = [
   {
     id: "context-discovery",
     label: "Automatic AGENTS.md Context",
-    model: "gemini-2.5-flash",
+    model: "Selected model",
     steps: [
       {
         type: "user-input",
@@ -118,7 +118,7 @@ export const SCENARIOS: Scenario[] = [
       {
         type: "assistant-text",
         content:
-          "According to your AGENTS.md:\n- Run all package tests: `pnpm build && pnpm test`\n- Run single package: `pnpm --filter @cube/<pkg> test`\n- Tests run with `tsx --test --test-isolation=none tests/**/*.test.ts`.",
+          "According to your AGENTS.md:\n- Run all package tests: `pnpm --workspace-concurrency=1 --recursive run test`\n- Run single package: `pnpm --filter @cube/<pkg> test`\n- Tests run with `tsx --test --test-isolation=none tests/**/*.test.ts`.",
         delayMs: 1200,
       },
     ],

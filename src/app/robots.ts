@@ -7,6 +7,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      disallow: ["/api/", "/install.ps1", "/install.sh"],
     },
     sitemap: "https://cube.run/sitemap.xml",
   };

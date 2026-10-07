@@ -21,57 +21,26 @@ const cinzel = Cinzel({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://cube.run"),
-  title: "Cube — Coding Agent, Engineered in the Terminal",
-  description:
-    "A TypeScript coding agent CLI with a custom TUI, multi-mode authentication, tool system, and workspace memory.",
-  keywords: [
-    "AI coding agent",
-    "terminal UI",
-    "CLI",
-    "developer tools",
-    "Mastra",
-    "pi-tui",
-    "Claude",
-    "Grok",
-    "OpenAI",
-    "Ollama",
-  ],
+  title: "Cube — AI Coding Agent for Your Terminal",
+  description: "Read and edit code, run commands with approval, and resume sessions with local memory. Choose OAuth, API keys, or Ollama/LM Studio. Add skills and MCP tools.",
+  keywords: ["AI coding agent", "terminal coding assistant", "CLI developer tools", "local AI coding", "MCP tools", "AGENTS.md", "Ollama", "LM Studio", "OAuth", "Cube"],
   authors: [{ name: "Cube Team" }],
-  alternates: {
-    canonical: "/",
-  },
+  alternates: { canonical: "/" },
   robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
+    index: true, follow: true,
+    googleBot: { index: true, follow: true, "max-video-preview": -1, "max-image-preview": "large", "max-snippet": -1 },
   },
   openGraph: {
-    title: "Cube — Coding Agent, Engineered in the Terminal",
-    description:
-      "A coding agent that lives where you already work. Multi-gateway model routing, local LibSQL memory, and atomic workspace mutations.",
-    url: "https://cube.run",
-    siteName: "Cube",
-    type: "website",
-    locale: "en_US",
+    title: "Cube — AI Coding Agent for Your Terminal",
+    description: "Read and edit code, run commands with approval, and resume sessions with local memory. Choose OAuth, API keys, or Ollama/LM Studio. Add skills and MCP tools.",
+    url: "https://cube.run/", siteName: "Cube", type: "website", locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Cube — Coding Agent, Engineered in the Terminal",
-    description: "A coding agent that lives where you already work.",
+    title: "Cube — AI Coding Agent for Your Terminal",
+    description: "Read and edit code, run commands with approval, and resume sessions with local memory. Choose OAuth, API keys, or Ollama/LM Studio. Add skills and MCP tools.",
   },
-  icons: {
-    icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
-    ],
-    shortcut: "/icon.svg",
-    apple: "/icon.svg",
-  },
+  icons: { icon: [{ url: "/icon.svg", type: "image/svg+xml" }], shortcut: "/icon.svg", apple: "/icon.svg" },
 };
 
 const jsonLd = {
@@ -79,83 +48,88 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "SoftwareApplication",
+      "@id": "https://cube.run/#software",
       "name": "Cube",
-      "operatingSystem": "Windows, MacOS, Linux",
+      "operatingSystem": "Windows x64, macOS arm64/x64, Linux x64",
       "applicationCategory": "DeveloperApplication",
-      "description":
-        "A TypeScript coding agent CLI with a custom differential-rendering TUI, multi-mode authentication, tool system, and workspace memory.",
-      "url": "https://cube.run",
-      "softwareVersion": "1.0.0",
+      "description": "Read and edit code, run commands with approval, and resume sessions with local memory. Choose OAuth, API keys, or Ollama/LM Studio. Add skills and MCP tools.",
+      "url": "https://cube.run/",
+      "softwareVersion": "0.1.7",
+      "featureList": [
+        "Terminal coding agent",
+        "File editing and patches",
+        "Tool approval and workspace permissions",
+        "OAuth and API key gateways",
+        "Ollama and LM Studio",
+        "Local SQLite history and durable memory",
+        "Skills and MCP tools",
+        "Managed background commands"
+      ],
       "offers": {
         "@type": "Offer",
         "price": "0",
-        "priceCurrency": "USD",
+        "priceCurrency": "USD"
       },
       "author": {
         "@type": "Organization",
-        "name": "Cube Team",
-      },
+        "name": "Cube Team"
+      }
     },
     {
       "@type": "FAQPage",
+      "@id": "https://cube.run/#faq",
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "How does the 1-click installer work?",
+          "name": "How does the installer work?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text":
-              "Our installer script runs directly in PowerShell on Windows (or curl/bash on macOS & Linux). It detects your system architecture, downloads the standalone self-contained Cube binary into your user home directory, and configures your PATH. No Node.js runtime, build tools, or administrator privileges are required.",
-          },
+            "text": "Run the PowerShell installer on Windows x64, or the shell installer on macOS arm64/x64 and Linux/WSL x64. It downloads a Cube package with a bundled Node.js runtime and verifies its SHA-256 checksum. No separate Node.js installation is needed. On macOS and Linux, you may need to add ~/.local/bin to PATH."
+          }
         },
         {
           "@type": "Question",
-          "name": "Can I really use my existing Claude Pro or ChatGPT Plus subscription?",
+          "name": "Which accounts and model gateways can I connect?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text":
-              "Yes. With Cube's OAuth gateway, you authenticate once in your default browser via secure PKCE OAuth 2.0. Cube directly consumes your monthly subscription quota without charging any token markups, monthly subscription fees, or proxy surcharges.",
-          },
+            "text": "Use /gateway to choose OAuth for Anthropic, OpenAI, xAI, or Google, an API key from one of 15 supported providers, or local Ollama/LM Studio. Then use /model to select a model. Available models, account eligibility, usage limits, and billing depend on the provider."
+          }
         },
         {
           "@type": "Question",
-          "name": "Is my proprietary source code sent to Cube servers or used for training?",
+          "name": "Where are my data stored and where do prompts go?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text":
-              "No. Cube operates on a strictly Zero Data Retention (ZDR) local-first philosophy. Cube does not operate any intermediate proxy servers. All prompt requests go directly from your local terminal to the model provider (Anthropic, OpenAI, or your local Ollama server). Your session database, credentials, and conversation history are stored entirely in LibSQL on your local disk at ~/.cube.",
-          },
+            "text": "Cube stores conversation history and memory in local SQLite under ~/.cube/memories, and credentials in ~/.cube/auth.json. Model requests go to your selected provider or local server. Connected MCP servers and network tools can receive data when used. Retention and training policies depend on those services; local storage does not imply zero data retention by a provider."
+          }
         },
         {
           "@type": "Question",
-          "name": "Can I run Cube completely offline without an internet connection?",
+          "name": "Can I use local models without cloud inference?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text":
-              "Yes. Cube has first-class integration with local inference engines like Ollama, LM Studio, and vLLM. Simply select `/gateway local ollama` and Cube will interact with your local GPU or Apple Silicon neural engine with zero outbound network calls.",
-          },
+            "text": "Yes. Start Ollama or LM Studio with a downloaded model, run /gateway, select local/ollama or local/lmstudio, then choose a model with /model. Inference uses the configured local server. Installation, update checks, web tools, remote MCP servers, and cloud-backed memory features may still use the network."
+          }
         },
         {
           "@type": "Question",
           "name": "How does Cube discover project context and rules?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text":
-              "Cube's WorkspaceManager automatically scans your current directory and walks up parent folders to identify Git roots and locate AGENTS.md (or .agents/, .cube/, .claude/) instruction files. These repository guidelines, coding styles, and safety rules are injected into the agent's context window automatically.",
-          },
+            "text": "Launch cube in the directory you want to use as the workspace. Cube loads AGENTS.md there and in .agents, .cube, .claude, and .codex, plus global instructions from ~/.cube/AGENTS.md. It discovers scoped AGENTS.md files as tools explore workspace paths. Manage skills with /skills and refresh instructions and MCP configuration with /reload."
+          }
         },
         {
           "@type": "Question",
-          "name": "How do updates work?",
+          "name": "How do tool permissions and updates work?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text":
-              "Cube comes with a built-in instantaneous updater. Running `cube update` or re-running the 1-click installer pulls the newest binary in under 2 seconds without wiping your existing configuration, credentials, or session history.",
-          },
-        },
-      ],
-    },
-  ],
+            "text": "Cube asks for workspace trust on first use. File edits, writes, patches, and shell commands require approval by default; /permissions lets you configure allow, ask, or deny rules, including MCP tools. Installed builds check for updates at startup and offer a verified download and restart. Re-running the installer also updates Cube while preserving ~/.cube data."
+          }
+        }
+      ]
+    }
+  ]
 };
 
 export default function RootLayout({

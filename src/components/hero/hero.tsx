@@ -62,10 +62,10 @@ export function Hero() {
         >
           <span className="w-1.5 h-1.5 bg-[#38BDF8] animate-pulse rounded-full" />
           <span className="font-cinzel text-[11px] tracking-[0.2em] text-[#F5F5F4] font-bold uppercase">
-            Autonomous Coding Agent · Terminal CLI
+            AI Coding Agent · Terminal CLI
           </span>
           <span className="text-[#3E3833]">|</span>
-          <span className="font-mono text-[11px] text-[#78716C]">0.1.6</span>
+          <span className="font-mono text-[11px] text-[#78716C]">0.1.7</span>
         </motion.div>
 
         {/* Monumental headline */}
@@ -87,8 +87,8 @@ export function Hero() {
           className="text-[#C8C5C2] font-serif leading-[1.65] mb-7 max-w-2xl
             text-[clamp(0.875rem,1.4vw,1.1rem)]"
         >
-          Autonomous TypeScript coding agent with differential-rendering TUI, multi-mode authentication
-          (Claude Pro, ChatGPT Plus, 15+ API keys, or offline Ollama), workspace memory, and atomic code mutations.
+          Read and edit code, run commands with approval, and keep context across sessions.
+          Choose OAuth, 15 API key providers, or local Ollama and LM Studio. Bring your own skills and MCP tools.
         </motion.p>
 
         {/* CTA row */}
@@ -99,7 +99,7 @@ export function Hero() {
           className="flex flex-wrap justify-center gap-3 mb-7"
         >
           <a
-            href="https://github.com/hphucdev-04"
+            href="https://github.com/hphucdev-04/cube"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 px-5 py-2.5 rounded-sm bg-[#0D0C0A]/90 border border-[#2A2622] hover:border-[#38BDF8]/60 text-[#F5F5F4] text-xs sm:text-sm font-medium transition-all backdrop-blur-sm"
@@ -112,7 +112,7 @@ export function Hero() {
             className="flex items-center gap-2 px-5 py-2.5 bg-[#0D0C0A]/90 border border-[#2A2622] hover:border-[#3E3833] text-[#D6D3D1] hover:text-[#F5F5F4] text-xs sm:text-sm font-medium transition-all backdrop-blur-sm"
           >
             <FileText className="w-4 h-4 text-[#A8A29E]" />
-            <span>Explore Live Demos</span>
+            <span>Watch Terminal Demos</span>
           </a>
         </motion.div>
 

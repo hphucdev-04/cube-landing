@@ -171,7 +171,7 @@ export function Navbar() {
           {/* Desktop GitHub Link */}
           <div className="hidden sm:flex items-center pr-1 gap-2">
             <a
-              href="https://github.com/hphucdev-04"
+              href="https://github.com/hphucdev-04/cube"
               target="_blank"
               rel="noopener noreferrer"
               className="p-1.5 rounded-sm text-[#A8A29E] hover:text-[#F5F5F4] hover:bg-white/[0.04] transition-colors flex items-center justify-center border border-transparent hover:border-[#2A2622]"
@@ -232,7 +232,7 @@ export function Navbar() {
 
             <div className="pt-2 mt-1 border-t border-[#2A2622] flex items-center justify-between px-2">
               <a
-                href="https://github.com/hphucdev-04"
+                href="https://github.com/hphucdev-04/cube"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs text-[#A8A29E] hover:text-[#F5F5F4] flex items-center gap-1.5 py-1"
@@ -240,7 +240,7 @@ export function Navbar() {
                 <GithubIcon className="w-4 h-4" />
                 <span>GitHub</span>
               </a>
-              <span className="text-[10px] font-mono text-[#78716C]">Cube 0.1.6</span>
+              <span className="text-[10px] font-mono text-[#78716C]">Cube 0.1.7</span>
             </div>
           </motion.div>
         )}

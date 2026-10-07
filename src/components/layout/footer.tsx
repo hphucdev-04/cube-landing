@@ -15,7 +15,7 @@ export function Footer() {
             CUBE
           </span>
           <span className="text-[10px] font-mono px-1.5 py-0.2 bg-[#141210] text-[#78716C] border border-[#2A2622]">
-            0.1.6
+            0.1.7
           </span>
         </div>
 
@@ -41,7 +41,7 @@ export function Footer() {
         {/* Contact / Social Links */}
         <div className="flex items-center gap-4 text-[11px] text-[#78716C]">
           <a
-            href="https://github.com/hphucdev-04"
+            href="https://github.com/hphucdev-04/cube"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 hover:text-[#F5F5F4] transition-colors"

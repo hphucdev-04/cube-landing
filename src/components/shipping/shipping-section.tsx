@@ -11,7 +11,7 @@ const SHIP_LABELS: string[] = [
   "gateway",
   "memory",
   "terminal execution",
-  "subagent",
+  "tool permissions",
   "mcp",
   "background task",
   "skill",
@@ -47,9 +47,9 @@ const COMPACT_PLATFORMS: CompactPlatform[] = [
   },
   {
     id: "npm",
-    label: "npm",
+    label: "Source",
     prompt: "$",
-    command: "npm install -g @cube-harness/cli",
+    command: "git clone https://github.com/hphucdev-04/cube.git && cd cube && pnpm install",
   },
 ];
 
@@ -162,7 +162,7 @@ export function ShippingSection() {
               </h3>
             </div>
             <p className="text-xs sm:text-sm text-[#A8A29E] font-serif leading-relaxed">
-              One command to install. Works with any codebase, any language, right now.
+              Install Cube, open your project directory, and run cube. Choose a gateway and model to start.
             </p>
           </div>
 

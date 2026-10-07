@@ -25,78 +25,50 @@ interface GatewayCategory {
 
 const GATEWAY_CATEGORIES: GatewayCategory[] = [
   {
-    id: "oauth",
-    title: "Subscription OAuth",
-    badge: "Zero Token Markup",
-    icon: Shield,
-    tagline: "Use your existing AI subscriptions. Zero extra token costs.",
-    description:
-      "Authenticate directly with your personal or team account via secure browser PKCE OAuth. Consume your monthly quota directly with zero middleman markup.",
-    codeSnippet: `/gateway oauth anthropic
-# Browser opens secure PKCE OAuth callback
-# Signed in as: user@company.com (Claude Pro/Team)
-# Active Model: claude-3-7-sonnet-20250219`,
-    perks: [
-      "Zero per-token markups or hidden fees",
-      "Official browser PKCE OAuth 2.0 flow",
-      "Auto-refreshing access tokens in secure local storage",
-      "Seamless switching between work and personal accounts",
-    ],
+    id: "oauth", title: "Account OAuth", badge: "4 Providers", icon: Shield,
+    tagline: "Sign in with a supported provider account.",
+    description: "Choose Anthropic, OpenAI, xAI, or Google from /gateway and follow the provider sign-in flow. Model availability, account eligibility, and usage limits depend on the provider.",
+    codeSnippet: `/gateway
+# Choose oauth/anthropic in the gateway picker
+# Complete provider sign-in
+/model
+# Choose an available model`,
+    perks: ["Browser-based provider sign-in", "Access-token refresh", "Credentials stored locally in ~/.cube/auth.json", "Switch gateways and models interactively"],
     providers: [
-      { name: "Anthropic", model: "Claude 3.7 Sonnet & 3.5 Haiku", status: "Active", detail: "Pro / Team / Enterprise" },
-      { name: "OpenAI", model: "GPT-4.5, o3-mini & GPT-4o", status: "Active", detail: "Plus / Pro / Team" },
-      { name: "xAI Grok", model: "Grok 2 / Grok 3 Beta", status: "Active", detail: "SuperGrok / Premium" },
-      { name: "Google Gemini", model: "Gemini 2.0 Flash & Pro", status: "Active", detail: "Google One AI Premium" },
+      { name: "Anthropic", model: "Available Claude models", status: "Supported", detail: "Provider account and limits apply" },
+      { name: "OpenAI", model: "Available account models", status: "Supported", detail: "Provider account and limits apply" },
+      { name: "xAI", model: "Available Grok models", status: "Supported", detail: "Provider account and limits apply" },
+      { name: "Google", model: "Available Gemini models", status: "Supported", detail: "Provider account and limits apply" },
     ],
   },
   {
-    id: "api",
-    title: "Direct API Keys",
-    badge: "15+ Providers",
-    icon: KeyRound,
-    tagline: "Pay-as-you-go keys from any major model foundry.",
-    description:
-      "Bring your developer API keys directly from Anthropic, OpenAI, OpenRouter, DeepSeek, Groq, Cerebras, and more. Keys are encrypted at rest on your machine.",
-    codeSnippet: `/gateway api openrouter
-# Stored encrypted key in ~/.cube/auth.json
-# Active Model: deepseek/deepseek-r1
-# Speed: 180 tokens/sec | Cost: $0.55/M tokens`,
-    perks: [
-      "Compatible with 15+ API providers and unified proxies",
-      "Custom temperature, top_p, and max_tokens overrides",
-      "AES-256 local encrypted credential persistence",
-      "Instant fallbacks when provider rate limits are hit",
-    ],
+    id: "api", title: "Direct API Keys", badge: "15 Providers", icon: KeyRound,
+    tagline: "Bring your own provider API key.",
+    description: "Connect API keys from 15 configured providers, including OpenAI, Anthropic, Google, OpenRouter, DeepSeek, and Groq. Credentials persist locally in ~/.cube/auth.json; provider billing applies.",
+    codeSnippet: `/gateway
+# Choose api_key/openrouter and enter your API key
+/model
+# Select a model from the provider catalog`,
+    perks: ["15 supported API key providers", "Model and reasoning controls where supported", "Local credential persistence", "Provider catalogs available through /model"],
     providers: [
-      { name: "OpenRouter", model: "DeepSeek R1, Llama 3.3, Qwen 2.5", status: "Active", detail: "Pay-as-you-go" },
-      { name: "Anthropic API", model: "Claude 3.7 Sonnet (Thinking)", status: "Active", detail: "Tier 1-4 developer key" },
-      { name: "OpenAI API", model: "o1, o3-mini, GPT-4o", status: "Active", detail: "Direct developer billing" },
-      { name: "DeepSeek Direct", model: "DeepSeek-V3 & R1 Reasoning", status: "Active", detail: "Direct API endpoint" },
+      { name: "OpenRouter", model: "Models from its provider catalog", status: "Supported", detail: "Provider billing applies" },
+      { name: "Anthropic API", model: "Available Claude models", status: "Supported", detail: "Developer API key" },
+      { name: "OpenAI API", model: "Models from its provider catalog", status: "Supported", detail: "Developer API key" },
+      { name: "DeepSeek", model: "Models from its provider catalog", status: "Supported", detail: "Developer API key" },
     ],
   },
   {
-    id: "local",
-    title: "100% Local & Offline",
-    badge: "Zero Data Leakage",
-    icon: Laptop,
-    tagline: "Run entirely offline on your local GPU. Zero telemetry.",
-    description:
-      "Connect seamlessly to Ollama, LM Studio, or custom vLLM servers running on your workstation. No internet connection required. Absolute data sovereign privacy.",
-    codeSnippet: `/gateway local ollama
-# Detected local Ollama instance on http://localhost:11434
-# Active Model: qwen2.5-coder:32b-instruct-q8_0
-# Offline mode: Zero outbound network packets`,
-    perks: [
-      "100% offline air-gapped coding support",
-      "Zero telemetry, zero external network requests",
-      "Native support for Ollama, LM Studio, and OpenAI-compatible endpoints",
-      "Optimal for strict corporate compliance and proprietary code",
-    ],
+    id: "local", title: "Local Model Servers", badge: "Ollama & LM Studio", icon: Laptop,
+    tagline: "Use models served on your own machine.",
+    description: "Connect to Ollama or LM Studio at a configurable local URL. Download a model and start the server first. Local inference avoids a cloud model endpoint; updates, web tools, or remote MCP services may still use the network.",
+    codeSnippet: `/gateway
+# Choose local/ollama or local/lmstudio
+/model
+# Select a model available on your local server`,
+    perks: ["Ollama model discovery", "LM Studio model discovery", "Configurable gateway base URLs", "Local conversation history and memory"],
     providers: [
-      { name: "Ollama", model: "qwen2.5-coder:32b, llama3.3:70b", status: "Active", detail: "http://localhost:11434" },
-      { name: "LM Studio", model: "DeepSeek-R1-Distill-Qwen, Mistral", status: "Active", detail: "http://localhost:1234/v1" },
-      { name: "vLLM / Custom", model: "Custom fine-tunes & internal models", status: "Active", detail: "Self-hosted private inference" },
-      { name: "Local Llama.cpp", model: "GGUF quantized weights", status: "Active", detail: "Direct hardware acceleration" },
+      { name: "Ollama", model: "Downloaded models from /api/tags", status: "Supported", detail: "http://127.0.0.1:11434" },
+      { name: "LM Studio", model: "Models served by your local instance", status: "Supported", detail: "http://127.0.0.1:1234/v1" },
     ],
   },
 ];
@@ -114,11 +86,11 @@ export function GatewaySection() {
             <span>MODEL ROUTING</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-white mb-4">
-            Your Subscriptions. Your Keys. Zero Lock-In.
+            Your Accounts. Your Keys. Your Local Models.
           </h2>
           <p className="text-base text-[#A1A1AA] leading-relaxed">
-            Never pay a 2x token markup. Sign in with your existing memberships,
-            switch provider keys on the fly, or code completely offline.
+            Connect a supported account, bring a provider API key,
+            or use a model served by Ollama or LM Studio.
           </p>
         </div>
 
@@ -231,7 +203,7 @@ export function GatewaySection() {
                       <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                       Session Ready
                     </span>
-                    <span className="font-mono text-[11px]">latency: ~12ms</span>
+                    <span className="font-mono text-[11px]">Provider-dependent latency</span>
                   </div>
                 </div>
               </div>

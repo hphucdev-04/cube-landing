@@ -41,10 +41,10 @@ Use arrow keys to navigate, Space to toggle, Enter to save.`,
     args: "<model-id> [--effort <level>]",
     category: "Model & Gateway",
     description: "Select what model and reasoning effort to use.",
-    example: "/model claude-3-7-sonnet --effort high",
+    example: "/model",
     output: `Switched active model:
-  Model  : claude-3-7-sonnet (Anthropic via OAuth)
-  Effort : HIGH (extended multi-step reasoning enabled)
+  Model  : Selected model from the active gateway
+  Effort : Choose an effort supported by the selected model
 Context preserved across turns.`,
   },
   {
@@ -53,20 +53,20 @@ Context preserved across turns.`,
     description: "Select an API, OAuth or local gateway strategy.",
     example: "/gateway",
     output: `Select Gateway Strategy:
-  ● oauth/anthropic    (Claude Pro - Active · 85% quota)
-  ○ oauth/openai       (ChatGPT Plus - Connected)
-  ○ api_key/gemini     (Google Gemini Developer API)
-  ○ local/ollama       (Air-gapped 100% offline inference)`,
+  ● oauth/anthropic    (Provider account sign-in)
+  ○ oauth/openai       (Provider account sign-in)
+  ○ api_key/google     (Google Gemini Developer API)
+  ○ local/ollama       (Local Ollama server)`,
   },
   {
     command: "/effort",
-    args: "<none | low | medium | high | max>",
+    args: "[none | minimal | low | medium | high | xhigh | max | default]",
     category: "Model & Gateway",
     description: "Set reasoning effort for the active model.",
     example: "/effort high",
     output: `Reasoning effort updated:
-  Active Model : claude-3-7-sonnet
-  Effort Level : HIGH (up to 32,000 reasoning tokens)
+  Active Model : Selected model
+  Effort Level : HIGH (availability and behavior depend on the model)
   Best for     : Complex refactoring, architecture, concurrency`,
   },
   {
@@ -76,10 +76,10 @@ Context preserved across turns.`,
     description: "Show session status, context usage and subscription limits.",
     example: "/status",
     output: `Cube Session Status:
-  Gateway      : oauth/anthropic (Claude Pro)
-  Model        : claude-3-7-sonnet (effort: high)
+  Gateway      : Selected gateway
+  Model        : Selected model (effort: high)
   Context      : 18,420 / 200,000 tokens (9.2%)
-  Subscription : 85% quota remaining (resets in 2h 15m)`,
+  Subscription : Provider usage shown when available`,
   },
   {
     command: "/compact",
@@ -97,7 +97,7 @@ Context preserved across turns.`,
     args: "[thread-id]",
     category: "Session & Memory",
     description: "Switch to a previous conversation thread.",
-    example: "/resume fix-auth-race",
+    example: "/resume",
     output: `Resumed conversation [fix-auth-race]:
   Thread ID : 4a9f81bc
   Turns     : 14 messages | 3 files modified
@@ -125,11 +125,11 @@ Explore alternative architectures without mutating original history.`,
   {
     command: "/reload",
     category: "Project & Agent",
-    description: "Reload project instructions and AGENTS.md context.",
+    description: "Reload project instructions and MCP configuration.",
     example: "/reload",
     output: `Project context reloaded:
   Root AGENTS.md : 14 rules synchronized
-  Skills         : 4 definitions discovered in .cube/skills/`,
+  MCP            : Server configuration refreshed`,
   },
   {
     command: "/rename",
@@ -144,7 +144,7 @@ Explore alternative architectures without mutating original history.`,
     args: "[thread-id]",
     category: "Session & Memory",
     description: "Delete a conversation thread from storage.",
-    example: "/delete scratch-exploration",
+    example: "/delete",
     output: `Deleted thread: scratch-exploration (cleaned from LibSQL memory).`,
   },
   {
@@ -167,29 +167,31 @@ Explore alternative architectures without mutating original history.`,
     args: "[fields]",
     category: "Configuration",
     description: "Configure which items appear in the terminal status line.",
-    example: "/statusline model, tokens, branch",
-    output: `Status line items configured: [model | tokens | branch]`,
+    example: "/statusline workspace, model",
+    output: `Status line items configured: [workspace | model]`,
   },
   {
     command: "/title",
     args: "[fields]",
     category: "Configuration",
     description: "Configure which items appear in the terminal window title.",
-    example: "/title project, model",
-    output: `Terminal title configured: [project | model]`,
+    example: "/title workspace, model",
+    output: `Terminal title configured: [workspace | model]`,
   },
   {
-    command: "/help",
-    category: "Configuration",
-    description: "Show available commands in your shell.",
-    example: "/help",
-    output: `Cube Slash Command Catalog:
-  /init       /skills     /reload
-  /model      /gateway    /effort
-  /status     /compact    /resume
-  /new        /fork       /rename
-  /delete     /theme      /copy
-  /statusline /title      /exit`,
+    command: "/permissions", category: "Configuration",
+    description: "Configure workspace boundaries and allow, ask, or deny tool policies.",
+    example: "/permissions", output: `Open workspace permissions, including file, command, and MCP tool rules.`,
+  },
+  {
+    command: "/tasks", category: "Project & Agent",
+    description: "Inspect or stop managed background commands and processes.",
+    example: "/tasks", output: `Open the background task picker to inspect output or stop a process.`,
+  },
+  {
+    command: "/mcp", category: "Project & Agent",
+    description: "Manage MCP servers, tools, and supported sign-in flows.",
+    example: "/mcp", output: `Open MCP server status, connection controls, and available tools.`,
   },
   {
     command: "/exit",
@@ -245,7 +247,7 @@ export function CommandPalette() {
             className="font-sans font-semibold tracking-tight text-[#F5F5F4] leading-[1.06] mb-3"
             style={{ fontSize: "clamp(1.8rem,4vw,3rem)" }}
           >
-            Terminal Precision Built for Flow
+            Slash Commands for Your Coding Workflow
           </h2>
           <p className="text-sm text-[#A8A29E] leading-relaxed font-serif max-w-2xl">
             Keep your fingers on the home row. Instant slash commands give you total authority over models,

@@ -6,7 +6,7 @@ export const size = {
   height: 630,
 };
 export const contentType = "image/png";
-export const alt = "Cube — Coding Agent, Engineered in the Terminal";
+export const alt = "Cube — AI Coding Agent for Your Terminal";
 
 export default function Image() {
   return new ImageResponse(
@@ -114,7 +114,7 @@ export default function Image() {
               color: "#A1A1AA",
             }}
           >
-          0.1.6
+          0.1.7
           </span>
         </div>
 
@@ -144,7 +144,7 @@ export default function Image() {
             marginBottom: "36px",
           }}
         >
-          Differential-rendering TUI, multi-gateway model routing, local LibSQL memory, and atomic workspace mutations.
+          Code with tool approval, local memory, skills, and MCP. Choose OAuth, API keys, or local models.
         </div>
 
         {/* Feature Pills */}
@@ -165,7 +165,7 @@ export default function Image() {
               color: "#FFFFFF",
             }}
           >
-            Windows • Linux • MacOS
+            Windows • Linux • macOS
           </div>
           <div
             style={{
@@ -177,7 +177,7 @@ export default function Image() {
               color: "#A1A1AA",
             }}
           >
-            100% Local-First
+            Local History & Memory
           </div>
         </div>
       </div>

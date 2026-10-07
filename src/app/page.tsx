@@ -56,7 +56,7 @@ export default function Home() {
         className="pointer-events-none fixed right-0 top-0 bottom-0 z-40 w-12 sm:w-16 hidden md:flex flex-col justify-between py-20 px-2 border-l border-[#2A2622]/80 bg-[#0A0908]/75 backdrop-blur-sm select-none"
       >
         <div className="font-mono text-[9px] text-[#3E3833] tracking-widest [writing-mode:vertical-rl]">
-          AST TRAVERSAL MATRIX
+          WORKSPACE CONTEXT MATRIX
         </div>
 
         <div className="flex flex-col items-center gap-1 font-mono text-[10px] text-[#3E3833]">
