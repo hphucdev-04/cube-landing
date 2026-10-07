@@ -4,7 +4,7 @@ import { GithubIcon, CubeLogoIcon } from "@/components/ui/icons";
 
 export function Footer() {
   return (
-    <footer className="relative w-full border-t border-[#2A2622] bg-[#0A0908] px-6 sm:px-12 md:px-20 lg:px-24 py-6 z-20">
+    <footer className="relative w-full border-t border-[#2A2622] bg-[#0A0908] px-6 sm:px-12 md:px-20 lg:px-24 py-6 z-50">
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-[#78716C]">
         {/* Brand */}
         <div className="flex items-center gap-2.5">

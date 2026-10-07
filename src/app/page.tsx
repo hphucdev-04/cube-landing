@@ -78,17 +78,17 @@ export default function Home() {
           {/* Section 1: Hero */}
           <Hero />
 
-          {/* Section 2: The 6 Runtime Subsystems (The Harness) */}
-          <FeaturesGrid />
+          {/* Section 2 to 5: Continuous Stacking Card Deck (Harness -> Showcase -> Ship -> FAQ) */}
+          <FeaturesGrid>
+            {/* Section 3: Live Terminal Showcase */}
+            <ScrollShowcase />
 
-          {/* Section 3: Live Terminal Showcase */}
-          <ScrollShowcase />
+            {/* Section 4: Everything You Need to Ship */}
+            <ShippingSection />
 
-          {/* Section 4: Everything You Need to Ship */}
-          <ShippingSection />
-
-          {/* Section 5: Documentation & FAQ */}
-          <FaqAccordion />
+            {/* Section 5: Documentation & FAQ */}
+            <FaqAccordion />
+          </FeaturesGrid>
         </main>
       </div>
 

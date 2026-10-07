@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, type ReactNode } from "react";
 import Image from "next/image";
 import {
   RotateCw,
@@ -9,7 +9,6 @@ import {
   Brain,
   Activity,
   ShieldCheck,
-  ArrowUpRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -140,10 +139,10 @@ function SubsystemCard({
     offset: ["start start", "end start"],
   });
 
-  // When next chamber slides over:
+  // When next chamber (or Showcase for the last card) slides over:
   // scale down subtly (1 -> 0.94) and fade in dark shadow veil (0 -> 0.55)
-  const scale = useTransform(scrollYProgress, [0, 1], [1, isLast ? 1 : 0.94]);
-  const veilOpacity = useTransform(scrollYProgress, [0, 1], [0, isLast ? 0 : 0.55]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
+  const veilOpacity = useTransform(scrollYProgress, [0, 1], [0, 0.55]);
 
   return (
     <div
@@ -306,12 +305,12 @@ function SubsystemCard({
   );
 }
 
-export function FeaturesGrid() {
+export function FeaturesGrid({ children }: { children?: ReactNode }) {
   return (
-    <section id="harness" className="relative w-full bg-[#0A0908]">
+    <div className="relative w-full bg-[#0A0908]">
 
       {/* ── SECTION HEADER — entablature frieze ─────────────────── */}
-      <div className="relative w-full border-t border-b border-[#2A2622] bg-[#0A0908] px-6 sm:px-12 md:px-20 py-10 overflow-hidden">
+      <div id="harness" className="relative w-full border-t border-b border-[#2A2622] bg-[#0A0908] px-6 sm:px-12 md:px-20 py-10 overflow-hidden">
         {/* Etching crosshatch */}
         <div
           aria-hidden="true"
@@ -349,8 +348,8 @@ export function FeaturesGrid() {
         </div>
       </div>
 
-      {/* ── 6 FULL-SCREEN SUBSYSTEM CARDS (STACKING DECK) ─────────── */}
-      <div className="relative">
+      {/* ── 6 FULL-SCREEN SUBSYSTEM CARDS + SUBSEQUENT STACKING SECTIONS ── */}
+      <div className="relative w-full">
         {HARNESS_BAYS.map((bay, index) => (
           <SubsystemCard
             key={bay.id}
@@ -359,33 +358,9 @@ export function FeaturesGrid() {
             total={HARNESS_BAYS.length}
           />
         ))}
-      </div>
 
-      {/* ── SECTION FOOTER — epigraph ────────────────────────────── */}
-      <div className="relative z-20 border-t border-[#2A2622] bg-[#0A0908] px-6 sm:px-12 md:px-20 py-10 overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-40"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(45deg,rgba(255,255,255,0.015) 0px,rgba(255,255,255,0.015) 1px,transparent 1px,transparent 9px),repeating-linear-gradient(-45deg,rgba(255,255,255,0.015) 0px,rgba(255,255,255,0.015) 1px,transparent 1px,transparent 9px)",
-          }}
-        />
-        <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-5 max-w-7xl">
-          <p className="text-sm text-[#A8A29E] font-serif leading-relaxed max-w-2xl">
-            Production codebases are complex networks of interdependent modules, tests, and legacy dependencies.
-            Cube applies deterministic AST traversal, local state continuity, and atomic transactions to
-            safely inspect and mutate code without collateral regression.
-          </p>
-          <a
-            href="#demo"
-            className="shrink-0 inline-flex items-center gap-2 px-4 py-2 border border-[#3E3833] hover:border-[#78716C] text-xs font-mono text-[#A8A29E] hover:text-[#F5F5F4] transition-colors"
-          >
-            <span>See Live Terminal Demos</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </a>
-        </div>
+        {children}
       </div>
-    </section>
+    </div>
   );
 }

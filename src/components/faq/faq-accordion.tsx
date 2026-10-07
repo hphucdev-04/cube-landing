@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 
 interface FaqItem {
   question: string;
@@ -44,17 +44,40 @@ const FAQS: FaqItem[] = [
 ];
 
 export function FaqAccordion() {
+  const ref = useRef<HTMLElement>(null);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
+  const veilOpacity = useTransform(scrollYProgress, [0, 1], [0, 0.55]);
+
   return (
     <section
+      ref={ref}
       id="faq"
-      className="relative min-h-screen lg:h-screen w-full flex flex-col justify-center border-t border-[#2A2622] bg-[#0A0908] overflow-hidden px-6 sm:px-12 md:px-20 lg:px-24 py-12 lg:py-16"
+      style={{ zIndex: 30 }}
+      className="sticky top-0 h-screen w-full flex flex-col justify-center border-t border-[#3E3833]/80 bg-[#0A0908] overflow-hidden px-6 sm:px-12 md:px-20 lg:px-24 py-12 lg:py-16 shadow-[0_-30px_70px_rgba(0,0,0,0.98),0_-10px_25px_rgba(0,0,0,0.85)]"
     >
+      {/* Top hairline highlight for incoming architectural card */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#78716C]/60 to-transparent z-30"
+      />
+
+      {/* Receding depth wrapper: scales down as Footer slides over */}
+      <motion.div
+        style={{ scale }}
+        className="relative w-full h-full flex flex-col justify-center origin-top will-change-transform"
+      >
+
       {/* ── AUTHENTIC PIRANESI ARCHITECTURAL DRAFTING BACKGROUND (CODE-ONLY) ── */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 select-none overflow-hidden">
         {/* Ambient technical cyan glow */}
@@ -186,6 +209,14 @@ export function FaqAccordion() {
           })}
         </div>
       </div>
+      </motion.div>
+
+      {/* Receding dark shadow veil */}
+      <motion.div
+        style={{ opacity: veilOpacity }}
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-30 bg-[#0A0908]"
+      />
     </section>
   );
 }

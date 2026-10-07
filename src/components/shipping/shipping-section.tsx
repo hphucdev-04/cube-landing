@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { Terminal, Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 // Core capabilities array. Add any new capability label here anytime.
 const SHIP_LABELS: string[] = [
@@ -54,6 +54,7 @@ const COMPACT_PLATFORMS: CompactPlatform[] = [
 ];
 
 export function ShippingSection() {
+  const sectionRef = useRef<HTMLElement>(null);
   const [activePlatform, setActivePlatform] = useState<CompactPlatform["id"]>("windows");
   const [copied, setCopied] = useState(false);
 
@@ -69,11 +70,34 @@ export function ShippingSection() {
     }
   };
 
+  // Exactly like SubsystemCard: tracks when FAQ slides over this card
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  // Scale down to 0.94 and veil to 0.55 as FAQ slides over
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
+  const veilOpacity = useTransform(scrollYProgress, [0, 1], [0, 0.55]);
+
   return (
     <section
+      ref={sectionRef}
       id="ship"
-      className="relative min-h-screen lg:h-screen w-full flex flex-col justify-center border-t border-[#2A2622] bg-[#0A0908] overflow-hidden px-6 sm:px-12 md:px-20 lg:px-24 py-12 lg:py-16"
+      style={{ zIndex: 25 }}
+      className="sticky top-0 -mt-[100vh] h-screen w-full flex flex-col justify-center border-t border-[#3E3833]/80 bg-[#0A0908] overflow-hidden px-6 sm:px-12 md:px-20 lg:px-24 py-12 lg:py-16 shadow-[0_-30px_70px_rgba(0,0,0,0.98),0_-10px_25px_rgba(0,0,0,0.85)]"
     >
+      {/* Top hairline highlight for incoming architectural card */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#78716C]/60 to-transparent z-30"
+      />
+
+      {/* Receding depth wrapper: scales down as FAQ slides over */}
+      <motion.div
+        style={{ scale }}
+        className="relative w-full h-full flex flex-col justify-center origin-top will-change-transform"
+      >
       {/* ── FULL-BLEED PIRANESI BACKDROP (ascii-magic-8.png) ────────── */}
       <div
         aria-hidden="true"
@@ -216,6 +240,13 @@ export function ShippingSection() {
           </div>
         </div>
       </div>
+      </motion.div>
+
+      {/* Receding dark shadow veil when FAQ slides over */}
+      <motion.div
+        style={{ opacity: veilOpacity }}
+        className="pointer-events-none absolute inset-0 z-40 bg-[#0A0908]"
+      />
     </section>
   );
 }

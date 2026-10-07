@@ -9,7 +9,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 
 interface ShowcaseFeature {
   id: string;
@@ -192,17 +192,15 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
   },
 ];
 
-// Compute scroll-to position for a given feature index in a 600vh section
+// Compute scroll-to position for a given feature index
 function useFeatureJump(sectionRef: React.RefObject<HTMLDivElement | null>) {
   return useCallback(
     (index: number) => {
       const el = sectionRef.current;
       if (!el) return;
       const top = el.getBoundingClientRect().top + window.scrollY;
-      const height = el.offsetHeight;
-      const scrollableDistance = Math.max(0, height - window.innerHeight);
-      // Place target comfortably inside the feature's scroll zone
-      const target = top + ((index + 0.15) / ALL_6_FEATURES.length) * scrollableDistance;
+      // Each feature occupies 100vh scroll travel within the section
+      const target = top + (index + 0.15) * window.innerHeight;
       window.scrollTo({ top: target, behavior: "smooth" });
     },
     [sectionRef]
@@ -215,11 +213,20 @@ export function ScrollShowcase() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
 
-  // Map scroll progress 0→1 across the 600vh section to feature index 0→5
+  // Total slots: 6 features + 1 trailing slot (700vh total) so the final feature stays pinned while Ship slides over it
+  const totalSlots = ALL_6_FEATURES.length + 1; // 7
+  const exitStart = ALL_6_FEATURES.length / totalSlots; // 6/7 ≈ 0.857
+
+  // Map scroll progress across the 700vh section to feature index 0→5
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
+
+  // When next card (Ship) slides over during the 7th 100vh block:
+  // scale down subtly (1 -> 0.94) and fade in dark shadow veil (0 -> 0.55)
+  const exitScale = useTransform(scrollYProgress, [exitStart, 1], [1, 0.94]);
+  const exitVeil = useTransform(scrollYProgress, [exitStart, 1], [0, 0.55]);
 
   const updateActiveIdx = useCallback((nextIdx: number) => {
     setActiveIdx((prev) => {
@@ -232,9 +239,11 @@ export function ScrollShowcase() {
   }, []);
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
+    // Progress during the first 600vh maps to features 0 to 5; beyond 6/7 locks to feature 5 (Subagent)
+    const activePortion = Math.min(1, v * (totalSlots / ALL_6_FEATURES.length));
     const idx = Math.max(
       0,
-      Math.min(ALL_6_FEATURES.length - 1, Math.floor(v * ALL_6_FEATURES.length))
+      Math.min(ALL_6_FEATURES.length - 1, Math.floor(activePortion * ALL_6_FEATURES.length))
     );
     updateActiveIdx(idx);
   });
@@ -283,15 +292,25 @@ export function ScrollShowcase() {
     <section
       ref={sectionRef}
       id="demo"
-      className="relative"
-      style={{ height: `${ALL_6_FEATURES.length * 100}vh` }}
+      className="relative z-20"
+      style={{ height: `${(ALL_6_FEATURES.length + 2) * 100}vh` }}
     >
       {/* ═══════════════════════════════════════════════════════════
           STICKY PINNED STAGE — occupies exactly one viewport height
-          The Piranesi artwork IS the full-screen environment.
-          Content is inscribed ON TOP of the architectural space.
+          Slides up over the final Harness card with deep shadow.
       ═══════════════════════════════════════════════════════════ */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#0A0908]">
+      <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#0A0908] border-t border-[#3E3833]/80 shadow-[0_-30px_70px_rgba(0,0,0,0.98),0_-10px_25px_rgba(0,0,0,0.85)]">
+        {/* Top hairline highlight for incoming architectural card */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#78716C]/60 to-transparent z-30"
+        />
+
+        {/* Receding depth wrapper: scales down as next card (Ship) slides over during the 7th 100vh block */}
+        <motion.div
+          style={{ scale: exitScale }}
+          className="relative w-full h-full flex flex-col justify-between origin-top will-change-transform"
+        >
 
         {/* ── LAYER 0: FULL-SCREEN PIRANESI BACKDROP ────────────────
             This is NOT an image inside a box.
@@ -577,6 +596,13 @@ export function ScrollShowcase() {
           </div>
         </div>
         {/* ─────────────────────────────────────────────────────────── */}
+        </motion.div>
+
+        {/* Receding dark shadow veil when Ship slides over */}
+        <motion.div
+          style={{ opacity: exitVeil }}
+          className="pointer-events-none absolute inset-0 z-40 bg-[#0A0908]"
+        />
       </div>
     </section>
   );
