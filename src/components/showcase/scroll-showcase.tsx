@@ -7,6 +7,7 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  RotateCcw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
@@ -212,6 +213,8 @@ export function ScrollShowcase() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
+  const [isDocked, setIsDocked] = useState(false);
+  const [isVideoEnded, setIsVideoEnded] = useState(false);
 
   // Total slots: 6 features + 1 trailing slot (700vh total) so the final feature stays pinned while Ship slides over it
   const totalSlots = ALL_6_FEATURES.length + 1; // 7
@@ -232,6 +235,7 @@ export function ScrollShowcase() {
     setActiveIdx((prev) => {
       if (nextIdx !== prev) {
         setDirection(nextIdx >= prev ? 1 : -1);
+        setIsVideoEnded(false);
         return nextIdx;
       }
       return prev;
@@ -248,13 +252,54 @@ export function ScrollShowcase() {
     updateActiveIdx(idx);
   });
 
-  // Auto-play video when active feature changes
+  // Detect when Showcase section has fully docked into viewport at top-0
   useEffect(() => {
+    const checkDocked = () => {
+      const el = sectionRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      // Docked when top is at top-0 (<= 15px) and hasn't completely scrolled away
+      const docked = rect.top <= 15 && rect.bottom >= window.innerHeight * 0.4;
+      setIsDocked(docked);
+    };
+
+    checkDocked();
+    window.addEventListener("scroll", checkDocked, { passive: true });
+    window.addEventListener("resize", checkDocked, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", checkDocked);
+      window.removeEventListener("resize", checkDocked);
+    };
+  }, []);
+
+  const feat = ALL_6_FEATURES[activeIdx];
+  const hasVideo = Boolean(feat.videoSrc);
+
+  // Play video ONLY when docked at top-0; play once to end without loop
+  useEffect(() => {
+    const vid = videoRef.current;
+    if (!vid) return;
+
+    if (isDocked && hasVideo) {
+      if (!isVideoEnded) {
+        vid.play().catch(() => {});
+      }
+    } else {
+      vid.pause();
+      if (!isDocked) {
+        vid.currentTime = 0;
+        setIsVideoEnded(false);
+      }
+    }
+  }, [isDocked, activeIdx, hasVideo, isVideoEnded]);
+
+  const handleReplay = useCallback(() => {
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
       videoRef.current.play().catch(() => {});
+      setIsVideoEnded(false);
     }
-  }, [activeIdx]);
+  }, []);
 
   const rawJumpTo = useFeatureJump(sectionRef);
   const jumpTo = useCallback(
@@ -264,9 +309,6 @@ export function ScrollShowcase() {
     },
     [rawJumpTo, updateActiveIdx]
   );
-
-  const feat = ALL_6_FEATURES[activeIdx];
-  const hasVideo = Boolean(feat.videoSrc);
 
   // Transition variants moving horizontally matching the progress bar flow
   const horizontalSlideVariants = {
@@ -494,10 +536,9 @@ export function ScrollShowcase() {
                           ref={videoRef}
                           key={feat.videoSrc}
                           src={feat.videoSrc}
-                          autoPlay
-                          loop
                           muted
                           playsInline
+                          onEnded={() => setIsVideoEnded(true)}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -522,19 +563,39 @@ export function ScrollShowcase() {
                     )}
                   </div>
 
-                  {/* Footer bar */}
+                  {/* Footer bar with LIVE TERMINAL CAPTURE and Replay button */}
                   <div className="flex items-center justify-between px-3.5 py-2 bg-[#0A0908]/85 border border-t-0 border-[#2A2622] backdrop-blur-sm text-[10px] font-mono">
                     <div className="flex items-center gap-1.5">
                       <span
                         className={cn(
                           "w-1.5 h-1.5 rounded-full",
-                          hasVideo ? "bg-[#38BDF8] animate-pulse" : "bg-[#3E3833]"
+                          hasVideo
+                            ? isVideoEnded
+                              ? "bg-[#78716C]"
+                              : "bg-[#38BDF8] animate-pulse"
+                            : "bg-[#3E3833]"
                         )}
                       />
                       <span className={hasVideo ? "text-[#D6D3D1] font-semibold" : "text-[#78716C]"}>
                         LIVE TERMINAL CAPTURE
                       </span>
+                      {hasVideo && isVideoEnded && (
+                        <span className="text-[9px] text-[#78716C] ml-1.5 hidden sm:inline select-none">
+                          // COMPLETE
+                        </span>
+                      )}
                     </div>
+
+                    {hasVideo && (
+                      <button
+                        type="button"
+                        onClick={handleReplay}
+                        className="flex items-center gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 bg-[#141210] hover:bg-[#38BDF8] text-[#A8A29E] hover:text-[#0A0908] border border-[#2A2622] hover:border-transparent transition-all cursor-pointer select-none text-[10px] font-mono font-medium"
+                        title="Replay terminal demonstration"
+                      >
+                        <RotateCcw className="w-3 h-3 stroke-[2]" />
+                      </button>
+                    )}
                   </div>
                 </motion.div>
               </AnimatePresence>

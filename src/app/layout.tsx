@@ -17,7 +17,6 @@ const jetbrainsMono = JetBrains_Mono({
 const cinzel = Cinzel({
   variable: "--font-cinzel",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
