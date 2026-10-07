@@ -249,7 +249,7 @@ export function CommandPalette() {
           </h2>
           <p className="text-sm text-[#A8A29E] leading-relaxed font-serif max-w-2xl">
             Keep your fingers on the home row. Instant slash commands give you total authority over models,
-            memory compression, and thread branches without interrupting your structural focus.
+            memory compression, and thread branches without breaking your terminal coding flow.
           </p>
         </div>
 

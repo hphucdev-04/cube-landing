@@ -34,7 +34,7 @@ const FAQS: FaqItem[] = [
   {
     question: "How does Cube discover project context and rules?",
     answer:
-      "Cube's WorkspaceManager automatically scans your current directory and walks up parent folders to identify Git roots and locate AGENTS.md (or .agents/, .cube/, .claude/) instruction files. These architectural guidelines, coding styles, and safety rules are injected into the agent's context window automatically.",
+      "Cube's WorkspaceManager automatically scans your current directory and walks up parent folders to identify Git roots and locate AGENTS.md (or .agents/, .cube/, .claude/) instruction files. These repository guidelines, coding styles, and safety rules are injected into the agent's context window automatically.",
   },
   {
     question: "How do updates work?",

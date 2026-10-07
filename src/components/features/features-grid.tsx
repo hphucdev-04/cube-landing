@@ -31,7 +31,7 @@ interface HarnessBay {
 const HARNESS_BAYS: HarnessBay[] = [
   {
     id: "loop",
-    roman: "PIER I",
+    roman: "01 // LOOP",
     code: "01",
     name: "Iterative Decision Loop",
     archType: "Reasoning Loop Runtime",
@@ -45,7 +45,7 @@ const HARNESS_BAYS: HarnessBay[] = [
   },
   {
     id: "tool",
-    roman: "PIER II",
+    roman: "02 // SHELL",
     code: "02",
     name: "Environment Grounding",
     archType: "Sandboxed IO & Shell Engine",
@@ -59,7 +59,7 @@ const HARNESS_BAYS: HarnessBay[] = [
   },
   {
     id: "context",
-    roman: "PIER III",
+    roman: "03 // RULES",
     code: "03",
     name: "Attention & Rule Discovery",
     archType: "AGENTS.md Context Compressor",
@@ -73,7 +73,7 @@ const HARNESS_BAYS: HarnessBay[] = [
   },
   {
     id: "memory",
-    roman: "PIER IV",
+    roman: "04 // STATE",
     code: "04",
     name: "Persistent Workspace Memory",
     archType: "SQLite Local State & Memory",
@@ -82,12 +82,12 @@ const HARNESS_BAYS: HarnessBay[] = [
     bgAsset: "/assets/ascii-magic-3.png",
     bgFocus: "object-center",
     conceptSummary:
-      "Retains architectural decisions, preferences, and session state locally across turns and restarts. Fork or resume any conversation thread with full AST and file change continuity — no cloud dependency.",
+      "Retains engineering decisions, repository conventions, and session state locally across turns and restarts. Fork or resume any conversation thread with full AST and file change continuity — no cloud dependency.",
     specs: ["Local SQLite State", "Session Forking", "Zero Cloud Storage", "Continuity"],
   },
   {
     id: "background",
-    roman: "PIER V",
+    roman: "05 // ASYNC",
     code: "05",
     name: "Non-Blocking Delegation",
     archType: "Parallel Subagent Dispatcher",
@@ -101,7 +101,7 @@ const HARNESS_BAYS: HarnessBay[] = [
   },
   {
     id: "guardrail",
-    roman: "PIER VI",
+    roman: "06 // DIFFS",
     code: "06",
     name: "Human Safeguards & Diffs",
     archType: "Diff Engine & Safety Gates",
@@ -115,12 +115,12 @@ const HARNESS_BAYS: HarnessBay[] = [
   },
 ];
 
-/** A single full-screen pier chamber — Piranesi artwork IS the environment.
+/** A single full-screen subsystem card.
  *  Uses sticky stacking cards: each card pins at top-0, and subsequent cards
  *  slide up from below and overlay over the previous card, while the card underneath
  *  recedes subtly in scale and darkness.
  */
-function PierChamber({
+function SubsystemCard({
   bay,
   index,
   total,
@@ -273,13 +273,13 @@ function PierChamber({
           </div>
         </div>
 
-        {/* ── ELEVATION CALIPER — stone mortar tone, clear of left sidebar (w-16 = 64px) ── */}
+        {/* ── SUBSYSTEM INDEX CALIPER — clear of left sidebar (w-16 = 64px) ── */}
         <div
           aria-hidden="true"
           className="absolute bottom-4 left-6 sm:left-10 md:left-20 lg:left-24 z-10 font-mono text-[10px] text-[#3E3833] flex items-center gap-2"
         >
           <span className="w-4 h-px bg-[#3E3833]/60" />
-          <span>ELEV +{(index + 1) * 16}.0m</span>
+          <span>SUBSYSTEM 0{index + 1} // 06</span>
           <span className="w-4 h-px bg-[#3E3833]/60" />
         </div>
 
@@ -290,7 +290,7 @@ function PierChamber({
             transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
             className="absolute bottom-5 right-6 sm:right-10 md:right-20 lg:right-24 z-10 flex flex-col items-center gap-1 pointer-events-none"
           >
-            <span className="font-cinzel text-[9px] tracking-[0.2em] text-[#3E3833]">NEXT PIER</span>
+            <span className="font-mono text-[9px] tracking-[0.2em] text-[#78716C]">NEXT SUBSYSTEM</span>
             <div className="w-px h-5 bg-gradient-to-b from-[#78716C]/40 to-transparent" />
           </motion.div>
         )}
@@ -338,7 +338,7 @@ export function FeaturesGrid() {
               The Engineering Harness
             </h2>
             <p className="mt-2 text-sm text-[#A8A29E] max-w-2xl font-serif">
-              Six structural piers that carry the agent&apos;s weight across vast, labyrinthine codebases.
+              Six runtime subsystems engineered to give the agent surgical precision across large production codebases.
             </p>
           </div>
 
@@ -349,10 +349,10 @@ export function FeaturesGrid() {
         </div>
       </div>
 
-      {/* ── 6 FULL-SCREEN PIER CHAMBERS (STACKING DECK) ─────────── */}
+      {/* ── 6 FULL-SCREEN SUBSYSTEM CARDS (STACKING DECK) ─────────── */}
       <div className="relative">
         {HARNESS_BAYS.map((bay, index) => (
-          <PierChamber
+          <SubsystemCard
             key={bay.id}
             bay={bay}
             index={index}
@@ -373,15 +373,15 @@ export function FeaturesGrid() {
         />
         <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-5 max-w-7xl">
           <p className="text-sm text-[#A8A29E] font-serif leading-relaxed max-w-2xl">
-            Like Piranesi&apos;s imaginary prisons, production codebases are vast labyrinths of
-            interdependent walkways, vaults, and machinery. Cube applies architectural rigor to
-            navigate and mutate systems with zero collateral regression.
+            Production codebases are complex networks of interdependent modules, tests, and legacy dependencies.
+            Cube applies deterministic AST traversal, local state continuity, and atomic transactions to
+            safely inspect and mutate code without collateral regression.
           </p>
           <a
             href="#demo"
             className="shrink-0 inline-flex items-center gap-2 px-4 py-2 border border-[#3E3833] hover:border-[#78716C] text-xs font-mono text-[#A8A29E] hover:text-[#F5F5F4] transition-colors"
           >
-            <span>Descent into the Showcase</span>
+            <span>See Live Terminal Demos</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
           </a>
         </div>

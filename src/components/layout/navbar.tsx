@@ -13,11 +13,11 @@ export interface NavSection {
 }
 
 const NAV_SECTIONS: NavSection[] = [
-  { id: "hero", label: "Overview", roman: "00" },
-  { id: "harness", label: "Harness", roman: "LIB. I" },
-  { id: "demo", label: "Showcase", roman: "LIB. II" },
-  { id: "commands", label: "Commands", roman: "LIB. III" },
-  { id: "faq", label: "FAQ", roman: "LIB. IV" },
+  { id: "hero", label: "Overview", roman: "01" },
+  { id: "harness", label: "Harness", roman: "02" },
+  { id: "demo", label: "Showcase", roman: "03" },
+  { id: "commands", label: "Commands", roman: "04" },
+  { id: "faq", label: "FAQ", roman: "05" },
 ];
 
 export function Navbar() {

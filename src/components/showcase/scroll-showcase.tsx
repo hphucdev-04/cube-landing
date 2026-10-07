@@ -16,7 +16,7 @@ interface ShowcaseFeature {
   code: string;
   label: string;
   roman: string;
-  elevation: string;
+  featureNum: string;
   title: string;
   tagline: string;
   bgAsset: string;
@@ -33,8 +33,8 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     id: "gateway",
     code: "01",
     label: "Gateway",
-    roman: "SECTIO I",
-    elevation: "+12.0m",
+    roman: "FEATURE 01",
+    featureNum: "01 // 06",
     title: "Multi-Gateway Model Matrix",
     tagline: "Your subscriptions. Your keys. Zero lock-in.",
     // ascii-magic-3: the receding arched corridor — perfect for "gateway"
@@ -60,8 +60,8 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     id: "skill",
     code: "02",
     label: "Skill",
-    roman: "SECTIO II",
-    elevation: "+20.0m",
+    roman: "FEATURE 02",
+    featureNum: "02 // 06",
     title: "Workspace Skill & Rule Discovery",
     tagline: "Repository guidelines right where you code.",
     // ascii-magic-2: ascending spiral staircase — recursive hierarchy
@@ -86,8 +86,8 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     id: "hitl",
     code: "03",
     label: "HITL",
-    roman: "SECTIO III",
-    elevation: "+28.0m",
+    roman: "FEATURE 03",
+    featureNum: "03 // 06",
     title: "Human-in-the-Loop Safeguards",
     tagline: "Absolute developer authority.",
     // ascii-magic-1: mechanical trusses, chains — guardrails
@@ -113,8 +113,8 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     id: "qa",
     code: "04",
     label: "Q&A",
-    roman: "SECTIO IV",
-    elevation: "+36.0m",
+    roman: "FEATURE 04",
+    featureNum: "04 // 06",
     title: "Interactive Intent Clarification",
     tagline: "Resolve ambiguity before writing code.",
     // ascii-magic-4: branching stairways & meander frieze — many paths
@@ -141,8 +141,8 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     id: "mcp",
     code: "05",
     label: "MCP",
-    roman: "SECTIO V",
-    elevation: "+44.0m",
+    roman: "FEATURE 05",
+    featureNum: "05 // 06",
     title: "Model Context Protocol Foundation",
     tagline: "Universal tool & data interoperability.",
     // ascii-magic-6: grand colonnade hall — universal connection
@@ -168,8 +168,8 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     id: "subagent",
     code: "06",
     label: "Subagent",
-    roman: "SECTIO VI",
-    elevation: "+52.0m",
+    roman: "FEATURE 06",
+    featureNum: "06 // 06",
     title: "Parallel Subagent Delegation",
     tagline: "Orchestrate autonomous worker teams.",
     // ascii-magic-5: concurrent vaults & scaffolding — parallel execution
@@ -344,13 +344,13 @@ export function ScrollShowcase() {
           <div className="flex items-center justify-between px-5 sm:px-8 md:px-20 lg:px-24 py-3 border-b border-[#2A2622]/60 bg-[#0A0908]/55 backdrop-blur-sm">
             <div className="flex items-center gap-3">
               <span className="font-cinzel text-[11px] font-bold text-[#D6D3D1] tracking-wider">
-                CAPABILITIES // {feat.roman}
+                CAPABILITIES // {feat.label.toUpperCase()}
               </span>
-              <span className="font-mono text-[11px] text-[#3E3833]">ELEV. {feat.elevation}</span>
+              <span className="font-mono text-[11px] text-[#3E3833]">{feat.featureNum}</span>
             </div>
 
             {/* 6-dot feature navigator */}
-            <div className="flex items-center gap-2" role="tablist" aria-label="Showcase chambers">
+            <div className="flex items-center gap-2" role="tablist" aria-label="Showcase features">
               {ALL_6_FEATURES.map((f, i) => (
                 <button
                   key={f.id}
@@ -485,9 +485,9 @@ export function ScrollShowcase() {
                     ) : (
                       <div className="relative aspect-video w-full flex flex-col items-center justify-center p-6 bg-[#050403]/95 text-center">
                         {/* Subtle corner ticks */}
-                        <div className="absolute top-2.5 left-2.5 font-mono text-[9px] text-[#3E3833]">┌ SEC·{feat.code}</div>
-                        <div className="absolute top-2.5 right-2.5 font-mono text-[9px] text-[#3E3833]">{feat.roman} ┐</div>
-                        <div className="absolute bottom-2.5 left-2.5 font-mono text-[9px] text-[#3E3833]">└ ELEV {feat.elevation}</div>
+                        <div className="absolute top-2.5 left-2.5 font-mono text-[9px] text-[#3E3833]">┌ DEMO // {feat.code}</div>
+                        <div className="absolute top-2.5 right-2.5 font-mono text-[9px] text-[#3E3833]">{feat.label.toUpperCase()} ┐</div>
+                        <div className="absolute bottom-2.5 left-2.5 font-mono text-[9px] text-[#3E3833]">└ CUBE RUNTIME</div>
                         <div className="absolute bottom-2.5 right-2.5 font-mono text-[9px] text-[#3E3833]">┘</div>
 
                         <div className="w-10 h-10 border border-[#2A2622] bg-[#0C0B09] flex items-center justify-center mb-3">
@@ -522,21 +522,21 @@ export function ScrollShowcase() {
             </div>
           </div>
 
-          {/* BOTTOM ELEVATION CALIPER BAR — clear of sidebars (w-16 = 64px) */}
+          {/* BOTTOM FEATURE PROGRESS BAR — clear of sidebars (w-16 = 64px) */}
           <div className="px-5 sm:px-8 md:px-20 lg:px-24 py-3 border-t border-[#2A2622]/60 bg-[#0A0908]/55 backdrop-blur-sm flex items-center gap-4">
             {/* Prev */}
             <button
               onClick={() => jumpTo(Math.max(0, activeIdx - 1))}
               disabled={activeIdx === 0}
               className="text-[#78716C] hover:text-[#F5F5F4] disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer transition-colors"
-              title="Previous chamber"
+              title="Previous feature"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
 
-            {/* Elevation progress ruler */}
+            {/* Feature progress ruler */}
             <div className="flex-1 flex items-center gap-3 min-w-0">
-              <span className="font-mono text-[10px] text-[#78716C] shrink-0">+12.0m</span>
+              <span className="font-mono text-[10px] text-[#78716C] shrink-0">01</span>
               <div className="relative flex-1 h-[3px] bg-[#1A1816] overflow-visible">
                 {/* Filled progress */}
                 <motion.div
@@ -544,7 +544,7 @@ export function ScrollShowcase() {
                   animate={{ width: `${((activeIdx + 1) / ALL_6_FEATURES.length) * 100}%` }}
                   transition={{ duration: 0.3 }}
                 />
-                {/* Tick marks at each chamber */}
+                {/* Tick marks at each feature */}
                 {ALL_6_FEATURES.map((f, i) => (
                   <button
                     key={f.id}
@@ -557,7 +557,7 @@ export function ScrollShowcase() {
                   </button>
                 ))}
               </div>
-              <span className="font-mono text-[10px] text-[#78716C] shrink-0">+52.0m</span>
+              <span className="font-mono text-[10px] text-[#78716C] shrink-0">06</span>
             </div>
 
             {/* Next */}
@@ -565,14 +565,14 @@ export function ScrollShowcase() {
               onClick={() => jumpTo(Math.min(ALL_6_FEATURES.length - 1, activeIdx + 1))}
               disabled={activeIdx === ALL_6_FEATURES.length - 1}
               className="text-[#78716C] hover:text-[#F5F5F4] disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer transition-colors"
-              title="Next chamber"
+              title="Next feature"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
 
-            {/* Current elevation readout */}
+            {/* Current feature readout */}
             <div className="font-mono text-[11px] text-[#F5F5F4] font-bold shrink-0">
-              ELEV. {feat.elevation}
+              FEATURE {feat.code} // 06
             </div>
           </div>
         </div>

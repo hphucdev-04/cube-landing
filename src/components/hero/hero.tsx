@@ -76,7 +76,7 @@ export function Hero() {
           className="font-sans font-semibold tracking-tight text-[#F5F5F4] leading-[1.06] mb-4
             text-[clamp(2.2rem,6vw,4.5rem)]"
         >
-          Navigate the labyrinth of<br className="hidden sm:block" /> software architecture
+          A coding agent that lives<br className="hidden sm:block" /> where you already work
         </motion.h1>
 
         {/* Sub-headline */}
@@ -87,8 +87,8 @@ export function Hero() {
           className="text-[#C8C5C2] font-serif leading-[1.65] mb-7 max-w-2xl
             text-[clamp(0.875rem,1.4vw,1.1rem)]"
         >
-          Autonomous TypeScript coding agent with multi-mode authentication — Claude Pro, ChatGPT Plus,
-          15+ API keys or 100% offline Ollama — AST traversal and atomic verified commits.
+          Autonomous TypeScript coding agent with differential-rendering TUI, multi-mode authentication
+          (Claude Pro, ChatGPT Plus, 15+ API keys, or offline Ollama), workspace memory, and atomic code mutations.
         </motion.p>
 
         {/* CTA row */}

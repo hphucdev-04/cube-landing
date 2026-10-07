@@ -11,15 +11,14 @@ import { FaqAccordion } from "@/components/faq/faq-accordion";
 import { Footer } from "@/components/layout/footer";
 
 export default function Home() {
-  const [scrollElevation, setScrollElevation] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       const progress = maxScroll > 0 ? scrollY / maxScroll : 0;
-      // Convert progress to architectural elevation (+0.0m to +96.0m)
-      setScrollElevation(Math.round(progress * 96 * 10) / 10);
+      setScrollProgress(progress);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -31,19 +30,19 @@ export default function Home() {
       {/* Background Architectural Etching & Particles */}
       <CubeVoxelField />
 
-      {/* LEFT MARGIN: Full-Height Architectural Elevation Ruler (Edge-to-Edge) */}
+      {/* LEFT MARGIN: Full-Height Progress Ruler (Edge-to-Edge) */}
       <div
         aria-hidden="true"
         className="pointer-events-none fixed left-0 top-0 bottom-0 z-40 w-12 sm:w-16 hidden md:flex flex-col justify-between py-20 px-2 border-r border-[#2A2622]/80 bg-[#0A0908]/75 backdrop-blur-sm select-none"
       >
         <div className="font-mono text-[9px] text-[#3E3833] tracking-widest rotate-180 [writing-mode:vertical-rl]">
-          CUBE RUNTIME ELEVATION
+          CUBE RUNTIME PROGRESS
         </div>
 
-        {/* Dynamic Elevation Indicator — surveyor instrument per DESIGN.md */}
+        {/* Dynamic Progress Indicator */}
         <div className="flex flex-col items-center gap-1 font-mono text-[10px] text-[#F5F5F4]">
           <span className="w-1.5 h-1.5 bg-[#38BDF8]" />
-          <span className="text-[#38BDF8] font-bold">+{scrollElevation.toFixed(1)}m</span>
+          <span className="text-[#38BDF8] font-bold">{Math.round(scrollProgress * 100)}%</span>
         </div>
 
         <div className="font-mono text-[9px] text-[#3E3833] tracking-widest rotate-180 [writing-mode:vertical-rl]">
@@ -70,30 +69,30 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Top Floating Entablature Navbar */}
+      {/* Top Floating Navbar */}
       <Navbar />
 
-      {/* MAIN EXPANSIVE CANVAS: Full-Bleed Content with Plumb-line Margins */}
+      {/* MAIN CANVAS */}
       <div className="relative z-10 flex-1 w-full">
         <main className="w-full">
-          {/* Section 1: Hero Vault (Full-bleed Symmetrical Perspective & Arch Portal) */}
+          {/* Section 1: Hero */}
           <Hero />
 
-          {/* Section 2: Colonnade of the 6 Structural Piers (The Harness) */}
+          {/* Section 2: The 6 Runtime Subsystems (The Harness) */}
           <FeaturesGrid />
 
-          {/* Section 3: The 6-Feature Scroll-Synced Labyrinth Journey (No boxed photos) */}
+          {/* Section 3: Live Terminal Showcase */}
           <ScrollShowcase />
 
-          {/* Section 4: The Scriptorium (Command Palette) */}
+          {/* Section 4: Slash Commands & Developer TUI */}
           <CommandPalette />
 
-          {/* Section 5: The Codices (FAQ) */}
+          {/* Section 5: Documentation & FAQ */}
           <FaqAccordion />
         </main>
       </div>
 
-      {/* Foundation Plinth Footer */}
+      {/* Installation & Setup Footer */}
       <Footer />
     </div>
   );
