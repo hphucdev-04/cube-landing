@@ -2,6 +2,7 @@
 
 import { useRef, type ReactNode } from "react";
 import { Artwork } from "@/components/visual/artwork";
+import { useStickyViewport } from "@/lib/use-sticky-viewport";
 import {
   RotateCw,
   Wrench,
@@ -92,6 +93,7 @@ function SubsystemCard({
   total: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  useStickyViewport(ref);
   const Icon = bay.icon;
   const isEven = index % 2 === 0;
 

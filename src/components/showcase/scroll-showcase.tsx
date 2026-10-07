@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore, type RefObject } fro
 import { Terminal, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Artwork } from "@/components/visual/artwork";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent, useInView } from "framer-motion";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 
 interface ShowcaseFeature {
   id: string;
@@ -144,14 +144,6 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
   },
 ];
 
-const SCROLL_STORY_QUERY = "(min-width: 1024px) and (min-height: 760px) and (prefers-reduced-motion: no-preference)";
-
-function subscribeScrollStory(onChange: () => void) {
-  const query = window.matchMedia(SCROLL_STORY_QUERY);
-  query.addEventListener("change", onChange);
-  return () => query.removeEventListener("change", onChange);
-}
-
 function subscribeReducedMotion(onChange: () => void) {
   const query = window.matchMedia("(prefers-reduced-motion: reduce)");
   query.addEventListener("change", onChange);
@@ -229,7 +221,6 @@ function DemoPlayer({ feat, playedVideos, inView, reducedMotion }: {
 export function ScrollShowcase() {
   const sectionRef = useRef<HTMLElement>(null);
   const playedVideos = useRef(new Set<string>());
-  const jumpTarget = useRef<number | null>(null);
   const [backgroundFeature, setBackgroundFeature] = useState(ALL_6_FEATURES[0]);
   const reducedMotion = useSyncExternalStore(
     subscribeReducedMotion,
@@ -237,27 +228,7 @@ export function ScrollShowcase() {
     () => true,
   );
   const [activeIdx, setActiveIdx] = useState(0);
-  const scrollStory = useSyncExternalStore(
-    subscribeScrollStory,
-    () => window.matchMedia(SCROLL_STORY_QUERY).matches,
-    () => false,
-  );
   const inView = useInView(sectionRef, { margin: "100px" });
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
-
-  useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    if (scrollStory) {
-      const index = Math.min(ALL_6_FEATURES.length - 1, Math.max(0, Math.floor(progress * 6)));
-      if (jumpTarget.current !== null) {
-        if (index !== jumpTarget.current) return;
-        jumpTarget.current = null;
-      }
-      setActiveIdx(index);
-    }
-  });
 
   const feat = ALL_6_FEATURES[activeIdx];
 
@@ -273,37 +244,13 @@ export function ScrollShowcase() {
     return () => { active = false; };
   }, [feat, inView]);
 
-  useEffect(() => {
-    if (!scrollStory) jumpTarget.current = null;
-  }, [scrollStory]);
-
-
-
-  const selectFeature = (index: number) => {
-    jumpTarget.current = null;
-    setActiveIdx(index);
-    const section = sectionRef.current;
-    if (scrollStory && section) {
-      const top = section.getBoundingClientRect().top + window.scrollY;
-      const travel = section.offsetHeight - window.innerHeight;
-      jumpTarget.current = index;
-      window.scrollTo({ top: top + ((index + 0.1) / 6) * travel, behavior: "smooth" });
-    }
-  };
-
   return (
     <section
       ref={sectionRef}
       id="demo"
       className="relative z-20"
-      style={{ height: scrollStory ? "490vh" : undefined, overflowAnchor: "none" }}
-      onWheel={() => { jumpTarget.current = null; }}
-      onTouchStart={() => { jumpTarget.current = null; }}
     >
-      <div className={cn(
-        "showcase-stage relative w-full overflow-hidden bg-[#0A0908] border-t border-[#3E3833]/80 chamber-shadow",
-        scrollStory && "sticky top-0",
-      )}>
+      <div className="showcase-stage relative w-full overflow-hidden bg-[#0A0908] border-t border-[#3E3833]/80 chamber-shadow">
         {/* One full-bleed plate: the image remains the architectural space. */}
         <AnimatePresence initial={false}>
           <motion.div
@@ -347,14 +294,14 @@ export function ScrollShowcase() {
                 aria-selected={index === activeIdx}
                 aria-controls="demo-panel"
                 tabIndex={index === activeIdx ? 0 : -1}
-                onClick={() => selectFeature(index)}
+                onClick={() => setActiveIdx(index)}
                 onKeyDown={(event) => {
                   const next = event.key === "ArrowRight" ? (index + 1) % 6
                     : event.key === "ArrowLeft" ? (index + 5) % 6
                     : event.key === "Home" ? 0 : event.key === "End" ? 5 : null;
                   if (next === null) return;
                   event.preventDefault();
-                  selectFeature(next);
+                  setActiveIdx(next);
                   document.getElementById(`demo-tab-${ALL_6_FEATURES[next].id}`)?.focus({ preventScroll: true });
                 }}
                 className={cn(
@@ -409,11 +356,11 @@ export function ScrollShowcase() {
         </AnimatePresence>
 
         <div className="relative z-10 flex items-center justify-between gap-4 px-6 sm:px-12 md:px-20 lg:px-24 py-5 border-t border-[#2A2622]/60">
-          <button type="button" onClick={() => selectFeature((activeIdx + 5) % 6)} aria-label="Previous demo" className="min-h-11 flex items-center gap-2 font-mono text-xs text-[#D6D3D1] cursor-pointer">
+          <button type="button" onClick={() => setActiveIdx((activeIdx + 5) % 6)} aria-label="Previous demo" className="min-h-11 flex items-center gap-2 font-mono text-xs text-[#D6D3D1] cursor-pointer">
             <ChevronLeft aria-hidden="true" className="w-4 h-4" />Previous
           </button>
           <span className="hidden sm:block font-cinzel text-[11px] tracking-wider text-[#78716C]">PLATE {feat.featureNum}</span>
-          <button type="button" onClick={() => selectFeature((activeIdx + 1) % 6)} aria-label="Next demo" className="min-h-11 flex items-center gap-2 font-mono text-xs text-[#D6D3D1] cursor-pointer">
+          <button type="button" onClick={() => setActiveIdx((activeIdx + 1) % 6)} aria-label="Next demo" className="min-h-11 flex items-center gap-2 font-mono text-xs text-[#D6D3D1] cursor-pointer">
             Next<ChevronRight aria-hidden="true" className="w-4 h-4" />
           </button>
         </div>

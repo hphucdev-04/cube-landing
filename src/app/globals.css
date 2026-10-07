@@ -140,10 +140,10 @@ section[id], #harness, #install {
   outline-offset: 4px;
 }
 
-@media (min-width: 1024px) and (min-height: 760px) {
+@media (min-width: 1024px) {
   .harness-card {
     position: sticky;
-    top: 0;
+    top: var(--sticky-top, 0px);
     min-height: 90svh;
   }
 }
@@ -155,13 +155,13 @@ section[id], #harness, #install {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  .harness-card { position: relative; }
+  .harness-card { position: relative; top: auto; }
   .harness-stage { transform: none !important; }
   .depth-veil { display: none; }
 }
 
 /* Normal-flow chambers keep a stable reading plane on small viewports. */
-@media (max-width: 1023px), (max-height: 759px) {
+@media (max-width: 1023px) {
   .harness-stage { transform: none !important; }
   .depth-veil { display: none; }
 }
