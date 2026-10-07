@@ -330,26 +330,28 @@ export function ScrollShowcase() {
           aria-labelledby={`demo-tab-${feat.id}`}
           className="relative z-10 grid lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-8 lg:gap-10 px-6 sm:px-12 md:px-20 lg:px-24 py-10 lg:py-12 items-center flex-1"
         >
-          <div className="relative reading-plane">
-            <div aria-hidden="true" className="hidden lg:block font-cinzel text-[#F5F5F4]/[0.06] leading-none select-none text-[clamp(5rem,12vw,10rem)] -ml-1 mb-[-3rem]">
-              {feat.code}
-            </div>
-            <div className="relative">
-              <p className="font-mono text-xs text-[#A8A29E] mb-3 leading-relaxed">├── {feat.tagline}</p>
-              <h2 className="font-sans font-semibold text-[#F5F5F4] leading-[1.1] mb-4 text-[clamp(1.6rem,3vw,2.6rem)]">
-                {feat.title}
-              </h2>
-              <p className="text-[#D6D3D1] font-serif leading-relaxed text-base mb-6">{feat.description}</p>
-              <ul className="space-y-3 pt-4 border-t border-[#3E3833]/50">
-                {feat.bullets.map((bullet) => (
-                  <li key={bullet} className="flex items-start gap-2.5 text-xs leading-relaxed text-[#D6D3D1] font-mono">
-                    <Check aria-hidden="true" className="w-3.5 h-3.5 shrink-0 mt-0.5 text-[#A8A29E]" />
-                    <span>{bullet}</span>
-                  </li>
+          {ALL_6_FEATURES.map((feature, index) => (
+            <div key={feature.id} data-demo-copy={feature.id} hidden={index !== activeIdx} className="relative reading-plane">
+              <div aria-hidden="true" className="hidden lg:block font-cinzel text-[#F5F5F4]/[0.06] leading-none select-none text-[clamp(5rem,12vw,10rem)] -ml-1 mb-[-3rem]">
+                {feature.code}
+              </div>
+              <div className="relative">
+                <p className="font-mono text-xs text-[#A8A29E] mb-3 leading-relaxed">├── {feature.tagline}</p>
+                <h2 className="font-sans font-semibold text-[#F5F5F4] leading-[1.1] mb-4 text-[clamp(1.6rem,3vw,2.6rem)]">
+                  {feature.title}
+                </h2>
+                <p className="text-[#D6D3D1] font-serif leading-relaxed text-base mb-6">{feature.description}</p>
+                <ul className="space-y-3 pt-4 border-t border-[#3E3833]/50">
+                  {feature.bullets.map((bullet) => (
+                    <li key={bullet} className="flex items-start gap-2.5 text-xs leading-relaxed text-[#D6D3D1] font-mono">
+                      <Check aria-hidden="true" className="w-3.5 h-3.5 shrink-0 mt-0.5 text-[#A8A29E]" />
+                      <span>{bullet}</span>
+                    </li>
                 ))}
               </ul>
             </div>
           </div>
+          ))}
 
           <DemoPlayer feat={feat} playedVideos={playedVideos} inView={inView} reducedMotion={reducedMotion} />
         </motion.div>

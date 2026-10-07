@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/api/", "/install.ps1", "/install.sh"],
     },
-    sitemap: "https://cube.run/sitemap.xml",
+    sitemap: "https://cube-agent.pages.dev/sitemap.xml",
   };
 }

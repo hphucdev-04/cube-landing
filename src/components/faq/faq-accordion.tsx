@@ -3,39 +3,8 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-
-interface FaqItem {
-  question: string;
-  answer: string;
-}
-
-const FAQS: FaqItem[] = [
-  {
-    "question": "How does the installer work?",
-    "answer": "Run the PowerShell installer on Windows x64, or the shell installer on macOS arm64/x64 and Linux/WSL x64. It downloads a Cube package with a bundled Node.js runtime and verifies its SHA-256 checksum. No separate Node.js installation is needed. On macOS and Linux, you may need to add ~/.local/bin to PATH."
-  },
-  {
-    "question": "Which accounts and model gateways can I connect?",
-    "answer": "Use /gateway to choose OAuth for Anthropic, OpenAI, xAI, or Google, an API key from one of 15 supported providers, or local Ollama/LM Studio. Then use /model to select a model. Available models, account eligibility, usage limits, and billing depend on the provider."
-  },
-  {
-    "question": "Where are my data stored and where do prompts go?",
-    "answer": "Cube stores conversation history and memory in local SQLite under ~/.cube/memories, and credentials in ~/.cube/auth.json. Model requests go to your selected provider or local server. Connected MCP servers and network tools can receive data when used. Retention and training policies depend on those services; local storage does not imply zero data retention by a provider."
-  },
-  {
-    "question": "Can I use local models without cloud inference?",
-    "answer": "Yes. Start Ollama or LM Studio with a downloaded model, run /gateway, select local/ollama or local/lmstudio, then choose a model with /model. Inference uses the configured local server. Installation, update checks, web tools, remote MCP servers, and cloud-backed memory features may still use the network."
-  },
-  {
-    "question": "How does Cube discover project context and rules?",
-    "answer": "Launch cube in the directory you want to use as the workspace. Cube loads AGENTS.md there and in .agents, .cube, .claude, and .codex, plus global instructions from ~/.cube/AGENTS.md. It discovers scoped AGENTS.md files as tools explore workspace paths. Manage skills with /skills and refresh instructions and MCP configuration with /reload."
-  },
-  {
-    "question": "How do tool permissions and updates work?",
-    "answer": "Cube asks for workspace trust on first use. File edits, writes, patches, and shell commands require approval by default; /permissions lets you configure allow, ask, or deny rules, including MCP tools. Installed builds check for updates at startup and offer a verified download and restart. Re-running the installer also updates Cube while preserving ~/.cube data."
-  }
-];
+import { motion, useReducedMotion } from "framer-motion";
+import { FAQS } from "@/lib/faq";
 
 export function FaqAccordion() {
   const reducedMotion = useReducedMotion();
@@ -162,38 +131,27 @@ export function FaqAccordion() {
                   </div>
                 </button>
 
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      key="content"
-                      id={`faq-answer-${index}`}
-                      role="region"
-                      aria-labelledby={`faq-question-${index}`}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{
-                        height: "auto",
-                        opacity: 1,
-                        transition: {
-                          height: { duration: reducedMotion ? 0 : 0.24, ease: [0.16, 1, 0.3, 1] },
-                          opacity: { duration: reducedMotion ? 0 : 0.18, delay: reducedMotion ? 0 : 0.04 },
-                        },
-                      }}
-                      exit={{
-                        height: 0,
-                        opacity: 0,
-                        transition: {
-                          height: { duration: reducedMotion ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] },
-                          opacity: { duration: reducedMotion ? 0 : 0.12 },
-                        },
-                      }}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-4 sm:px-5 pb-4 text-sm text-[#D6D3D1] leading-relaxed border-t border-[#2A2622] pt-3 font-serif">
-                        {faq.answer}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <motion.div
+                  id={`faq-answer-${index}`}
+                  role="region"
+                  aria-labelledby={`faq-question-${index}`}
+                  aria-hidden={!isOpen}
+                  inert={!isOpen}
+                  initial={false}
+                  animate={{
+                    height: isOpen ? "auto" : 0,
+                    opacity: isOpen ? 1 : 0,
+                    transition: {
+                      height: { duration: reducedMotion ? 0 : isOpen ? 0.24 : 0.2, ease: [0.16, 1, 0.3, 1] },
+                      opacity: { duration: reducedMotion ? 0 : isOpen ? 0.18 : 0.12, delay: reducedMotion || !isOpen ? 0 : 0.04 },
+                    },
+                  }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-4 sm:px-5 pb-4 text-sm text-[#D6D3D1] leading-relaxed border-t border-[#2A2622] pt-3 font-serif">
+                    {faq.answer}
+                  </div>
+                </motion.div>
               </div>
             );
           })}
