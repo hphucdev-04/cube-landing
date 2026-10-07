@@ -71,7 +71,7 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
   };
 
   return (
-    <div id="install" className="w-full flex flex-col items-center mx-auto">
+    <div id={idPrefix === "hero" ? "install" : `${prefix}-install`} className="w-full flex flex-col items-center mx-auto">
       {/* Platform Tabs — #38BDF8 active background is the product tab indicator per DESIGN.md */}
       <div className="relative z-20 flex flex-wrap items-center justify-center gap-1 mb-2.5 max-w-full px-1">
         {INSTALL_OPTIONS.map((opt) => {
@@ -85,7 +85,7 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
                 setCopied(false);
               }}
               className={cn(
-                "relative px-2.5 sm:px-3.5 py-1 text-[11px] sm:text-xs font-mono transition-colors cursor-pointer select-none",
+                "relative min-h-11 px-2.5 sm:px-3.5 py-1 text-[11px] sm:text-xs font-mono transition-colors cursor-pointer select-none",
                 isSelected
                   ? "text-[#0A0908] font-semibold"
                   : "text-[#78716C] hover:text-[#D6D3D1] font-medium"
@@ -137,10 +137,10 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
               type="button"
               onClick={handleCopy}
               className={cn(
-                "shrink-0 flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 text-xs font-mono font-medium transition-all cursor-pointer",
+                "min-h-11 shrink-0 flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 text-xs font-mono font-medium transition-all cursor-pointer",
                 copied
                   ? "bg-[#38BDF8] text-[#0A0908]"
-                  : "bg-[#141210] hover:bg-[#38BDF8] text-[#A8A29E] hover:text-[#0A0908] border border-[#2A2622] hover:border-transparent"
+                  : "bg-[#38BDF8] hover:bg-[#7DD3FC] text-[#0A0908] border border-transparent"
               )}
               title="Copy to clipboard"
             >
@@ -161,10 +161,10 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
       </motion.div>
 
       {/* Verification notes — stone palette */}
-      <div className="mt-3 flex flex-nowrap items-center justify-center gap-x-2.5 sm:gap-x-4 text-[11px] sm:text-xs text-[#78716C] font-mono whitespace-nowrap overflow-x-auto scrollbar-none">
+      <div className="mt-3 max-w-full flex flex-wrap items-center justify-center gap-x-2.5 sm:gap-x-4 text-[11px] sm:text-xs text-[#78716C] font-mono">
         <span className="flex items-center gap-1.5 text-[#A8A29E] shrink-0">
           <ShieldCheck className="w-3.5 h-3.5 text-[#A8A29E]" />
-          <span>SHA-256 Verified Release</span>
+          <span>{activeTab === "npm" || activeTab === "pnpm" ? "Source checkout" : "SHA-256 Verified Release"}</span>
         </span>
         <span className="text-[#2A2622] select-none shrink-0">·</span>
         <AnimatePresence mode="wait" initial={false}>
@@ -174,7 +174,7 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -2 }}
             transition={{ duration: 0.15 }}
-            className="shrink-0"
+            className="min-w-0 text-center"
           >
             {activeOption.platform}
           </motion.span>

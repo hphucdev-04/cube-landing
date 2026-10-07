@@ -1,13 +1,14 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
+import { Artwork } from "@/components/visual/artwork";
 import { FileText, ChevronDown } from "lucide-react";
 import { InstallBox } from "./install-box";
 import { GithubIcon } from "@/components/ui/icons";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 
 export function Hero() {
+  const reducedMotion = useReducedMotion();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -22,20 +23,17 @@ export function Hero() {
     <section
       ref={containerRef}
       id="hero"
-      className="relative h-screen w-full flex flex-col justify-center items-center overflow-hidden bg-[#0A0908]"
+      className="hero-chamber relative w-full flex flex-col justify-center items-center overflow-hidden bg-[#0A0908]"
     >
       {/* FULL-BLEED PARALLAX BACKDROP — artwork IS the space */}
       <motion.div
-        style={{ y: bgY, scale: bgScale }}
+        style={{ y: reducedMotion ? 0 : bgY, scale: reducedMotion ? 1 : bgScale }}
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0 select-none"
       >
-        <Image
+        <Artwork
           src="/assets/ascii-magic-7.png"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
+          eager
           className="object-cover object-center contrast-[1.15] brightness-[0.82]"
         />
         {/* Chiaroscuro — preserves etching detail, darkens edges */}
@@ -45,13 +43,13 @@ export function Hero() {
 
       {/* Architectural arch wireframe overlay */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-center select-none">
-        <div className="w-[90vw] h-[80vh] arch-vault border border-[#3E3833]/35 absolute top-10" />
+        <div className="w-[90vw] h-[calc(100%-5rem)] arch-vault border border-[#3E3833]/35 absolute top-10" />
       </div>
 
       {/* INSCRIPTION PANEL — centred, fits full viewport */}
       <motion.div
-        style={{ y: contentY }}
-        className="relative z-10 w-full px-5 sm:px-10 md:px-20 max-w-5xl mx-auto text-center flex flex-col items-center"
+        style={{ y: reducedMotion ? 0 : contentY }}
+        className="reading-plane relative z-10 w-full px-5 sm:px-10 md:px-20 max-w-5xl mx-auto text-center flex flex-col items-center"
       >
         {/* Eyebrow badge */}
         <motion.div
@@ -85,7 +83,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.18 }}
           className="text-[#C8C5C2] font-serif leading-[1.65] mb-7 max-w-2xl
-            text-[clamp(0.875rem,1.4vw,1.1rem)]"
+            text-[clamp(1rem,1.4vw,1.1rem)]"
         >
           Read and edit code, run commands with approval, and keep context across sessions.
           Choose OAuth, 15 API key providers, or local Ollama and LM Studio. Bring your own skills and MCP tools.

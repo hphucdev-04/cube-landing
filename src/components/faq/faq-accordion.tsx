@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 interface FaqItem {
   question: string;
@@ -38,27 +38,18 @@ const FAQS: FaqItem[] = [
 ];
 
 export function FaqAccordion() {
-  const ref = useRef<HTMLElement>(null);
+  const reducedMotion = useReducedMotion();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
-  const veilOpacity = useTransform(scrollYProgress, [0, 1], [0, 0.55]);
-
   return (
     <section
-      ref={ref}
       id="faq"
       style={{ zIndex: 30 }}
-      className="sticky top-0 h-screen w-full flex flex-col justify-center border-t border-[#3E3833]/80 bg-[#0A0908] overflow-hidden px-6 sm:px-12 md:px-20 lg:px-24 py-12 lg:py-16 shadow-[0_-30px_70px_rgba(0,0,0,0.98),0_-10px_25px_rgba(0,0,0,0.85)]"
+      className="relative min-h-[70svh] w-full flex flex-col justify-center border-t border-[#3E3833]/80 bg-[#0A0908] overflow-hidden px-6 sm:px-12 md:px-20 lg:px-24 py-24 lg:py-28 shadow-[0_-30px_70px_rgba(0,0,0,0.98),0_-10px_25px_rgba(0,0,0,0.85)]"
     >
       {/* Top hairline highlight for incoming architectural card */}
       <div
@@ -67,9 +58,8 @@ export function FaqAccordion() {
       />
 
       {/* Receding depth wrapper: scales down as Footer slides over */}
-      <motion.div
-        style={{ scale }}
-        className="relative w-full h-full flex flex-col justify-center origin-top will-change-transform"
+      <div
+        className="relative w-full flex flex-col justify-center"
       >
 
       {/* ── AUTHENTIC PIRANESI ARCHITECTURAL DRAFTING BACKGROUND (CODE-ONLY) ── */}
@@ -151,6 +141,9 @@ export function FaqAccordion() {
                 )}
               >
                 <button
+                  id={`faq-question-${index}`}
+                  aria-expanded={isOpen}
+                  aria-controls={`faq-answer-${index}`}
                   onClick={() => toggle(index)}
                   className="w-full px-4 sm:px-5 py-3.5 flex items-center justify-between text-left gap-4 cursor-pointer"
                 >
@@ -173,26 +166,29 @@ export function FaqAccordion() {
                   {isOpen && (
                     <motion.div
                       key="content"
+                      id={`faq-answer-${index}`}
+                      role="region"
+                      aria-labelledby={`faq-question-${index}`}
                       initial={{ height: 0, opacity: 0 }}
                       animate={{
                         height: "auto",
                         opacity: 1,
                         transition: {
-                          height: { duration: 0.24, ease: [0.16, 1, 0.3, 1] },
-                          opacity: { duration: 0.18, delay: 0.04 },
+                          height: { duration: reducedMotion ? 0 : 0.24, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: reducedMotion ? 0 : 0.18, delay: reducedMotion ? 0 : 0.04 },
                         },
                       }}
                       exit={{
                         height: 0,
                         opacity: 0,
                         transition: {
-                          height: { duration: 0.2, ease: [0.16, 1, 0.3, 1] },
-                          opacity: { duration: 0.12 },
+                          height: { duration: reducedMotion ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: reducedMotion ? 0 : 0.12 },
                         },
                       }}
                       className="overflow-hidden"
                     >
-                      <div className="px-4 sm:px-5 pb-4 text-xs sm:text-[13px] text-[#A8A29E] leading-relaxed border-t border-[#2A2622] pt-3 font-serif">
+                      <div className="px-4 sm:px-5 pb-4 text-sm text-[#D6D3D1] leading-relaxed border-t border-[#2A2622] pt-3 font-serif">
                         {faq.answer}
                       </div>
                     </motion.div>
@@ -203,14 +199,8 @@ export function FaqAccordion() {
           })}
         </div>
       </div>
-      </motion.div>
+      </div>
 
-      {/* Receding dark shadow veil */}
-      <motion.div
-        style={{ opacity: veilOpacity }}
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-30 bg-[#0A0908]"
-      />
     </section>
   );
 }

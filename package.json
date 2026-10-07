@@ -7,7 +7,8 @@
     "build": "next build",
     "deploy": "next build && pnpm dlx wrangler pages deploy out --project-name=cube-agent --branch=main",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "assets:optimize": "node scripts/optimize-artwork.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

@@ -1,3 +1,4 @@
+import { MotionProvider } from "@/components/layout/motion-provider";
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Cinzel } from "next/font/google";
 import "./globals.css";
@@ -153,7 +154,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className="min-h-full flex flex-col bg-[#0A0908] text-[#F5F5F4] font-sans selection:bg-[#38BDF8]/30 selection:text-white"
       >
-        {children}
+        <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
   );
