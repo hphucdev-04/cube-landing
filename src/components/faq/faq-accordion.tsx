@@ -53,7 +53,7 @@ export function FaqAccordion() {
   return (
     <section
       id="faq"
-      className="relative border-t border-[#2A2622] bg-[#0A0908] w-full overflow-hidden"
+      className="relative min-h-screen lg:h-screen w-full flex flex-col justify-center border-t border-[#2A2622] bg-[#0A0908] overflow-hidden px-6 sm:px-10 py-12 lg:py-16"
     >
       {/* Etching texture */}
       <div
@@ -65,10 +65,10 @@ export function FaqAccordion() {
         }}
       />
 
-      <div className="relative max-w-4xl mx-auto w-full px-6 sm:px-10 py-20 sm:py-24">
+      <div className="relative max-w-6xl mx-auto w-full">
         {/* Section Header */}
-        <div className="text-center mb-10 sm:mb-14">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 text-xs font-mono border border-[#2A2622] bg-[#141210] mb-4">
+        <div className="text-center mb-8 lg:mb-12">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 text-xs font-mono border border-[#2A2622] bg-[#141210] mb-3">
             {/* Product accent dot — per DESIGN.md */}
             <span className="w-1.5 h-1.5 bg-[#38BDF8]" />
             <span className="font-cinzel text-[#F5F5F4] tracking-wider">DOCUMENTATION &amp; FAQ</span>
@@ -76,13 +76,13 @@ export function FaqAccordion() {
           <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight text-[#F5F5F4] mb-2 font-sans">
             Frequently Asked Questions
           </h2>
-          <p className="text-xs sm:text-sm text-[#A8A29E] font-serif">
+          <p className="text-xs sm:text-sm text-[#A8A29E] font-serif max-w-xl mx-auto">
             Local privacy, subscriptions, model gateways, and getting started.
           </p>
         </div>
 
-        {/* Accordion List */}
-        <div className="space-y-2.5">
+        {/* Accordion List — 2 columns on desktop to fit screen height perfectly */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 items-start">
           {FAQS.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
@@ -97,9 +97,9 @@ export function FaqAccordion() {
               >
                 <button
                   onClick={() => toggle(index)}
-                  className="w-full px-5 py-4 flex items-center justify-between text-left gap-4 cursor-pointer"
+                  className="w-full px-4 sm:px-5 py-3.5 flex items-center justify-between text-left gap-4 cursor-pointer"
                 >
-                  <span className="text-xs sm:text-sm font-medium text-[#F5F5F4]">
+                  <span className="text-xs sm:text-sm font-medium text-[#F5F5F4] leading-snug">
                     {faq.question}
                   </span>
                   <div
@@ -137,7 +137,7 @@ export function FaqAccordion() {
                       }}
                       className="overflow-hidden"
                     >
-                      <div className="px-5 pb-5 text-xs sm:text-sm text-[#A8A29E] leading-relaxed border-t border-[#2A2622] pt-3 font-serif">
+                      <div className="px-4 sm:px-5 pb-4 text-xs sm:text-[13px] text-[#A8A29E] leading-relaxed border-t border-[#2A2622] pt-3 font-serif">
                         {faq.answer}
                       </div>
                     </motion.div>
