@@ -53,25 +53,63 @@ export function FaqAccordion() {
   return (
     <section
       id="faq"
-      className="relative min-h-screen lg:h-screen w-full flex flex-col justify-center border-t border-[#2A2622] bg-[#0A0908] overflow-hidden px-6 sm:px-10 py-12 lg:py-16"
+      className="relative min-h-screen lg:h-screen w-full flex flex-col justify-center border-t border-[#2A2622] bg-[#0A0908] overflow-hidden px-6 sm:px-12 md:px-20 lg:px-24 py-12 lg:py-16"
     >
-      {/* Etching texture */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-50"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(45deg,rgba(255,255,255,0.015) 0px,rgba(255,255,255,0.015) 1px,transparent 1px,transparent 9px),repeating-linear-gradient(-45deg,rgba(255,255,255,0.015) 0px,rgba(255,255,255,0.015) 1px,transparent 1px,transparent 9px)",
-        }}
-      />
+      {/* ── AUTHENTIC PIRANESI ARCHITECTURAL DRAFTING BACKGROUND (CODE-ONLY) ── */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 select-none overflow-hidden">
+        {/* Ambient technical cyan glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,rgba(56,189,248,0.04),transparent_75%)]" />
 
-      <div className="relative max-w-6xl mx-auto w-full">
+        {/* Fine Acid Crosshatch Etching Texture (Microscopic 45°/-45° crosshatch per DESIGN.md .etching-bg) */}
+        <div
+          className="absolute inset-0 opacity-80"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.032) 0px, rgba(255, 255, 255, 0.032) 1px, transparent 1px, transparent 7px), repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.032) 0px, rgba(255, 255, 255, 0.032) 1px, transparent 1px, transparent 7px)",
+          }}
+        />
+
+        {/* Architectural Surveyor Blueprint Grid with Crosshairs (Pure SVG, 0 image assets) */}
+        <svg
+          className="absolute inset-0 w-full h-full opacity-40"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <pattern id="faqArchitectGrid" width="64" height="64" patternUnits="userSpaceOnUse">
+              {/* Subtle grid lines */}
+              <path
+                d="M 64 0 L 0 0 0 64"
+                fill="none"
+                stroke="#3E3833"
+                strokeWidth="0.5"
+                strokeDasharray="2 4"
+                opacity="0.45"
+              />
+              {/* Surveyor crosshair at intersection (┼) */}
+              <path
+                d="M -3 0 L 3 0 M 0 -3 L 0 3"
+                stroke="#78716C"
+                strokeWidth="0.75"
+                opacity="0.6"
+              />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#faqArchitectGrid)" />
+        </svg>
+
+        {/* Edge Chiaroscuro Transitions: softens into stone floor and ceiling */}
+        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#0A0908] via-[#0A0908]/70 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0A0908] via-[#0A0908]/70 to-transparent" />
+      </div>
+
+      <div className="relative z-10 max-w-6xl mx-auto w-full">
         {/* Section Header */}
         <div className="text-center mb-8 lg:mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 text-xs font-mono border border-[#2A2622] bg-[#141210] mb-3">
-            {/* Product accent dot — per DESIGN.md */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 text-xs font-mono border border-[#2A2622] bg-[#141210]/90 mb-3 backdrop-blur-sm">
             <span className="w-1.5 h-1.5 bg-[#38BDF8]" />
-            <span className="font-cinzel text-[#F5F5F4] tracking-wider">DOCUMENTATION &amp; FAQ</span>
+            <span className="font-cinzel text-[#F5F5F4] tracking-wider">
+              DOCUMENTATION &amp; FAQ
+            </span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight text-[#F5F5F4] mb-2 font-sans">
             Frequently Asked Questions
@@ -92,7 +130,7 @@ export function FaqAccordion() {
                   "border transition-colors overflow-hidden",
                   isOpen
                     ? "border-[#3E3833] bg-[#0D0C0A]"
-                    : "border-[#2A2622] bg-[#0A0908] hover:border-[#3E3833]"
+                    : "border-[#2A2622] bg-[#0A0908]/90 hover:border-[#3E3833]"
                 )}
               >
                 <button
