@@ -210,30 +210,30 @@ function SubsystemCard({
         <div
           className={`relative z-10 w-full flex ${isEven ? "justify-start" : "justify-end"} px-6 sm:px-12 md:px-20 lg:px-28`}
         >
-          <div className={`max-w-[min(42rem,52vw)] w-full ${isEven ? "" : "text-right"}`}>
+          <div className={`max-w-[min(50rem,62vw)] w-full ${isEven ? "" : "text-right"}`}>
 
             {/* Giant dim stone ordinal — Piranesi scale, limestone tone */}
             <div
               aria-hidden="true"
-              className="font-cinzel font-bold text-[#F5F5F4]/[0.05] leading-none select-none mb-0 -mt-4"
-              style={{ fontSize: "clamp(7rem,18vw,14rem)" }}
+              className="font-cinzel font-bold text-[#F5F5F4]/[0.05] leading-none select-none mb-0 -mt-6"
+              style={{ fontSize: "clamp(8.5rem,22vw,16rem)" }}
             >
               {bay.code}
             </div>
 
             {/* Pier label — carved above the numeral */}
-            <div className={`-mt-[3rem] sm:-mt-[4rem] lg:-mt-[5.5rem] relative z-10 ${isEven ? "" : "flex flex-col items-end"}`}>
+            <div className={`-mt-[3.5rem] sm:-mt-[5rem] lg:-mt-[6.5rem] relative z-10 ${isEven ? "" : "flex flex-col items-end"}`}>
 
               {/* Roman label + arch type */}
-              <div className={`flex items-center gap-3 mb-3 ${isEven ? "" : "flex-row-reverse"}`}>
-                <div className="flex items-center justify-center w-7 h-7 border border-[#3E3833] bg-[#0A0908]/70 backdrop-blur-sm">
-                  <Icon className="w-3.5 h-3.5 text-[#A8A29E]" />
+              <div className={`flex items-center gap-3 mb-3.5 ${isEven ? "" : "flex-row-reverse"}`}>
+                <div className="flex items-center justify-center w-8 h-8 border border-[#3E3833] bg-[#0A0908]/80 backdrop-blur-sm">
+                  <Icon className="w-4 h-4 text-[#A8A29E]" />
                 </div>
                 <div>
-                  <span className="font-cinzel text-[11px] font-bold text-[#D6D3D1] tracking-[0.2em]">
+                  <span className="font-cinzel text-xs sm:text-[13px] font-bold text-[#E7E5E4] tracking-[0.22em]">
                     {bay.roman}
                   </span>
-                  <span className="font-mono text-[10px] text-[#3E3833] ml-2">
+                  <span className="font-mono text-[11px] sm:text-xs text-[#78716C] ml-2.5">
                     {bay.archType}
                   </span>
                 </div>
@@ -241,28 +241,28 @@ function SubsystemCard({
 
               {/* Name — monumental limestone inscription */}
               <h3
-                className="font-sans font-semibold text-[#F5F5F4] leading-[1.05] mb-3"
-                style={{ fontSize: "clamp(1.6rem,3.8vw,3rem)" }}
+                className="font-sans font-semibold text-[#F5F5F4] leading-[1.08] mb-3.5"
+                style={{ fontSize: "clamp(2rem, 4.4vw, 3.5rem)" }}
               >
                 {bay.name}
               </h3>
 
               {/* Capability — surveyor's note in mono, muted stone */}
-              <div className={`font-mono text-[11px] text-[#78716C] mb-4 tracking-wide ${isEven ? "" : "text-right"}`}>
+              <div className={`font-mono text-xs sm:text-[13px] text-[#A8A29E] mb-5 tracking-wide ${isEven ? "" : "text-right"}`}>
                 ├── {bay.capability}
               </div>
 
               {/* Summary — etched parchment text */}
-              <p className={`text-[#A8A29E] font-serif leading-relaxed mb-5 text-sm sm:text-[0.95rem] ${isEven ? "" : "text-right"}`}>
+              <p className={`text-[#D6D3D1] font-serif leading-relaxed mb-6 text-sm sm:text-base lg:text-[1.08rem] ${isEven ? "" : "text-right"}`}>
                 {bay.conceptSummary}
               </p>
 
               {/* Spec tags — stone-tone mortar borders, no cyan */}
-              <div className={`flex flex-wrap gap-1.5 ${isEven ? "" : "justify-end"}`}>
+              <div className={`flex flex-wrap gap-2 ${isEven ? "" : "justify-end"}`}>
                 {bay.specs.map((s) => (
                   <span
                     key={s}
-                    className="text-[10px] font-mono px-2 py-0.5 border border-[#3E3833]/60 text-[#78716C] bg-[#0A0908]/60 backdrop-blur-sm"
+                    className="text-xs font-mono px-3 py-1 border border-[#3E3833]/80 text-[#A8A29E] bg-[#0A0908]/75 backdrop-blur-sm"
                   >
                     {s}
                   </span>

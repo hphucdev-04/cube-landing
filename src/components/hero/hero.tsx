@@ -65,7 +65,7 @@ export function Hero() {
             Autonomous Coding Agent · Terminal CLI
           </span>
           <span className="text-[#3E3833]">|</span>
-          <span className="font-mono text-[11px] text-[#78716C]">0.1.4</span>
+          <span className="font-mono text-[11px] text-[#78716C]">0.1.6</span>
         </motion.div>
 
         {/* Monumental headline */}
