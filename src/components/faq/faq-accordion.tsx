@@ -71,13 +71,13 @@ export function FaqAccordion() {
           <div className="inline-flex items-center gap-2 px-3.5 py-1 text-xs font-mono border border-[#2A2622] bg-[#141210] mb-4">
             {/* Product accent dot — per DESIGN.md */}
             <span className="w-1.5 h-1.5 bg-[#38BDF8]" />
-            <span className="font-cinzel text-[#F5F5F4] tracking-wider">LIBER IV · THE CODICES &amp; FAQ</span>
+            <span className="font-cinzel text-[#F5F5F4] tracking-wider">DOCUMENTATION &amp; FAQ</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight text-[#F5F5F4] mb-2 font-sans">
             Frequently Asked Questions
           </h2>
           <p className="text-xs sm:text-sm text-[#A8A29E] font-serif">
-            Architecture, local privacy, subscriptions, and getting started.
+            Local privacy, subscriptions, model gateways, and getting started.
           </p>
         </div>
 

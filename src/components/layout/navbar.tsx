@@ -125,7 +125,7 @@ export function Navbar() {
               CUBE
             </span>
             <span className="text-[10px] font-mono text-[#3E3833] px-1.5 py-0.2 bg-[#0A0908] border border-[#2A2622] hidden sm:inline-block">
-              CARCERI
+              CLI
             </span>
           </button>
 

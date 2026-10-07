@@ -34,7 +34,7 @@ const HARNESS_BAYS: HarnessBay[] = [
     roman: "PIER I",
     code: "01",
     name: "Iterative Decision Loop",
-    archType: "Semicircular Keystoned Vault",
+    archType: "Reasoning Loop Runtime",
     icon: RotateCw,
     capability: "Autonomous Observe → Plan → Act",
     bgAsset: "/assets/ascii-magic-6.png",
@@ -48,7 +48,7 @@ const HARNESS_BAYS: HarnessBay[] = [
     roman: "PIER II",
     code: "02",
     name: "Environment Grounding",
-    archType: "Truss & Cantilever Gantry",
+    archType: "Sandboxed IO & Shell Engine",
     icon: Wrench,
     capability: "Surgical Disk & Shell Operations",
     bgAsset: "/assets/ascii-magic-5.png",
@@ -62,7 +62,7 @@ const HARNESS_BAYS: HarnessBay[] = [
     roman: "PIER III",
     code: "03",
     name: "Attention & Rule Discovery",
-    archType: "Transverse Crypt & Colonnade",
+    archType: "AGENTS.md Context Compressor",
     icon: Layers,
     capability: "Automatic Workspace Guidelines",
     bgAsset: "/assets/ascii-magic-4.png",
@@ -76,7 +76,7 @@ const HARNESS_BAYS: HarnessBay[] = [
     roman: "PIER IV",
     code: "04",
     name: "Persistent Workspace Memory",
-    archType: "Foundation Plinth & Buttress",
+    archType: "SQLite Local State & Memory",
     icon: Brain,
     capability: "Cross-Turn State & Local Continuity",
     bgAsset: "/assets/ascii-magic-3.png",
@@ -90,7 +90,7 @@ const HARNESS_BAYS: HarnessBay[] = [
     roman: "PIER V",
     code: "05",
     name: "Non-Blocking Delegation",
-    archType: "Multi-Tier Flying Bridges",
+    archType: "Parallel Subagent Dispatcher",
     icon: Activity,
     capability: "Concurrent Subtasks & Workers",
     bgAsset: "/assets/ascii-magic-2.png",
@@ -104,7 +104,7 @@ const HARNESS_BAYS: HarnessBay[] = [
     roman: "PIER VI",
     code: "06",
     name: "Human Safeguards & Diffs",
-    archType: "Central Reinforced Keystone",
+    archType: "Diff Engine & Safety Gates",
     icon: ShieldCheck,
     capability: "Explicit Confirmation & Reversible Diffs",
     bgAsset: "/assets/ascii-magic-1.png",
@@ -328,7 +328,7 @@ export function FeaturesGrid() {
               {/* #38BDF8 only for the active-indicator dot — product accent */}
               <span className="w-1.5 h-1.5 bg-[#38BDF8]" />
               <span className="font-cinzel tracking-wider text-[#F5F5F4]">
-                LIBER I · THE SIX ARCHITECTURAL PIERS
+                SYSTEM HARNESS // 6 RUNTIME PILLARS
               </span>
             </div>
             <h2
@@ -343,8 +343,8 @@ export function FeaturesGrid() {
           </div>
 
           <div className="shrink-0 flex flex-col items-end gap-1">
-            <div className="text-xs font-mono text-[#A8A29E]">6 // STRUCTURAL BAYS</div>
-            <div className="text-[10px] font-mono text-[#3E3833]">PIRANESI CARCERI ARCHITECTURE</div>
+            <div className="text-xs font-mono text-[#A8A29E]">6 // RUNTIME SUBSYSTEMS</div>
+            <div className="text-[10px] font-mono text-[#3E3833]">AUTONOMOUS AGENT HARNESS</div>
           </div>
         </div>
       </div>

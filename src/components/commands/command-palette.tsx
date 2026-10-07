@@ -239,13 +239,13 @@ export function CommandPalette() {
           <div className="inline-flex items-center gap-2 px-3 py-1 border border-[#2A2622] bg-[#141210] text-xs font-mono mb-4">
             {/* Product accent dot */}
             <span className="w-1.5 h-1.5 bg-[#38BDF8]" />
-            <span className="font-cinzel text-[#F5F5F4] tracking-wider">LIBER III · THE SCRIPTORIUM</span>
+            <span className="font-cinzel text-[#F5F5F4] tracking-wider">COMMANDS // DEVELOPER TUI</span>
           </div>
           <h2
             className="font-sans font-semibold tracking-tight text-[#F5F5F4] leading-[1.06] mb-3"
             style={{ fontSize: "clamp(1.8rem,4vw,3rem)" }}
           >
-            Architectural Precision Built for Flow
+            Terminal Precision Built for Flow
           </h2>
           <p className="text-sm text-[#A8A29E] leading-relaxed font-serif max-w-2xl">
             Keep your fingers on the home row. Instant slash commands give you total authority over models,

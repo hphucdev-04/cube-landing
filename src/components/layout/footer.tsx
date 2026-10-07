@@ -10,7 +10,7 @@ export function Footer() {
       <div className="relative max-w-4xl mx-auto pt-24 pb-16 px-4 sm:px-6 lg:px-8 text-center">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-sm text-xs font-mono border border-[#2A2622] bg-[#141210] text-[#A8A29E] mb-4 shadow-sm">
           <span className="w-1.5 h-1.5 bg-[#38BDF8]" />
-          <span className="font-cinzel tracking-wider text-[#F5F5F4]">FOUNDATION PLINTH</span>
+          <span className="font-cinzel tracking-wider text-[#F5F5F4]">INSTALLATION &amp; SETUP</span>
         </div>
         <h2 className="text-2xl sm:text-4xl font-cinzel font-bold text-[#F5F5F4] tracking-tight mb-3">
           Elevate your terminal workflow in under 30 seconds
@@ -45,7 +45,7 @@ export function Footer() {
           {/* Links */}
           <div className="flex flex-wrap items-center gap-5 text-xs text-[#A8A29E] font-mono">
             <a href="#hero" className="hover:text-[#F5F5F4] transition-colors">
-              Architectura
+              Overview
             </a>
             <a href="#harness" className="hover:text-[#F5F5F4] transition-colors">
               Harness

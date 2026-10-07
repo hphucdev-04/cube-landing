@@ -63,7 +63,7 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     roman: "SECTIO II",
     elevation: "+20.0m",
     title: "Workspace Skill & Rule Discovery",
-    tagline: "Architectural context right where you code.",
+    tagline: "Repository guidelines right where you code.",
     // ascii-magic-2: ascending spiral staircase — recursive hierarchy
     bgAsset: "/assets/ascii-magic-2.png",
     bgFocus: "object-center",
@@ -125,7 +125,7 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
       "When requirements are ambiguous, Cube renders keyboard-driven multiple-choice questions in your shell — lock down exact specs before a line of code is written.",
     bullets: [
       "Arrow-key interactive picker in terminal TUI",
-      "Inline architectural tradeoffs before selection",
+      "Inline technical tradeoffs before selection",
       "Seamless return to autonomous execution",
     ],
     terminalLines: [
@@ -344,7 +344,7 @@ export function ScrollShowcase() {
           <div className="flex items-center justify-between px-5 sm:px-8 md:px-20 lg:px-24 py-3 border-b border-[#2A2622]/60 bg-[#0A0908]/55 backdrop-blur-sm">
             <div className="flex items-center gap-3">
               <span className="font-cinzel text-[11px] font-bold text-[#D6D3D1] tracking-wider">
-                LIBER II · {feat.roman}
+                CAPABILITIES // {feat.roman}
               </span>
               <span className="font-mono text-[11px] text-[#3E3833]">ELEV. {feat.elevation}</span>
             </div>
