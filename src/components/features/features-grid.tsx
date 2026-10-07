@@ -30,8 +30,8 @@ interface HarnessBay {
 const HARNESS_BAYS: HarnessBay[] = [
   {
     id: "loop",
-    roman: "01 // AGENT LOOP",
-    code: "01",
+    roman: "I // AGENT LOOP",
+    code: "I",
     name: "The Agent Loop",
     archType: "Core Reasoning & Execution Cycle",
     icon: RotateCw,
@@ -44,8 +44,8 @@ const HARNESS_BAYS: HarnessBay[] = [
   },
   {
     id: "context",
-    roman: "02 // CONTEXT",
-    code: "02",
+    roman: "II // CONTEXT",
+    code: "II",
     name: "Context Management",
     archType: "Attention Budget & Rule Ingestion",
     icon: Layers,
@@ -58,8 +58,8 @@ const HARNESS_BAYS: HarnessBay[] = [
   },
   {
     id: "tools",
-    roman: "03 // TOOLS & SANDBOX",
-    code: "03",
+    roman: "III // TOOLS & SANDBOX",
+    code: "III",
     name: "Tools & Sandboxed Execution",
     archType: "Sandboxed IO & Shell Engine",
     icon: Wrench,
@@ -72,8 +72,8 @@ const HARNESS_BAYS: HarnessBay[] = [
   },
   {
     id: "memory",
-    roman: "04 // STATE & MEMORY",
-    code: "04",
+    roman: "IV // STATE & MEMORY",
+    code: "IV",
     name: "State & Memory System",
     archType: "SQLite Local State & Memory",
     icon: Brain,
@@ -86,8 +86,8 @@ const HARNESS_BAYS: HarnessBay[] = [
   },
   {
     id: "guardrails",
-    roman: "05 // GUARDRAILS & SAFETY",
-    code: "05",
+    roman: "V // GUARDRAILS & SAFETY",
+    code: "V",
     name: "Guardrails, Safety & HITL",
     archType: "Diff Engine & Verification Gates",
     icon: ShieldCheck,
@@ -100,8 +100,8 @@ const HARNESS_BAYS: HarnessBay[] = [
   },
   {
     id: "orchestration",
-    roman: "06 // ORCHESTRATION",
-    code: "06",
+    roman: "VI // ORCHESTRATION",
+    code: "VI",
     name: "Orchestration & Delegation",
     archType: "Parallel Subagent Dispatcher",
     icon: Activity,
@@ -278,7 +278,7 @@ function SubsystemCard({
           className="absolute bottom-4 left-6 sm:left-10 md:left-20 lg:left-24 z-10 font-mono text-[10px] text-[#3E3833] flex items-center gap-2"
         >
           <span className="w-4 h-px bg-[#3E3833]/60" />
-          <span>SUBSYSTEM 0{index + 1} // 06</span>
+          <span>SUBSYSTEM {bay.code} // VI</span>
           <span className="w-4 h-px bg-[#3E3833]/60" />
         </div>
 
@@ -327,7 +327,7 @@ export function FeaturesGrid({ children }: { children?: ReactNode }) {
               {/* #38BDF8 only for the active-indicator dot — product accent */}
               <span className="w-1.5 h-1.5 bg-[#38BDF8]" />
               <span className="font-cinzel tracking-wider text-[#F5F5F4]">
-                SYSTEM HARNESS // 6 RUNTIME PILLARS
+                SYSTEM HARNESS // VI RUNTIME PILLARS
               </span>
             </div>
             <h2
@@ -342,7 +342,7 @@ export function FeaturesGrid({ children }: { children?: ReactNode }) {
           </div>
 
           <div className="shrink-0 flex flex-col items-end gap-1">
-            <div className="text-xs font-mono text-[#A8A29E]">6 // RUNTIME SUBSYSTEMS</div>
+            <div className="text-xs font-mono text-[#A8A29E]">VI // RUNTIME SUBSYSTEMS</div>
             <div className="text-[10px] font-mono text-[#3E3833]">AUTONOMOUS AGENT HARNESS</div>
           </div>
         </div>

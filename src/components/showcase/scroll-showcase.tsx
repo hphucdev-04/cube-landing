@@ -31,10 +31,10 @@ interface ShowcaseFeature {
 const ALL_6_FEATURES: ShowcaseFeature[] = [
   {
     id: "gateway",
-    code: "01",
+    code: "I",
     label: "Gateway",
-    roman: "FEATURE 01",
-    featureNum: "01 // 06",
+    roman: "FEATURE I",
+    featureNum: "I // VI",
     title: "Multi-Gateway Model Matrix",
     tagline: "Your subscriptions. Your keys. Zero lock-in.",
     // ascii-magic-3: the receding arched corridor — perfect for "gateway"
@@ -58,10 +58,10 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
   },
   {
     id: "skill",
-    code: "02",
+    code: "II",
     label: "Skill",
-    roman: "FEATURE 02",
-    featureNum: "02 // 06",
+    roman: "FEATURE II",
+    featureNum: "II // VI",
     title: "Workspace Skill & Rule Discovery",
     tagline: "Repository guidelines right where you code.",
     // ascii-magic-2: ascending spiral staircase — recursive hierarchy
@@ -84,10 +84,10 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
   },
   {
     id: "hitl",
-    code: "03",
+    code: "III",
     label: "HITL",
-    roman: "FEATURE 03",
-    featureNum: "03 // 06",
+    roman: "FEATURE III",
+    featureNum: "III // VI",
     title: "Human-in-the-Loop Safeguards",
     tagline: "Absolute developer authority.",
     // ascii-magic-1: mechanical trusses, chains — guardrails
@@ -111,10 +111,10 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
   },
   {
     id: "qa",
-    code: "04",
+    code: "IV",
     label: "Q&A",
-    roman: "FEATURE 04",
-    featureNum: "04 // 06",
+    roman: "FEATURE IV",
+    featureNum: "IV // VI",
     title: "Interactive Intent Clarification",
     tagline: "Resolve ambiguity before writing code.",
     // ascii-magic-4: branching stairways & meander frieze — many paths
@@ -139,10 +139,10 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
   },
   {
     id: "mcp",
-    code: "05",
+    code: "V",
     label: "MCP",
-    roman: "FEATURE 05",
-    featureNum: "05 // 06",
+    roman: "FEATURE V",
+    featureNum: "V // VI",
     title: "Model Context Protocol Foundation",
     tagline: "Universal tool & data interoperability.",
     // ascii-magic-6: grand colonnade hall — universal connection
@@ -166,10 +166,10 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
   },
   {
     id: "subagent",
-    code: "06",
+    code: "VI",
     label: "Subagent",
-    roman: "FEATURE 06",
-    featureNum: "06 // 06",
+    roman: "FEATURE VI",
+    featureNum: "VI // VI",
     title: "Parallel Subagent Delegation",
     tagline: "Orchestrate autonomous worker teams.",
     // ascii-magic-5: concurrent vaults & scaffolding — parallel execution
@@ -555,7 +555,7 @@ export function ScrollShowcase() {
 
             {/* Feature progress ruler */}
             <div className="flex-1 flex items-center gap-3 min-w-0">
-              <span className="font-mono text-[10px] text-[#78716C] shrink-0">01</span>
+              <span className="font-mono text-[10px] text-[#78716C] shrink-0">I</span>
               <div className="relative flex-1 h-[3px] bg-[#1A1816] overflow-visible">
                 {/* Filled progress */}
                 <motion.div
@@ -576,7 +576,7 @@ export function ScrollShowcase() {
                   </button>
                 ))}
               </div>
-              <span className="font-mono text-[10px] text-[#78716C] shrink-0">06</span>
+              <span className="font-mono text-[10px] text-[#78716C] shrink-0">VI</span>
             </div>
 
             {/* Next */}
@@ -591,7 +591,7 @@ export function ScrollShowcase() {
 
             {/* Current feature readout */}
             <div className="font-mono text-[11px] text-[#F5F5F4] font-bold shrink-0">
-              FEATURE {feat.code} // 06
+              FEATURE {feat.code} // VI
             </div>
           </div>
         </div>

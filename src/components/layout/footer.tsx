@@ -36,6 +36,10 @@ export function Footer() {
           <a href="#faq" className="hover:text-[#F5F5F4] transition-colors">
             FAQ
           </a>
+        </div>
+
+        {/* Contact / Social Links */}
+        <div className="flex items-center gap-4 text-[11px] text-[#78716C]">
           <a
             href="https://github.com/hphucdev-04"
             target="_blank"
@@ -45,10 +49,7 @@ export function Footer() {
             <GithubIcon className="w-3.5 h-3.5" />
             <span>GitHub</span>
           </a>
-        </div>
-
-        {/* Contact / Copyright */}
-        <div className="text-[11px] text-[#78716C]">
+          <span className="text-[#3E3833]">·</span>
           <span>phuc.ph24012004@gmail.com</span>
         </div>
       </div>

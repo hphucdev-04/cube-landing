@@ -1,53 +1,53 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <!-- Signature 3D Isometric Cube for Cube Brand Favicon -->
+  <!-- Signature 3D Isometric Blue Cube for Browser Tab Favicon -->
   <defs>
     <filter id="cube-glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="1.5" stdDeviation="1" flood-color="#000000" flood-opacity="0.45" />
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1" flood-color="#000000" flood-opacity="0.5" />
     </filter>
-    <linearGradient id="top-face" x1="6" y1="4" x2="26" y2="15.5" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#FFFFFF" />
-      <stop offset="100%" stop-color="#E4E4E7" />
+    <linearGradient id="cube-logo-top" x1="6" y1="4" x2="26" y2="15.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E0F2FE" />
+      <stop offset="100%" stop-color="#38BDF8" />
     </linearGradient>
-    <linearGradient id="left-face" x1="6" y1="9.75" x2="16" y2="27" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#D4D4D8" />
-      <stop offset="100%" stop-color="#8E8E93" />
+    <linearGradient id="cube-logo-left" x1="6" y1="9.75" x2="16" y2="27" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0284C7" />
+      <stop offset="100%" stop-color="#0369A1" />
     </linearGradient>
-    <linearGradient id="right-face" x1="26" y1="9.75" x2="16" y2="27" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#4B4B52" />
-      <stop offset="100%" stop-color="#242428" />
+    <linearGradient id="cube-logo-right" x1="26" y1="9.75" x2="16" y2="27" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
     </linearGradient>
   </defs>
 
   <!-- Ambient Shadow Base -->
   <g filter="url(#cube-glow)">
-    <!-- Top Face (Crisp white illumination) -->
+    <!-- Top Face (Sky Cyan) -->
     <path
       d="M16 3.5 L26.5 9.5 L16 15.5 L5.5 9.5 Z"
-      fill="url(#top-face)"
-      stroke="#121214"
+      fill="url(#cube-logo-top)"
+      stroke="#060709"
       stroke-width="0.8"
       stroke-linejoin="round"
     />
 
-    <!-- Left Face (Medium silver/zinc lighting) -->
+    <!-- Left Face (Deep Cyan) -->
     <path
       d="M5.5 9.5 L16 15.5 L16 27.5 L5.5 21.5 Z"
-      fill="url(#left-face)"
-      stroke="#121214"
+      fill="url(#cube-logo-left)"
+      stroke="#060709"
       stroke-width="0.8"
       stroke-linejoin="round"
     />
 
-    <!-- Right Face (Deep charcoal ambient shade) -->
+    <!-- Right Face (Slate Obsidian) -->
     <path
       d="M26.5 9.5 L26.5 21.5 L16 27.5 L16 15.5 Z"
-      fill="url(#right-face)"
-      stroke="#121214"
+      fill="url(#cube-logo-right)"
+      stroke="#060709"
       stroke-width="0.8"
       stroke-linejoin="round"
     />
 
-    <!-- Inner Corner Highlights -->
-    <line x1="16" y1="15.5" x2="16" y2="27.5" stroke="#121214" stroke-width="0.8" />
+    <!-- Inner Seam Lines -->
+    <line x1="16" y1="15.5" x2="16" y2="27.5" stroke="#060709" stroke-width="0.8" />
   </g>
 </svg>

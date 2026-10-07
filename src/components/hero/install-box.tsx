@@ -73,7 +73,7 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
   return (
     <div id="install" className="w-full flex flex-col items-center mx-auto">
       {/* Platform Tabs — #38BDF8 active background is the product tab indicator per DESIGN.md */}
-      <div className="relative z-20 flex items-center justify-center gap-1 mb-2.5">
+      <div className="relative z-20 flex flex-wrap items-center justify-center gap-1 mb-2.5 max-w-full px-1">
         {INSTALL_OPTIONS.map((opt) => {
           const isSelected = activeTab === opt.id;
           return (
@@ -85,7 +85,7 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
                 setCopied(false);
               }}
               className={cn(
-                "relative px-3.5 py-1 text-xs font-mono transition-colors cursor-pointer select-none",
+                "relative px-2.5 sm:px-3.5 py-1 text-[11px] sm:text-xs font-mono transition-colors cursor-pointer select-none",
                 isSelected
                   ? "text-[#0A0908] font-semibold"
                   : "text-[#78716C] hover:text-[#D6D3D1] font-medium"
@@ -108,12 +108,12 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
       <motion.div
         layout
         transition={{ type: "spring", stiffness: 420, damping: 32 }}
-        className="relative group w-fit max-w-[95vw] sm:max-w-2xl mx-auto"
+        className="relative group w-full max-w-[calc(100vw-2rem)] sm:max-w-2xl mx-auto"
       >
         <div className="relative bg-[#0D0C0A] border border-[#2A2622] group-hover:border-[#3E3833] p-2 sm:p-2.5 transition-colors">
-          <div className="flex items-center gap-2.5 sm:gap-4">
+          <div className="flex items-center justify-between gap-2 sm:gap-4 w-full">
             {/* Terminal prompt and command */}
-            <div className="flex items-center gap-2 px-1.5 py-0.5 font-mono text-xs sm:text-[13px] whitespace-nowrap overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-2 px-1.5 py-0.5 font-mono text-xs sm:text-[13px] whitespace-nowrap overflow-x-auto scrollbar-none min-w-0 flex-1">
               {/* prompt cursor = #38BDF8 per DESIGN.md "con trỏ cube >" */}
               <span className="text-[#38BDF8] font-semibold select-none shrink-0">
                 {activeOption.prompt}
@@ -136,11 +136,12 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
             <button
               type="button"
               onClick={handleCopy}
-              className={`shrink-0 flex items-center justify-center gap-2 px-3.5 py-1.5 text-xs font-mono font-medium transition-all cursor-pointer ${
+              className={cn(
+                "shrink-0 flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 text-xs font-mono font-medium transition-all cursor-pointer",
                 copied
                   ? "bg-[#38BDF8] text-[#0A0908]"
                   : "bg-[#141210] hover:bg-[#38BDF8] text-[#A8A29E] hover:text-[#0A0908] border border-[#2A2622] hover:border-transparent"
-              }`}
+              )}
               title="Copy to clipboard"
             >
               {copied ? (

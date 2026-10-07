@@ -62,12 +62,14 @@ export function DownloadCounterBadge() {
   }, [count]);
 
   return (
-    <div className="mt-4 flex items-center justify-center gap-2 text-xs font-mono text-[#A1A1AA]">
+    <div className="mt-4 flex items-center justify-center gap-2 text-xs font-mono text-[#A1A1AA] px-4 text-center">
       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-      <span className="text-white font-semibold">
-        {displayCount.toLocaleString()}
+      <span className="leading-snug">
+        <span className="text-white font-semibold">
+          {displayCount.toLocaleString()}
+        </span>{" "}
+        developers installed across Windows, MacOS & Linux
       </span>
-      <span>developers installed across Windows, MacOS & Linux</span>
     </div>
   );
 }
