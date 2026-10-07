@@ -26,7 +26,6 @@ interface ShowcaseFeature {
   videoSrc?: string;
   description: string;
   bullets: string[];
-  terminalLines: { type: "cmd" | "success" | "warn" | "info" | "bullet" | "output"; text: string }[];
 }
 
 const ALL_6_FEATURES: ShowcaseFeature[] = [
@@ -49,13 +48,6 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
       "15+ API providers with unified fallback routing",
       "100% offline inference via Ollama / LM Studio",
     ],
-    terminalLines: [
-      { type: "cmd", text: "cube gateway status" },
-      { type: "success", text: "✔ PKCE OAuth: Claude Pro (Active · 5hr quota)" },
-      { type: "info", text: "ℹ API Matrix: 15 providers configured" },
-      { type: "bullet", text: "Local Engine: Ollama / qwen2.5-coder:32b" },
-      { type: "output", text: "Active: claude-3-7-sonnet · Zero token markup" },
-    ],
   },
   {
     id: "skill",
@@ -68,19 +60,13 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     // ascii-magic-2: ascending spiral staircase — recursive hierarchy
     bgAsset: "/assets/ascii-magic-2.png",
     bgFocus: "object-center",
+    videoSrc: "/demos/skill.mp4",
     description:
       "Cube crawls project directories and walks up parent folders to automatically discover AGENTS.md rules, repository guidelines, and custom skill scripts.",
     bullets: [
       "Automatic AGENTS.md discovery across monorepo trees",
       "Dynamic skill loading with isolated runtimes",
       "Zero prompt maintenance across multiple repos",
-    ],
-    terminalLines: [
-      { type: "cmd", text: 'cube run "refactor database client"' },
-      { type: "info", text: "[workspace] Scanning directory tree..." },
-      { type: "success", text: "✔ AGENTS.md: 14 project rules injected" },
-      { type: "info", text: "ℹ Loaded .cube/skills/sql-migration.md" },
-      { type: "output", text: "Context injected. Zero prompt maintenance." },
     ],
   },
   {
@@ -102,13 +88,6 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
       "Colorized unified diff previews before any write",
       "One-key rollback and atomic commit guarantees",
     ],
-    terminalLines: [
-      { type: "cmd", text: 'cube exec "rm -rf ./dist && pnpm migrate:prod"' },
-      { type: "warn", text: "! GUARDRAIL: Potentially destructive mutation" },
-      { type: "output", text: "Target: Recursive delete & schema migration" },
-      { type: "cmd", text: "Approve? [y/N]: y" },
-      { type: "success", text: "✔ Authorized. Rollback checkpoint #928a created." },
-    ],
   },
   {
     id: "qa",
@@ -116,26 +95,18 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     label: "Q&A",
     roman: "FEATURE IV",
     featureNum: "IV // VI",
-    title: "Interactive Intent Clarification",
-    tagline: "Resolve ambiguity before writing code.",
+    title: "Interactive Terminal Q&A",
+    tagline: "Pause to ask. Select answers directly in your shell.",
     // ascii-magic-4: branching stairways & meander frieze — many paths
     bgAsset: "/assets/ascii-magic-4.png",
     bgFocus: "object-center",
     videoSrc: "/demos/qa.mp4",
     description:
-      "When requirements are ambiguous, Cube renders keyboard-driven multiple-choice questions in your shell — lock down exact specs before a line of code is written.",
+      "When facing critical technical forks, Cube pauses autonomous execution to ask questions with an interactive option picker — letting you choose the exact answer before writing code.",
     bullets: [
-      "Arrow-key interactive picker in terminal TUI",
-      "Inline technical tradeoffs before selection",
-      "Seamless return to autonomous execution",
-    ],
-    terminalLines: [
-      { type: "cmd", text: 'cube plan "migrate authentication subsystem"' },
-      { type: "info", text: "? Multiple approaches detected. Choose one:" },
-      { type: "bullet", text: "❯ [1] OAuth PKCE flow (Recommended)" },
-      { type: "bullet", text: "  [2] Static API key rotation + LibSQL" },
-      { type: "bullet", text: "  [3] Delegated subagent auth broker" },
-      { type: "success", text: "✔ Spec locked. Proceeding with PKCE flow." },
+      "Arrow-key option selection directly inside the terminal",
+      "Pauses to ask at decision points to eliminate wrong assumptions",
+      "Seamlessly resumes autonomous execution once answered",
     ],
   },
   {
@@ -149,20 +120,13 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
     // ascii-magic-6: grand colonnade hall — universal connection
     bgAsset: "/assets/ascii-magic-5.png",
     bgFocus: "object-center",
+    videoSrc: "/demos/mcp.mp4",
     description:
       "Built-in MCP client. Connect external tool servers, database inspectors, browser automation, and enterprise endpoints through open standards.",
     bullets: [
       "Universal MCP client: stdio & SSE transports",
       "Connect databases, GitHub, browser automation",
       "Community server ecosystem, zero adapter code",
-    ],
-    terminalLines: [
-      { type: "cmd", text: "cube mcp list" },
-      { type: "success", text: "✔ MCP client online" },
-      { type: "bullet", text: "├─ postgres-inspector  (stdio · 6 tools)" },
-      { type: "bullet", text: "├─ github-context       (stdio · 8 tools)" },
-      { type: "bullet", text: "└─ browser-playwright   (sse  · 12 tools)" },
-      { type: "output", text: "26 external tools available across 3 servers" },
     ],
   },
   {
@@ -182,13 +146,6 @@ const ALL_6_FEATURES: ShowcaseFeature[] = [
       "Spawn workers with isolated context & workspace",
       "Parallel exploration, refactoring, and test writing",
       "Automatic dependency resolution & unified review",
-    ],
-    terminalLines: [
-      { type: "cmd", text: 'cube run --parallel "audit & refactor monorepo"' },
-      { type: "info", text: "[orchestrator] Spawning 2 isolated subagents:" },
-      { type: "bullet", text: "↳ Worker #1 [PID 4912] — /src/routes/auth" },
-      { type: "bullet", text: "↳ Worker #2 [PID 4913] — /src/routes/billing" },
-      { type: "success", text: "✔ Both complete. Schema merged → /docs/openapi.json" },
     ],
   },
 ];
@@ -538,6 +495,12 @@ export function ScrollShowcase() {
                           src={feat.videoSrc}
                           muted
                           playsInline
+                          preload="auto"
+                          onCanPlay={(e) => {
+                            if (isDocked && !isVideoEnded) {
+                              e.currentTarget.play().catch(() => {});
+                            }
+                          }}
                           onEnded={() => setIsVideoEnded(true)}
                           className="w-full h-full object-cover"
                         />
