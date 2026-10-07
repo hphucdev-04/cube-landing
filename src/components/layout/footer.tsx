@@ -53,9 +53,6 @@ export function Footer() {
             <a href="#demo" className="hover:text-[#F5F5F4] transition-colors">
               Showcase
             </a>
-            <a href="#commands" className="hover:text-[#F5F5F4] transition-colors">
-              Commands
-            </a>
             <a href="#faq" className="hover:text-[#F5F5F4] transition-colors">
               FAQ
             </a>

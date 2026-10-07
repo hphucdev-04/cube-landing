@@ -61,7 +61,7 @@ const HARNESS_BAYS: HarnessBay[] = [
     id: "tools",
     roman: "03 // TOOLS & SANDBOX",
     code: "03",
-    name: "Tool Execution & Sandboxed",
+    name: "Tools & Sandboxed Execution",
     archType: "Sandboxed IO & Shell Engine",
     icon: Wrench,
     capability: "Surgical Disk & Shell Process Isolation",

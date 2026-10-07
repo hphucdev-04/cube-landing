@@ -6,7 +6,6 @@ import { Navbar } from "@/components/layout/navbar";
 import { Hero } from "@/components/hero/hero";
 import { ScrollShowcase } from "@/components/showcase/scroll-showcase";
 import { FeaturesGrid } from "@/components/features/features-grid";
-import { CommandPalette } from "@/components/commands/command-palette";
 import { FaqAccordion } from "@/components/faq/faq-accordion";
 import { Footer } from "@/components/layout/footer";
 
@@ -84,10 +83,7 @@ export default function Home() {
           {/* Section 3: Live Terminal Showcase */}
           <ScrollShowcase />
 
-          {/* Section 4: Slash Commands & Developer TUI */}
-          <CommandPalette />
-
-          {/* Section 5: Documentation & FAQ */}
+          {/* Section 4: Documentation & FAQ */}
           <FaqAccordion />
         </main>
       </div>
