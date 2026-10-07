@@ -31,51 +31,51 @@ interface HarnessBay {
 const HARNESS_BAYS: HarnessBay[] = [
   {
     id: "loop",
-    roman: "01 // LOOP",
+    roman: "01 // AGENT LOOP",
     code: "01",
-    name: "Iterative Decision Loop",
-    archType: "Reasoning Loop Runtime",
+    name: "The Agent Loop",
+    archType: "Core Reasoning & Execution Cycle",
     icon: RotateCw,
     capability: "Autonomous Observe → Plan → Act",
     bgAsset: "/assets/ascii-magic-6.png",
     bgFocus: "object-center",
     conceptSummary:
-      "The perpetual cycle at the heart of Cube: observe the terminal environment, plan tool calls, act on files and shell, inspect feedback — then recurse until the task collapses into correctness.",
+      "The perpetual cycle at the heart of Cube: observe the terminal environment, plan tool calls, execute actions on filesystem and shell, inspect feedback — then recurse until the task reaches verified correctness.",
     specs: ["Observe-Plan-Act", "AST Feedback", "Cycle Detection", "Live Reasoning"],
   },
   {
-    id: "tool",
-    roman: "02 // SHELL",
-    code: "02",
-    name: "Environment Grounding",
-    archType: "Sandboxed IO & Shell Engine",
-    icon: Wrench,
-    capability: "Surgical Disk & Shell Operations",
-    bgAsset: "/assets/ascii-magic-5.png",
-    bgFocus: "object-center",
-    conceptSummary:
-      "Connects model reasoning to real filesystem mutations and shell commands. Line-targeted diffs replace full-file blind overwrites. Process sandboxing enforces timeout gates on every invocation.",
-    specs: ["Line Diffs", "Process Sandboxing", "Mastra SDK", "Timeout Gates"],
-  },
-  {
     id: "context",
-    roman: "03 // RULES",
-    code: "03",
-    name: "Attention & Rule Discovery",
-    archType: "AGENTS.md Context Compressor",
+    roman: "02 // CONTEXT",
+    code: "02",
+    name: "Context Management",
+    archType: "Attention Budget & Rule Ingestion",
     icon: Layers,
-    capability: "Automatic Workspace Guidelines",
+    capability: "AGENTS.md Discovery & Context Compaction",
     bgAsset: "/assets/ascii-magic-4.png",
     bgFocus: "object-center",
     conceptSummary:
-      "Crawls parent folders to discover AGENTS.md rules, repository conventions, and custom skill scripts. Token pruning surgically removes noisy logs to preserve attention budget across vast monorepos.",
+      "Crawls parent folders to automatically discover AGENTS.md rules, repository conventions, and custom skills. Surgical token pruning and compaction preserve attention budget across massive monorepos.",
     specs: ["AGENTS.md Discovery", "Tree Traversal", "Token Pruning", "Monorepo Scoping"],
   },
   {
+    id: "tools",
+    roman: "03 // TOOLS & SANDBOX",
+    code: "03",
+    name: "Tool Execution & Sandboxed",
+    archType: "Sandboxed IO & Shell Engine",
+    icon: Wrench,
+    capability: "Surgical Disk & Shell Process Isolation",
+    bgAsset: "/assets/ascii-magic-5.png",
+    bgFocus: "object-center",
+    conceptSummary:
+      "Connects model reasoning to real filesystem mutations and shell commands. Surgical line-targeted diffs replace full-file overwrites, while process sandboxing enforces strict execution boundaries and timeout gates.",
+    specs: ["Line Diffs", "Process Sandboxing", "Mastra SDK", "Timeout Gates"],
+  },
+  {
     id: "memory",
-    roman: "04 // STATE",
+    roman: "04 // STATE & MEMORY",
     code: "04",
-    name: "Persistent Workspace Memory",
+    name: "State & Memory System",
     archType: "SQLite Local State & Memory",
     icon: Brain,
     capability: "Cross-Turn State & Local Continuity",
@@ -86,10 +86,24 @@ const HARNESS_BAYS: HarnessBay[] = [
     specs: ["Local SQLite State", "Session Forking", "Zero Cloud Storage", "Continuity"],
   },
   {
-    id: "background",
-    roman: "05 // ASYNC",
+    id: "guardrails",
+    roman: "05 // GUARDRAILS & SAFETY",
     code: "05",
-    name: "Non-Blocking Delegation",
+    name: "Guardrails, Safety & HITL",
+    archType: "Diff Engine & Verification Gates",
+    icon: ShieldCheck,
+    capability: "Explicit Confirmation & Reversible Diffs",
+    bgAsset: "/assets/ascii-magic-1.png",
+    bgFocus: "object-top",
+    conceptSummary:
+      "Prevents destructive actions. Colorized unified diffs show exactly what lines change before any write occurs. Manual confirmation gates guard disk deletions, migrations, and git resets.",
+    specs: ["Unified Color Diff", "Human Confirmation", "Atomic Commit", "Rollback Snapshots"],
+  },
+  {
+    id: "orchestration",
+    roman: "06 // ORCHESTRATION",
+    code: "06",
+    name: "Orchestration & Delegation",
     archType: "Parallel Subagent Dispatcher",
     icon: Activity,
     capability: "Concurrent Subtasks & Workers",
@@ -98,20 +112,6 @@ const HARNESS_BAYS: HarnessBay[] = [
     conceptSummary:
       "Spawns long-running builds, test suites, and subagents in the background so the primary CLI loop remains responsive. Independent sub-problems run concurrently in isolated sandboxes.",
     specs: ["Subagent Orchestration", "Async Workers", "Non-Blocking TUI", "Status Signals"],
-  },
-  {
-    id: "guardrail",
-    roman: "06 // DIFFS",
-    code: "06",
-    name: "Human Safeguards & Diffs",
-    archType: "Diff Engine & Safety Gates",
-    icon: ShieldCheck,
-    capability: "Explicit Confirmation & Reversible Diffs",
-    bgAsset: "/assets/ascii-magic-1.png",
-    bgFocus: "object-top",
-    conceptSummary:
-      "Prevents destructive actions. Colorized unified diffs show exactly what lines change before any write occurs. Manual confirmation gates guard disk deletions, migrations, and git resets.",
-    specs: ["Unified Color Diff", "Human Confirmation", "Atomic Commit", "Rollback Snapshots"],
   },
 ];
 
@@ -335,7 +335,7 @@ export function FeaturesGrid() {
               className="font-sans font-semibold tracking-tight text-[#F5F5F4] leading-[1.06]"
               style={{ fontSize: "clamp(1.8rem,4.5vw,3.5rem)" }}
             >
-              The Engineering Harness
+              The Harness Engineering
             </h2>
             <p className="mt-2 text-sm text-[#A8A29E] max-w-2xl font-serif">
               Six runtime subsystems engineered to give the agent surgical precision across large production codebases.
