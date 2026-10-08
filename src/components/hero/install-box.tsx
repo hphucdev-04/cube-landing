@@ -38,17 +38,17 @@ const INSTALL_OPTIONS: InstallOption[] = [
   },
   {
     id: "npm",
-    label: "Source",
+    label: "npm",
     prompt: "$",
-    command: "git clone https://github.com/hphucdev-04/cube.git && cd cube && pnpm install",
-    platform: "In Cube checkout · Node.js >=22.13.0 + pnpm",
+    command: "npm install -g @cube-harness/cli",
+    platform: "Node.js >=18",
   },
   {
     id: "pnpm",
-    label: "Run",
+    label: "pnpm",
     prompt: "$",
-    command: "pnpm dev",
-    platform: "In Cube checkout · Node.js >=22.13.0 + pnpm",
+    command: "pnpm add -g @cube-harness/cli",
+    platform: "Node.js >=18",
   },
 ];
 
@@ -164,7 +164,7 @@ export function InstallBox({ idPrefix }: { idPrefix?: string }) {
       <div className="mt-3 max-w-full flex flex-wrap items-center justify-center gap-x-2.5 sm:gap-x-4 text-[11px] sm:text-xs text-[#78716C] font-mono">
         <span className="flex items-center gap-1.5 text-[#A8A29E] shrink-0">
           <ShieldCheck className="w-3.5 h-3.5 text-[#A8A29E]" />
-          <span>{activeTab === "npm" || activeTab === "pnpm" ? "Source checkout" : "SHA-256 Verified Release"}</span>
+          <span>SHA-256 Verified Release</span>
         </span>
         <span className="text-[#2A2622] select-none shrink-0">·</span>
         <AnimatePresence mode="wait" initial={false}>

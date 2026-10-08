@@ -263,15 +263,48 @@ export function FeaturesGrid({ children }: { children?: ReactNode }) {
 
       {/* ── SECTION HEADER — entablature frieze ─────────────────── */}
       <div id="harness" className="relative w-full border-t border-b border-[#2A2622] bg-[#0A0908] px-6 sm:px-12 md:px-20 py-10 overflow-hidden">
-        {/* Etching crosshatch */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-40"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(45deg,rgba(255,255,255,0.015) 0px,rgba(255,255,255,0.015) 1px,transparent 1px,transparent 9px),repeating-linear-gradient(-45deg,rgba(255,255,255,0.015) 0px,rgba(255,255,255,0.015) 1px,transparent 1px,transparent 9px)",
-          }}
-        />
+        {/* ── AUTHENTIC PIRANESI ARCHITECTURAL DRAFTING BACKGROUND (SAME AS FAQ) ── */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 select-none overflow-hidden">
+          {/* Ambient technical cyan glow */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,rgba(56,189,248,0.04),transparent_75%)]" />
+
+          {/* Fine Acid Crosshatch Etching Texture */}
+          <div
+            className="absolute inset-0 opacity-80"
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.032) 0px, rgba(255, 255, 255, 0.032) 1px, transparent 1px, transparent 7px), repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.032) 0px, rgba(255, 255, 255, 0.032) 1px, transparent 1px, transparent 7px)",
+            }}
+          />
+
+          {/* Architectural Surveyor Blueprint Grid with Crosshairs (Pure SVG) */}
+          <svg
+            className="absolute inset-0 w-full h-full opacity-40"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <pattern id="harnessArchitectGrid" width="64" height="64" patternUnits="userSpaceOnUse">
+                {/* Subtle grid lines */}
+                <path
+                  d="M 64 0 L 0 0 0 64"
+                  fill="none"
+                  stroke="#3E3833"
+                  strokeWidth="0.5"
+                  strokeDasharray="2 4"
+                  opacity="0.45"
+                />
+                {/* Surveyor crosshair at intersection (┼) */}
+                <path
+                  d="M -3 0 L 3 0 M 0 -3 L 0 3"
+                  stroke="#78716C"
+                  strokeWidth="0.75"
+                  opacity="0.6"
+                />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#harnessArchitectGrid)" />
+          </svg>
+        </div>
 
         <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-6 max-w-7xl">
           <div>

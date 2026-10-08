@@ -20,7 +20,7 @@ const SHIP_LABELS: string[] = [
 ];
 
 interface CompactPlatform {
-  id: "windows" | "macos" | "linux" | "npm";
+  id: "windows" | "macos" | "linux" | "npm" | "pnpm";
   label: string;
   prompt: string;
   command: string;
@@ -47,9 +47,15 @@ const COMPACT_PLATFORMS: CompactPlatform[] = [
   },
   {
     id: "npm",
-    label: "Source",
+    label: "npm",
     prompt: "$",
-    command: "git clone https://github.com/hphucdev-04/cube.git && cd cube && pnpm install",
+    command: "npm install -g @cube-harness/cli",
+  },
+  {
+    id: "pnpm",
+    label: "pnpm",
+    prompt: "$",
+    command: "pnpm add -g @cube-harness/cli",
   },
 ];
 
