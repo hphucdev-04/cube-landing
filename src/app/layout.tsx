@@ -24,25 +24,54 @@ const cinzel = Cinzel({
 export const metadata: Metadata = {
   metadataBase: new URL("https://cube-agent.pages.dev"),
   title: "Cube — AI Coding Agent for Your Terminal",
-  description: "Read and edit code, run commands with approval, and resume sessions with local memory. Choose OAuth, API keys, or Ollama/LM Studio. Add skills and MCP tools.",
-  keywords: ["AI coding agent", "terminal coding assistant", "CLI developer tools", "local AI coding", "MCP tools", "AGENTS.md", "Ollama", "LM Studio", "OAuth", "Cube"],
-  authors: [{ name: "Cube Team" }],
+  description:
+    "Read and edit code, run commands with approval, and resume sessions with local memory. Choose OAuth, API keys, or Ollama/LM Studio. Add skills and MCP tools.",
+  keywords: [
+    "AI coding agent",
+    "terminal coding assistant",
+    "CLI developer tools",
+    "local AI coding",
+    "MCP tools",
+    "AGENTS.md",
+    "Ollama",
+    "LM Studio",
+    "OAuth",
+    "Cube",
+  ],
+  authors: [{ name: "Hoai Phuc", url: "https://github.com/hphucdev-04"}],
+  creator: "Hoai Phuc (phuc.ph24012004@gmail.com)",
   alternates: { canonical: "/" },
   robots: {
-    index: true, follow: true,
-    googleBot: { index: true, follow: true, "max-video-preview": -1, "max-image-preview": "large", "max-snippet": -1 },
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   openGraph: {
     title: "Cube — AI Coding Agent for Your Terminal",
-    description: "Read and edit code, run commands with approval, and resume sessions with local memory. Choose OAuth, API keys, or Ollama/LM Studio. Add skills and MCP tools.",
-    url: "https://cube-agent.pages.dev/", siteName: "Cube", type: "website", locale: "en_US",
+    description:
+      "Read and edit code, run commands with approval, and resume sessions with local memory. Choose OAuth, API keys, or Ollama/LM Studio. Add skills and MCP tools.",
+    url: "https://cube-agent.pages.dev/",
+    siteName: "Cube",
+    type: "website",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
     title: "Cube — AI Coding Agent for Your Terminal",
-    description: "Read and edit code, run commands with approval, and resume sessions with local memory. Choose OAuth, API keys, or Ollama/LM Studio. Add skills and MCP tools.",
+    description:
+      "Read and edit code, run commands with approval, and resume sessions with local memory. Choose OAuth, API keys, or Ollama/LM Studio. Add skills and MCP tools.",
   },
-  icons: { icon: [{ url: "/icon.svg", type: "image/svg+xml" }], shortcut: "/icon.svg", apple: "/icon.svg" },
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 const jsonLd = {
@@ -51,13 +80,19 @@ const jsonLd = {
     {
       "@type": "SoftwareApplication",
       "@id": "https://cube-agent.pages.dev/#software",
-      "name": "Cube",
-      "operatingSystem": "Windows x64, macOS arm64/x64, Linux x64",
-      "applicationCategory": "DeveloperApplication",
-      "description": "Read and edit code, run commands with approval, and resume sessions with local memory. Choose OAuth, API keys, or Ollama/LM Studio. Add skills and MCP tools.",
-      "url": "https://cube-agent.pages.dev/",
-      "softwareVersion": "0.1.7",
-      "featureList": [
+      name: "Cube",
+      operatingSystem: "Windows x64, macOS arm64/x64, Linux x64",
+      applicationCategory: "DeveloperApplication",
+      description:
+        "Read and edit code, run commands with approval, and resume sessions with local memory. Choose OAuth, API keys, or Ollama/LM Studio. Add skills and MCP tools.",
+      url: "https://cube-agent.pages.dev/",
+      softwareVersion: "0.1.7",
+      installUrl: "https://cube-agent.pages.dev/#install",
+      downloadUrl: [
+        "https://cube-agent.pages.dev/install.ps1",
+        "https://cube-agent.pages.dev/install.sh",
+      ],
+      featureList: [
         "Terminal coding agent",
         "File editing and patches",
         "Tool approval and workspace permissions",
@@ -66,28 +101,30 @@ const jsonLd = {
         "Local SQLite history and durable memory",
         "Skills and MCP tools",
         "Managed background commands",
-        "Parallel subagent delegation"
+        "Parallel subagent delegation",
       ],
-      "offers": {
+      offers: {
         "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
+        price: "0",
+        priceCurrency: "USD",
       },
-      "author": {
-        "@type": "Organization",
-        "name": "Cube Team"
-      }
+      author: {
+        "@type": "Person",                                                                                                                   
+        "name": "Hoai Phuc",                                                                                              
+        "email": "mailto:phuc.ph24012004@gmail.com",                                                                                         
+        "url": "https://github.com/hphucdev-04"    
+      },
     },
     {
       "@type": "FAQPage",
       "@id": "https://cube-agent.pages.dev/#faq",
-      "mainEntity": FAQS.map(({ question, answer }) => ({
+      mainEntity: FAQS.map(({ question, answer }) => ({
         "@type": "Question",
         name: question,
         acceptedAnswer: { "@type": "Answer", text: answer },
-      }))
-    }
-  ]
+      })),
+    },
+  ],
 };
 
 export default function RootLayout({
